@@ -13,7 +13,7 @@ TEMPLATE = app
 
 PRECOMPILED_HEADER  = stable.h
 
-SOURCES += main.cpp\
+SOURCES += main.cpp \
         minipauzer.cpp \
     manager.cpp \
     player.cpp \
@@ -32,10 +32,11 @@ HEADERS  += minipauzer.h \
     autodetector.h \
 
 FORMS    += minipauzer.ui \
-    folderdialog.ui
+    folderdialog.ui \
 
-INCLUDEPATH += C:\bass24\c \
+INCLUDEPATH += C:\bass24\c \ C:\basswasapi24\c \
 
 LIBS += -LC:\bass24\c -lbass \
+        -LC:\basswasapi24\c -lbasswasapi \
 
 DISTFILES += \

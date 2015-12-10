@@ -11,6 +11,10 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector = new AutoDetector(this);
     manager = new Manager();
 
+	buttonPlayClickTimer = new QTimer(this);
+	buttonPlayClickTimer->setSingleShot(true);
+	connect(buttonPlayClickTimer, SIGNAL(timeout()), this, SLOT(releaseButtonPlay()));
+
     detector->start();
 
     //New song signals
@@ -22,9 +26,18 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(ui->sliderBar, SIGNAL(valueChanged(int)), player, SLOT(setPosition(int)));
 
     //connect current time label
+	ui->lbl_CurTime->setText("0:00");
     connect(player, SIGNAL(posChanged(int)), this, SLOT(updateLabelCurTime(int)));
 
-    connect(detector, SIGNAL(audioDetected(QString)), ui->label, SLOT(setText(QString)));
+    connect(detector, SIGNAL(audioDetected(int)), this, SLOT(on_detected_audio(int)));
+
+	isPlaying = false;
+	isDetectorOn = false;
+	isManuallyPlayed = false;
+	isAutoPauseAllowed = false;
+
+	isButtonPlayClickAllowed = true;
+
 }
 
 MiniPauzer::~MiniPauzer()
@@ -34,22 +47,34 @@ MiniPauzer::~MiniPauzer()
     delete manager;
     detector->exit();
     delete detector;
+	delete buttonPlayClickTimer;
 }
-
-bool play = false;
 
 void MiniPauzer::on_btn_Play_clicked()
 {
-    if (play == false)
-    {
-        player->play();
-        play = true;
-    }
-    else
-    {
-        player->pause();
-        play = false;
-    }
+	if (isButtonPlayClickAllowed == true)
+	{
+		isButtonPlayClickAllowed = false;
+
+		buttonPlayClickTimer->start(500);
+
+		if (isDetectorOn)
+			isDetectorOn = false;
+		else
+			isDetectorOn = true;
+
+		if (isPlaying == false)
+		{
+			player->play();
+			isManuallyPlayed = true;
+			isPlaying = true;
+		}
+		else
+		{
+			player->pause();
+			isPlaying = false;
+		}
+	}
 }
 
 void MiniPauzer::on_sliderBar_sliderPressed()
@@ -117,4 +142,42 @@ void MiniPauzer::on_btn_ChooseFolders_clicked()
 void MiniPauzer::getFolderList(QStringList list)
 {
     QMessageBox::information(0, "", list.at(0));
+}
+
+void MiniPauzer::on_detected_audio(int audio_num)
+{
+	if (isDetectorOn)
+	{
+		if (isManuallyPlayed == true && audio_num > 1)
+		{
+			isAutoPauseAllowed = false;
+			isManuallyPlayed = false;
+		}
+
+		if (audio_num <= 1)
+			isAutoPauseAllowed = true;
+
+		if (isPlaying == true)
+		{
+			if (audio_num > 1 && isAutoPauseAllowed == true)
+			{
+				player->pause();
+				isPlaying = false;
+			}
+		}
+		else
+		{
+			if (audio_num == 0)
+			{
+				player->play();
+				isPlaying = true;	
+			}
+		}
+	}
+
+}
+
+void MiniPauzer::releaseButtonPlay()
+{
+	isButtonPlayClickAllowed = true;
 }

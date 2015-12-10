@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QMouseEvent>
 #include <bass.h>
+#include <basswasapi.h>
 
 
 #endif

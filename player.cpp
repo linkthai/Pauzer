@@ -6,8 +6,11 @@ Player::Player(QObject *parent) :
     if (!BASS_Init(-1, 44100, 0, NULL, NULL))
         qDebug() << "Cannot initialize device";
     t = new QTimer(this);
+    t->start(100);
     connect(t, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     //endOfMusic = true;
+
+    BASS_Init(-1, 44100, 0, NULL, NULL);
 }
 
 Player::~Player()
@@ -20,9 +23,12 @@ bool Player::changeToSong(int songNum)
 {
     QString filename = "C:\\1.mp3";
 
-    if (!(channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL))
-        && !(channel = BASS_MusicLoad(false, filename.toLatin1(), 0, 0, BASS_MUSIC_RAMP, 0)))
-            return false;
+    int device = BASS_WASAPI_GetDevice();
+
+    HSAMPLE sample;
+    if (!(channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL)))
+        return false;
+
 
     emit songLength(BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE)));
 
@@ -31,8 +37,6 @@ bool Player::changeToSong(int songNum)
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
-    if (data != 0)
-        return;
     BASS_ChannelPause(channel);
 }
 
@@ -53,7 +57,6 @@ void Player::play()
         qDebug() << "Error resuming";
     else
     {
-        t->start(100);
         //playing = true;
     }
 
@@ -65,11 +68,10 @@ void Player::play()
 void Player::pause()
 {
     //Fade out music
-    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0, 750);
+    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0.f, 750);
 
     //After fade out call function to pause
-    BASS_ChannelSetSync(channel, BASS_SYNC_SLIDE | BASS_SYNC_ONETIME, 0, &PauseAfterFadeOut, 0);
-    t->stop();
+    BASS_ChannelSetSync(channel, BASS_SYNC_SLIDE | BASS_SYNC_ONETIME, 0.f, &PauseAfterFadeOut, 0);
     //playing = false;
 }
 

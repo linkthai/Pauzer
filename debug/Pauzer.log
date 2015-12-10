@@ -1,0 +1,63 @@
+﻿Build started 09-Dec-15 02:05:53.
+     1>Project "C:\Users\Huzky\Documents\Qt Projects\Pauzer\Pauzer.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         MOC autodetector.h
+         MOC checkablefilesystemmodel.h
+         MOC folderdialog.h
+         MOC minipauzer.h
+         MOC player.h
+         MOC sliderbar.h
+         Generating precompiled header source file 'stable.h.cpp' ...
+         UIC folderdialog.ui
+         UIC minipauzer.ui
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I. /IC:\bass24\c /I\ /IC:\basswasapi24\c /IC:\Qt\5.5\msvc2012\include /IC:\Qt\5.5\msvc2012\include\QtWidgets /IC:\Qt\5.5\msvc2012\include\QtGui /IC:\Qt\5.5\msvc2012\include\QtANGLE /IC:\Qt\5.5\msvc2012\include\QtCore /Idebug /I. /I"C:\Qt\5.5\msvc2012\mkspecs\win32-msvc2012" /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D QT_WIDGETS_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Yc"stable.h" /Fp"debug\\Pauzer.pch" /Fo"debug\\" /Fd"debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt -w34100 -w34189 -w44996 stable.h.cpp
+         stable.h.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I. /IC:\bass24\c /I\ /IC:\basswasapi24\c /IC:\Qt\5.5\msvc2012\include /IC:\Qt\5.5\msvc2012\include\QtWidgets /IC:\Qt\5.5\msvc2012\include\QtGui /IC:\Qt\5.5\msvc2012\include\QtANGLE /IC:\Qt\5.5\msvc2012\include\QtCore /Idebug /I. /I"C:\Qt\5.5\msvc2012\mkspecs\win32-msvc2012" /Zi /nologo /W3 /WX- /Od /Oy- /D _WINDOWS /D UNICODE /D WIN32 /D QT_WIDGETS_LIB /D QT_GUI_LIB /D QT_CORE_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Yu"stable.h" /Fp"debug\\Pauzer.pch" /Fo"debug\\" /Fd"debug\vc110.pdb" /Gd /TP /FIstable.h /analyze- /errorReport:prompt -w34100 -w34189 -w44996 autodetector.cpp checkablefilesystemmodel.cpp folderdialog.cpp main.cpp manager.cpp minipauzer.cpp player.cpp sliderbar.cpp debug\moc_autodetector.cpp debug\moc_checkablefilesystemmodel.cpp debug\moc_folderdialog.cpp debug\moc_minipauzer.cpp debug\moc_player.cpp debug\moc_sliderbar.cpp
+         autodetector.cpp
+     1>autodetector.cpp(29): warning C4189: 'count' : local variable is initialized but not referenced
+     1>autodetector.cpp(53): warning C4100: 'user' : unreferenced formal parameter
+     1>autodetector.cpp(53): warning C4100: 'length' : unreferenced formal parameter
+     1>autodetector.cpp(53): warning C4100: 'buffer' : unreferenced formal parameter
+         checkablefilesystemmodel.cpp
+         folderdialog.cpp
+         main.cpp
+         manager.cpp
+         minipauzer.cpp
+         player.cpp
+     1>player.cpp(22): warning C4100: 'songNum' : unreferenced formal parameter
+     1>player.cpp(28): warning C4101: 'sample' : unreferenced local variable
+     1>player.cpp(26): warning C4189: 'device' : local variable is initialized but not referenced
+     1>player.cpp(52): warning C4100: 'user' : unreferenced formal parameter
+     1>player.cpp(52): warning C4100: 'data' : unreferenced formal parameter
+     1>player.cpp(52): warning C4100: 'handle' : unreferenced formal parameter
+         sliderbar.cpp
+         moc_autodetector.cpp
+         moc_checkablefilesystemmodel.cpp
+         moc_folderdialog.cpp
+         moc_minipauzer.cpp
+         moc_player.cpp
+         moc_sliderbar.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"debug\\Pauzer.exe" /NOLOGO /LIBPATH:C:\Qt\5.5\msvc2012\lib /LIBPATH:C:/qt/5.5/msvc2012/lib /LIBPATH:C:\Qt\5.5\msvc2012\lib /LIBPATH:C:\bass24\c /LIBPATH:C:\basswasapi24\c C:\Qt\5.5\msvc2012\lib\qtmaind.lib shell32.lib C:/qt/5.5/msvc2012/lib\Qt5Cored.lib C:\bass24\c\bass.lib C:\basswasapi24\c\basswasapi.lib C:\Qt\5.5\msvc2012\lib\Qt5Widgetsd.lib C:\Qt\5.5\msvc2012\lib\Qt5Guid.lib C:\Qt\5.5\msvc2012\lib\Qt5Cored.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"debug\Pauzer.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /MACHINE:X86 /SAFESEH "/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" debug\autodetector.obj
+         debug\checkablefilesystemmodel.obj
+         debug\folderdialog.obj
+         debug\main.obj
+         debug\manager.obj
+         debug\minipauzer.obj
+         debug\player.obj
+         debug\sliderbar.obj
+         debug\moc_autodetector.obj
+         debug\moc_checkablefilesystemmodel.obj
+         debug\moc_folderdialog.obj
+         debug\moc_minipauzer.obj
+         debug\moc_player.obj
+         debug\moc_sliderbar.obj
+         debug\stable.h.obj
+         Pauzer.vcxproj -> C:\Users\Huzky\Documents\Qt Projects\Pauzer\debug\Pauzer.exe
+     1>Done Building Project "C:\Users\Huzky\Documents\Qt Projects\Pauzer\Pauzer.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:14.94

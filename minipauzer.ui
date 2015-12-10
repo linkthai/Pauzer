@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
+    <width>669</width>
     <height>258</height>
    </rect>
   </property>
@@ -16,53 +16,14 @@
   <widget class="QPushButton" name="btn_Play">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>150</y>
+     <x>360</x>
+     <y>200</y>
      <width>91</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Play</string>
-   </property>
-  </widget>
-  <widget class="SliderBar" name="sliderBar">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>50</y>
-     <width>391</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lbl_CurTime">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>50</y>
-     <width>31</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>0:00</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="lbl_songLen">
-   <property name="geometry">
-    <rect>
-     <x>620</x>
-     <y>50</y>
-     <width>31</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>0:00</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btn_ChooseFolders">
@@ -78,18 +39,64 @@
     <string>Choose Music Folders</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QCheckBox" name="btn_play">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>110</y>
-     <width>631</width>
-     <height>20</height>
+     <x>210</x>
+     <y>150</y>
+     <width>31</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string/>
    </property>
+  </widget>
+  <widget class="QSplitter" name="splitter">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>80</y>
+     <width>441</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <widget class="QLabel" name="lbl_CurTime">
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0:00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="SliderBar" name="sliderBar">
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lbl_songLen">
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0:00</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
