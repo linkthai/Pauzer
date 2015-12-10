@@ -26,9 +26,8 @@ QT_BEGIN_NAMESPACE
 class Ui_MiniPauzer
 {
 public:
-    QPushButton *btn_Play;
     QPushButton *btn_ChooseFolders;
-    QCheckBox *btn_play;
+    QCheckBox *btn_Play;
     QSplitter *splitter;
     QLabel *lbl_CurTime;
     SliderBar *sliderBar;
@@ -39,15 +38,15 @@ public:
         if (MiniPauzer->objectName().isEmpty())
             MiniPauzer->setObjectName(QStringLiteral("MiniPauzer"));
         MiniPauzer->resize(669, 258);
-        btn_Play = new QPushButton(MiniPauzer);
-        btn_Play->setObjectName(QStringLiteral("btn_Play"));
-        btn_Play->setGeometry(QRect(360, 200, 91, 31));
         btn_ChooseFolders = new QPushButton(MiniPauzer);
         btn_ChooseFolders->setObjectName(QStringLiteral("btn_ChooseFolders"));
         btn_ChooseFolders->setGeometry(QRect(10, 220, 151, 25));
-        btn_play = new QCheckBox(MiniPauzer);
-        btn_play->setObjectName(QStringLiteral("btn_play"));
-        btn_play->setGeometry(QRect(210, 150, 31, 31));
+        btn_Play = new QCheckBox(MiniPauzer);
+        btn_Play->setObjectName(QStringLiteral("btn_Play"));
+        btn_Play->setGeometry(QRect(340, 190, 31, 31));
+        btn_Play->setStyleSheet(QLatin1String("QCheckBox:enabled{\n"
+" border-image: url(:/icons/play.svg) 4 4 4 4 stretch stretch;\n"
+"}"));
         splitter = new QSplitter(MiniPauzer);
         splitter->setObjectName(QStringLiteral("splitter"));
         splitter->setGeometry(QRect(200, 80, 441, 22));
@@ -78,9 +77,8 @@ public:
     void retranslateUi(QWidget *MiniPauzer)
     {
         MiniPauzer->setWindowTitle(QApplication::translate("MiniPauzer", "MiniPauzer", 0));
-        btn_Play->setText(QApplication::translate("MiniPauzer", "Play", 0));
         btn_ChooseFolders->setText(QApplication::translate("MiniPauzer", "Choose Music Folders", 0));
-        btn_play->setText(QString());
+        btn_Play->setText(QString());
         lbl_CurTime->setText(QApplication::translate("MiniPauzer", "0:00", 0));
         lbl_songLen->setText(QApplication::translate("MiniPauzer", "0:00", 0));
     } // retranslateUi

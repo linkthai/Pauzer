@@ -6,6 +6,7 @@
 #include <mmdeviceapi.h>
 #include <audiopolicy.h>
 #include <endpointvolume.h>
+#include <ObjBase.h>
 
 class AutoDetector : public QThread
 {

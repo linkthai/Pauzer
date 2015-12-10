@@ -23,7 +23,7 @@ AutoDetector::AutoDetector(QObject *parent) :
 	detected = -1;
 
 	pSessionManager = NULL;
-	CreateSessionManager(&pSessionManager);
+    CreateSessionManager(&pSessionManager);
 }
 
 AutoDetector::~AutoDetector()
@@ -114,12 +114,11 @@ HRESULT AutoDetector::CreateSessionManager(IAudioSessionManager2** ppSessionMana
     IMMDeviceEnumerator* pEnumerator = NULL;
     IAudioSessionManager2* pSessionManager = NULL;
 
-
     // Create the device enumerator.
     hr = CoCreateInstance(
-        __uuidof(MMDeviceEnumerator), 
-        NULL, CLSCTX_ALL, 
-        __uuidof(IMMDeviceEnumerator), 
+        __uuidof(MMDeviceEnumerator),
+        NULL, CLSCTX_ALL,
+        __uuidof(IMMDeviceEnumerator),
         (void**)&pEnumerator);
 
     // Get the default audio device.
@@ -136,7 +135,7 @@ HRESULT AutoDetector::CreateSessionManager(IAudioSessionManager2** ppSessionMana
     (*ppSessionManager)->AddRef();
 
     // Clean up.
-	SAFE_RELEASE(pSessionManager);
+    SAFE_RELEASE(pSessionManager);
     SAFE_RELEASE(pEnumerator);
     SAFE_RELEASE(pDevice);
 

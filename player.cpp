@@ -10,6 +10,8 @@ Player::Player(QObject *parent) :
     connect(t, SIGNAL(timeout()), this, SLOT(signalUpdate()));
     //endOfMusic = true;
 
+	isPlaying = false;
+
     BASS_Init(-1, 44100, 0, NULL, NULL);
 }
 
@@ -22,8 +24,6 @@ Player::~Player()
 bool Player::changeToSong(int songNum)
 {
     QString filename = "C:\\1.mp3";
-
-    int device = BASS_WASAPI_GetDevice();
 
     HSAMPLE sample;
     if (!(channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL)))
@@ -57,8 +57,10 @@ void Player::play()
         qDebug() << "Error resuming";
     else
     {
-        //playing = true;
+        isPlaying = true;
     }
+
+	emit changePlaying(isPlaying);
 
     //Fade in music after starting or resuming
     BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, 0);
@@ -67,12 +69,20 @@ void Player::play()
 
 void Player::pause()
 {
+	isPlaying = false;
+	emit changePlaying(isPlaying);
+
     //Fade out music
     BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0.f, 750);
 
     //After fade out call function to pause
     BASS_ChannelSetSync(channel, BASS_SYNC_SLIDE | BASS_SYNC_ONETIME, 0.f, &PauseAfterFadeOut, 0);
     //playing = false;
+}
+
+bool Player::getPlaying()
+{
+	return isPlaying;
 }
 
 void Player::setPosition(int cur)

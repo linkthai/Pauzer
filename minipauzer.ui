@@ -13,19 +13,6 @@
   <property name="windowTitle">
    <string>MiniPauzer</string>
   </property>
-  <widget class="QPushButton" name="btn_Play">
-   <property name="geometry">
-    <rect>
-     <x>360</x>
-     <y>200</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Play</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="btn_ChooseFolders">
    <property name="geometry">
     <rect>
@@ -39,14 +26,19 @@
     <string>Choose Music Folders</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="btn_play">
+  <widget class="QCheckBox" name="btn_Play">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>150</y>
+     <x>340</x>
+     <y>190</y>
      <width>31</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QCheckBox:enabled{
+ border-image: url(:/icons/play.svg) 4 4 4 4 stretch stretch;
+}</string>
    </property>
    <property name="text">
     <string/>

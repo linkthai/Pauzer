@@ -17,6 +17,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     detector->start();
 
+	//Playing signals
+	connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
+
     //New song signals
     connect(player, SIGNAL(songLength(int)), ui->sliderBar, SLOT(setMaxLength(int)));
     connect(player, SIGNAL(songLength(int)), this, SLOT(updateLabelMaxLen(int)));
@@ -26,8 +29,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(ui->sliderBar, SIGNAL(valueChanged(int)), player, SLOT(setPosition(int)));
 
     //connect current time label
-	ui->lbl_CurTime->setText("0:00");
     connect(player, SIGNAL(posChanged(int)), this, SLOT(updateLabelCurTime(int)));
+    ui->lbl_CurTime->setText("0:00");
 
     connect(detector, SIGNAL(audioDetected(int)), this, SLOT(on_detected_audio(int)));
 
@@ -58,21 +61,16 @@ void MiniPauzer::on_btn_Play_clicked()
 
 		buttonPlayClickTimer->start(500);
 
-		if (isDetectorOn)
-			isDetectorOn = false;
-		else
-			isDetectorOn = true;
-
-		if (isPlaying == false)
+		if (player->getPlaying() == false)
 		{
-			player->play();
 			isManuallyPlayed = true;
-			isPlaying = true;
+			isDetectorOn = true;
+			player->play();
 		}
 		else
 		{
+			isDetectorOn = false;
 			player->pause();
-			isPlaying = false;
 		}
 	}
 }
@@ -148,21 +146,21 @@ void MiniPauzer::on_detected_audio(int audio_num)
 {
 	if (isDetectorOn)
 	{
-		if (isManuallyPlayed == true && audio_num > 1)
+		if (audio_num <= 1 && isAutoPauseAllowed == false)
+			isAutoPauseAllowed = true;
+
+		if (isManuallyPlayed == true && isAutoPauseAllowed == true)
 		{
-			isAutoPauseAllowed = false;
+			if (audio_num > 1)
+				isAutoPauseAllowed = false;
 			isManuallyPlayed = false;
 		}
 
-		if (audio_num <= 1)
-			isAutoPauseAllowed = true;
-
-		if (isPlaying == true)
+		if (player->getPlaying() == true)
 		{
 			if (audio_num > 1 && isAutoPauseAllowed == true)
 			{
 				player->pause();
-				isPlaying = false;
 			}
 		}
 		else
@@ -170,7 +168,6 @@ void MiniPauzer::on_detected_audio(int audio_num)
 			if (audio_num == 0)
 			{
 				player->play();
-				isPlaying = true;	
 			}
 		}
 	}

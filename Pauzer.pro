@@ -34,9 +34,10 @@ HEADERS  += minipauzer.h \
 FORMS    += minipauzer.ui \
     folderdialog.ui \
 
-INCLUDEPATH += C:\bass24\c \ C:\basswasapi24\c \
+INCLUDEPATH += .\bass24\c \
 
-LIBS += -LC:\bass24\c -lbass \
-        -LC:\basswasapi24\c -lbasswasapi \
+LIBS += -L.\bass24\c -lbass \
+
+win32:LIBS += -lOle32 \
 
 DISTFILES += \

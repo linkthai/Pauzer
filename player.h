@@ -11,13 +11,16 @@ class Player : public QObject
 public:
     explicit Player(QObject *parent = 0);
     ~Player();
+	bool getPlaying();
 private:
+	bool isPlaying;
     unsigned long channel;
     QTimer *t;
     bool changeToSong(int songNum);
 signals:
     void posChanged(int time);
     void songLength(int length);
+	void changePlaying(bool isPlaying);
 public slots:
     void play();
     void pause();
