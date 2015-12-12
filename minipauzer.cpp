@@ -18,20 +18,23 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector->start();
 
 	//Playing signals
-	connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
-
-    //New song signals
-    connect(player, SIGNAL(songLength(int)), ui->sliderBar, SLOT(setMaxLength(int)));
-    connect(player, SIGNAL(songLength(int)), this, SLOT(updateLabelMaxLen(int)));
+    connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
 
     //connect slider and stream
     connect(player, SIGNAL(posChanged(int)), ui->sliderBar, SLOT(setCurrentPos(int)));
     connect(ui->sliderBar, SIGNAL(valueChanged(int)), player, SLOT(setPosition(int)));
 
+    //New song signals
+    connect(player, SIGNAL(songLength(int)), ui->sliderBar, SLOT(setMaxLength(int)));
+    connect(player, SIGNAL(songLength(int)), this, SLOT(updateLabelMaxLen(int)));
+    connect(player, SIGNAL(songTitle(QString)), ui->lbl_Title, SLOT(setText(QString)));
+    connect(player, SIGNAL(songArtist(QString)), ui->lbl_Artist, SLOT(setText(QString)));
+    connect(player, SIGNAL(songAlbum(QString)), ui->lbl_Album, SLOT(setText(QString)));
+
     //connect current time label
     connect(player, SIGNAL(posChanged(int)), this, SLOT(updateLabelCurTime(int)));
-    ui->lbl_CurTime->setText("0:00");
 
+    //emit audio detection
     connect(detector, SIGNAL(audioDetected(int)), this, SLOT(on_detected_audio(int)));
 
 	isPlaying = false;
@@ -41,6 +44,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
 	isButtonPlayClickAllowed = true;
 
+    qsrand(QTime::currentTime().second());
+
+    player->changeToPlaylist(0);
 }
 
 MiniPauzer::~MiniPauzer()
@@ -177,4 +183,14 @@ void MiniPauzer::on_detected_audio(int audio_num)
 void MiniPauzer::releaseButtonPlay()
 {
 	isButtonPlayClickAllowed = true;
+}
+
+void MiniPauzer::on_btn_Prev_clicked()
+{
+    player->prevSong();
+}
+
+void MiniPauzer::on_btn_Next_clicked()
+{
+    player->nextSong();
 }

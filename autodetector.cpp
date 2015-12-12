@@ -100,7 +100,7 @@ void AutoDetector::checkAudioOutput()
 	
 	detected = list.size();
 	if (current_num != detected && smallSoundDetector->isActive() == false)
-		smallSoundDetector->start(1000);
+        smallSoundDetector->start(1500);
 
 	emit audioDetected(current_num);
 }

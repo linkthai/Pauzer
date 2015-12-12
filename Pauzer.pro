@@ -21,6 +21,7 @@ SOURCES += main.cpp \
     folderdialog.cpp \
     checkablefilesystemmodel.cpp \
     autodetector.cpp \
+    playlist.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -30,13 +31,16 @@ HEADERS  += minipauzer.h \
     folderdialog.h \
     checkablefilesystemmodel.h \
     autodetector.h \
+    playlist.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
 
-INCLUDEPATH += .\bass24\c \
+INCLUDEPATH += C:\bass24\c \
+                C:\Libraries\taglib\include\taglib \
 
-LIBS += -L.\bass24\c -lbass \
+LIBS += -LC:\bass24\c -lbass \
+        -LC:\Libraries\taglib\lib -ltag \
 
 win32:LIBS += -lOle32 \
 

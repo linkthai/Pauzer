@@ -5,34 +5,89 @@ Player::Player(QObject *parent) :
 {
     if (!BASS_Init(-1, 44100, 0, NULL, NULL))
         qDebug() << "Cannot initialize device";
+
+
     t = new QTimer(this);
-    t->start(100);
+    t->start(500);
     connect(t, SIGNAL(timeout()), this, SLOT(signalUpdate()));
+
     //endOfMusic = true;
 
 	isPlaying = false;
+    isShuffling = false;
+    isChangingSong = false;
 
-    BASS_Init(-1, 44100, 0, NULL, NULL);
+    playlist = new Playlist(this);
+    connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
+
+    emit(posChanged(0));
 }
 
 Player::~Player()
 {
+    delete playlist;
 
+    if (t != NULL)
+        delete t;
+}
+
+void Player::changeToPlaylist(int playlistNum)
+{
+    playlist->setPlaylist(0, TRUE);
 
 }
 
-bool Player::changeToSong(int songNum)
+void Player::changeToSong(int songNum)
 {
-    QString filename = "C:\\1.mp3";
+    isChangingSong = true;
+    QString filename;
 
-    HSAMPLE sample;
-    if (!(channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL)))
-        return false;
+    switch(songNum)
+    {
+    case 1:
+        filename = "C:/1.mp3";
+        break;
+    case 2:
+        filename = "C:/2.mp3";
+        break;
+    case 3:
+        filename = "C:/3.mp3";
+        break;
+    default:
+        filename = "C:/4.mp3";
+        break;
+    }
 
+    BASS_ChannelStop(channel);
+    BASS_StreamFree(channel);
+
+    channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL);
+
+    if (isPlaying)
+    {
+        BASS_ChannelPlay(channel, false);
+    }
+    else
+    {
+        BASS_ChannelPause(channel);
+    }
+
+    QString text;
+    TagLib::FileRef f(QFile::encodeName(filename).constData());
+
+    text = TStringToQString(f.tag()->title());
+    emit songTitle(text);
+
+    text = TStringToQString(f.tag()->artist());
+    emit songArtist(text);
+
+    text = TStringToQString(f.tag()->album());
+    emit songAlbum(text);
 
     emit songLength(BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE)));
-
-    return true;
+    BASS_ChannelSetPosition(channel, 0, BASS_POS_BYTE);
+    signalUpdate();
+    isChangingSong = false;
 }
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user)
@@ -47,10 +102,6 @@ void Player::play()
     if (BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED)
     {
         BASS_ChannelStop(channel);
-        if (changeToSong(0) == false)
-        {
-            qDebug() << "Can't play file";
-        }
     }
 
     if (!BASS_ChannelPlay(channel, false))
@@ -80,14 +131,25 @@ void Player::pause()
     //playing = false;
 }
 
+void Player::nextSong()
+{
+    playlist->nextSong(TRUE, FALSE);
+}
+
+void Player::prevSong()
+{
+    playlist->prevSong(TRUE,FALSE);
+}
+
 bool Player::getPlaying()
 {
-	return isPlaying;
+    return isPlaying;
 }
 
 void Player::setPosition(int cur)
 {
-    BASS_ChannelSetPosition(channel, BASS_ChannelSeconds2Bytes(channel, cur), BASS_POS_BYTE);
+    if (isChangingSong == false)
+        BASS_ChannelSetPosition(channel, BASS_ChannelSeconds2Bytes(channel, cur), BASS_POS_BYTE);
 }
 
 void Player::signalUpdate()

@@ -36,6 +36,10 @@ private slots:
 
 	void on_detected_audio(int audio_num);
 
+    void on_btn_Prev_clicked();
+
+    void on_btn_Next_clicked();
+
 private:
     Ui::MiniPauzer *ui;
     Manager *manager;
