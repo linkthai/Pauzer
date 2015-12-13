@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Pauzer
 TEMPLATE = app
 
+CONFIG += resources_big
+
 PRECOMPILED_HEADER  = stable.h
 
 SOURCES += main.cpp \
@@ -22,6 +24,8 @@ SOURCES += main.cpp \
     checkablefilesystemmodel.cpp \
     autodetector.cpp \
     playlist.cpp \
+    master.cpp \
+    song.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -32,16 +36,38 @@ HEADERS  += minipauzer.h \
     checkablefilesystemmodel.h \
     autodetector.h \
     playlist.h \
+    master.h \
+    song.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
 
-INCLUDEPATH += C:\bass24\c \
-                C:\Libraries\taglib\include\taglib \
+INCLUDEPATH += C:\Libraries\bass24\c \
+                C:\Libraries\taglib\include \
 
-LIBS += -LC:\bass24\c -lbass \
-        -LC:\Libraries\taglib\lib -ltag \
+debug_and_release {
+    CONFIG -= debug_and_release
+    CONFIG += debug_and_release
+}
+
+CONFIG(debug, debug|release) {
+    CONFIG -= debug release
+    CONFIG += debug
+    LIBS += -LC:\Libraries\taglib\lib\win32-v110 -ltaglibd \
+}
+
+CONFIG(release, debug|release) {
+    CONFIG -= debug release
+    CONFIG += release
+    LIBS += -LC:\Libraries\taglib\lib\win32-v110 -ltaglib \
+}
+
+LIBS += -LC:\Libraries\bass24\c -lbass \
+
 
 win32:LIBS += -lOle32 \
 
 DISTFILES += \
+
+RESOURCES += \
+    resources.qrc \

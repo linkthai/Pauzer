@@ -1,4 +1,6 @@
 #include "playlist.h"
+#include "manager.h"
+#include <QMessageBox>
 
 Playlist::Playlist(QObject *parent) : QObject(parent)
 {
@@ -7,10 +9,13 @@ Playlist::Playlist(QObject *parent) : QObject(parent)
 
 void Playlist::setPlaylist(int playlistNum, bool isShuffling)
 {
-    songList.append(0);
-    songList.append(1);
-    songList.append(2);
-    songList.append(3);
+    songList.clear();
+
+    for (int i = 0; i < Manager::master.GetCount(); i++)
+    {
+        songList.append(i);
+    }
+
     reShuffle();
 
     if (isShuffling)
@@ -21,7 +26,7 @@ void Playlist::setPlaylist(int playlistNum, bool isShuffling)
     {
         currentSong = songList.at(0);
     }
-    emit changeCurrentSong(currentSong);
+    emit changeCurrentSong(currentSong, false);
 }
 
 Playlist::~Playlist()
@@ -44,7 +49,7 @@ int Playlist::getCurrentSong()
     return currentSong;
 }
 
-void Playlist::nextSong(bool isShuffling, bool isPlaylistRepeating)
+void Playlist::nextSong(bool isShuffling, int repeatMode)
 {
     int num;
 
@@ -76,10 +81,13 @@ void Playlist::nextSong(bool isShuffling, bool isPlaylistRepeating)
         currentSong = songList.at(num);
     }
 
-    emit changeCurrentSong(currentSong);
+    if (num == 0)
+        emit changeCurrentSong(currentSong, true);
+    else
+        emit changeCurrentSong(currentSong, false);
 }
 
-void Playlist::prevSong(bool isShuffling, bool isPlaylistRepeating)
+void Playlist::prevSong(bool isShuffling, int repeatMode)
 {
     int num;
 
@@ -110,10 +118,10 @@ void Playlist::prevSong(bool isShuffling, bool isPlaylistRepeating)
         currentSong = songList.at(num);
     }
 
-    emit changeCurrentSong(currentSong);
+    emit changeCurrentSong(currentSong, false);
 }
 
-void Playlist::reShuffle()
+void Playlist::reShuffle(bool changeSong)
 {
     shuffleList.clear();
 
@@ -128,6 +136,12 @@ void Playlist::reShuffle()
         int rand = qrand() % tempList.size();
         shuffleList.append(tempList.at(rand));
         tempList.removeAt(rand);
+    }
+
+    if (changeSong == true)
+    {
+        currentSong = shuffleList.at(0);
+        emit changeCurrentSong(currentSong, false);
     }
 }
 

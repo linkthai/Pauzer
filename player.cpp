@@ -1,24 +1,29 @@
 #include "player.h"
 
+bool endOfPlayback;
+
 Player::Player(QObject *parent) :
     QObject(parent)
 {
     if (!BASS_Init(-1, 44100, 0, NULL, NULL))
         qDebug() << "Cannot initialize device";
 
-
     t = new QTimer(this);
-    t->start(500);
+    t->start(100);
     connect(t, SIGNAL(timeout()), this, SLOT(signalUpdate()));
+    connect(t, SIGNAL(timeout()), this, SLOT(checkEndPlayback()));
 
     //endOfMusic = true;
 
 	isPlaying = false;
     isShuffling = false;
     isChangingSong = false;
+    endOfPlayback = false;
+
+    repeatMode = Repeat::NO_REPEAT;
 
     playlist = new Playlist(this);
-    connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
+    connect(playlist, SIGNAL(changeCurrentSong(int, bool)), this, SLOT(changeToSong(int, bool)));
 
     emit(posChanged(0));
 }
@@ -33,30 +38,18 @@ Player::~Player()
 
 void Player::changeToPlaylist(int playlistNum)
 {
-    playlist->setPlaylist(0, TRUE);
+    playlist->setPlaylist(0, isShuffling);
 
 }
 
-void Player::changeToSong(int songNum)
+void Player::changeToSong(int songNum, bool isPlaylistRepeated)
 {
     isChangingSong = true;
     QString filename;
 
-    switch(songNum)
-    {
-    case 1:
-        filename = "C:/1.mp3";
-        break;
-    case 2:
-        filename = "C:/2.mp3";
-        break;
-    case 3:
-        filename = "C:/3.mp3";
-        break;
-    default:
-        filename = "C:/4.mp3";
-        break;
-    }
+    filename = QString::fromStdString(Manager::master.Get(songNum).GetPath());
+
+    BASS_ChannelRemoveSync(channel, BASS_SYNC_END);
 
     BASS_ChannelStop(channel);
     BASS_StreamFree(channel);
@@ -65,15 +58,23 @@ void Player::changeToSong(int songNum)
 
     if (isPlaying)
     {
-        BASS_ChannelPlay(channel, false);
+        if (isPlaylistRepeated == true && repeatMode == Repeat::NO_REPEAT)
+        {
+            emit endOfPlaylistNoRepeat();
+        }
+        else
+            BASS_ChannelPlay(channel, false);
     }
     else
     {
         BASS_ChannelPause(channel);
     }
 
+    BASS_ChannelSetSync(channel, BASS_SYNC_END, 0, &EndOfPlayback, 0);
+
+
     QString text;
-    TagLib::FileRef f(QFile::encodeName(filename).constData());
+    TagLib::MPEG::File f(QFile::encodeName(filename).constData());
 
     text = TStringToQString(f.tag()->title());
     emit songTitle(text);
@@ -84,15 +85,88 @@ void Player::changeToSong(int songNum)
     text = TStringToQString(f.tag()->album());
     emit songAlbum(text);
 
+    TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
+    TagLib::ID3v2::FrameList framelist = tag->frameList("APIC");
+
+    if (framelist.isEmpty())
+    {
+        QPixmap pixMap(":/resources/cover.png");
+        emit songCover(pixMap);
+    }
+    else
+    {
+        TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(framelist.front());
+        if (pic != NULL)
+        {
+            QImage coverArt;
+            coverArt.loadFromData((const uchar *)pic->picture().data(), pic->picture().size());
+
+            QPixmap pixMap = QPixmap::fromImage(coverArt);
+            emit songCover(pixMap);
+
+        }
+    }
+
     emit songLength(BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE)));
     BASS_ChannelSetPosition(channel, 0, BASS_POS_BYTE);
     signalUpdate();
     isChangingSong = false;
 }
 
+void Player::setShuffle(bool state)
+{
+    if (state == true)
+    {
+        isShuffling = true;
+        playlist->reShuffle(true);
+    }
+    else
+    {
+        isShuffling = false;
+    }
+}
+
+void Player::setRepeat(int state)
+{
+    switch(state)
+    {
+    case 0:
+        repeatMode = Repeat::NO_REPEAT;
+        break;
+    case 1:
+        repeatMode = Repeat::ONE_SONG;
+        break;
+    default:
+        repeatMode = Repeat::PLAYLIST;
+        break;
+    }
+}
+
+void Player::checkEndPlayback()
+{
+    if (endOfPlayback == true)
+    {
+        if (repeatMode == Repeat::ONE_SONG)
+        {
+            setPosition(0);
+            BASS_ChannelPlay(channel, false);
+        }
+        else
+        {
+            this->nextSong();
+        }
+        endOfPlayback = false;
+    }
+}
+
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
     BASS_ChannelPause(channel);
+}
+
+void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user)
+{
+    endOfPlayback = true;
 }
 
 void Player::play()
@@ -133,12 +207,14 @@ void Player::pause()
 
 void Player::nextSong()
 {
-    playlist->nextSong(TRUE, FALSE);
+    BASS_ChannelStop(channel);
+    playlist->nextSong(isShuffling, repeatMode);
 }
 
 void Player::prevSong()
 {
-    playlist->prevSong(TRUE,FALSE);
+    BASS_ChannelStop(channel);
+    playlist->prevSong(isShuffling, repeatMode);
 }
 
 bool Player::getPlaying()

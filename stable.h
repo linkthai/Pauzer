@@ -19,6 +19,22 @@
 #include <QFileDialog>
 #include <QMouseEvent>
 #include <bass.h>
+
 #include <fileref.h>
+#include <mpegfile.h>
+#include <tbytevector.h>
+#include <id3v2tag.h>
+#include <id3v2frame.h>
+#include <id3v2header.h>
+#include <tlist.h>
+#include <tag.h>
+#include <taglib.h>
+#include <attachedpictureframe.h>
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
 
 #endif

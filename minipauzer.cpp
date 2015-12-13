@@ -6,16 +6,22 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     ui(new Ui::MiniPauzer)
 {
     ui->setupUi(this);
+    ui->coverArt->setScaledContents(true);
+    QPixmap pixmap(":/resources/cover.png");
+    ui->coverArt->setPixmap(pixmap);
 
     player = new Player(this);
     detector = new AutoDetector(this);
-    manager = new Manager();
 
 	buttonPlayClickTimer = new QTimer(this);
 	buttonPlayClickTimer->setSingleShot(true);
 	connect(buttonPlayClickTimer, SIGNAL(timeout()), this, SLOT(releaseButtonPlay()));
 
     detector->start();
+    if (ui->btn_AutoDetector->isChecked())
+        detector->resume();
+    else
+        detector->start();
 
 	//Playing signals
     connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
@@ -30,6 +36,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(player, SIGNAL(songTitle(QString)), ui->lbl_Title, SLOT(setText(QString)));
     connect(player, SIGNAL(songArtist(QString)), ui->lbl_Artist, SLOT(setText(QString)));
     connect(player, SIGNAL(songAlbum(QString)), ui->lbl_Album, SLOT(setText(QString)));
+    connect(player, SIGNAL(songCover(QPixmap)), ui->coverArt, SLOT(setPixmap(QPixmap)));
+    connect(player, SIGNAL(endOfPlaylistNoRepeat()), this, SLOT(endOfPlaylistStop()));
 
     //connect current time label
     connect(player, SIGNAL(posChanged(int)), this, SLOT(updateLabelCurTime(int)));
@@ -38,22 +46,19 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(detector, SIGNAL(audioDetected(int)), this, SLOT(on_detected_audio(int)));
 
 	isPlaying = false;
-	isDetectorOn = false;
+    isDetectorOn = false;
 	isManuallyPlayed = false;
 	isAutoPauseAllowed = false;
 
 	isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().second());
-
-    player->changeToPlaylist(0);
 }
 
 MiniPauzer::~MiniPauzer()
 {
     delete ui;
     delete player;
-    delete manager;
     detector->exit();
     delete detector;
 	delete buttonPlayClickTimer;
@@ -136,7 +141,6 @@ void MiniPauzer::on_btn_ChooseFolders_clicked()
     FolderDialog *dialog = new FolderDialog();
     dialog->setModal(true);
 
-    //Folder lists created
     connect(dialog, SIGNAL(createdFolderList(QStringList)), this, SLOT(getFolderList(QStringList)));
 
     dialog->exec();
@@ -145,7 +149,9 @@ void MiniPauzer::on_btn_ChooseFolders_clicked()
 
 void MiniPauzer::getFolderList(QStringList list)
 {
-    QMessageBox::information(0, "", list.at(0));
+    Manager::CreateMaster(list);
+
+    player->changeToPlaylist(0);
 }
 
 void MiniPauzer::on_detected_audio(int audio_num)
@@ -193,4 +199,40 @@ void MiniPauzer::on_btn_Prev_clicked()
 void MiniPauzer::on_btn_Next_clicked()
 {
     player->nextSong();
+}
+
+void MiniPauzer::on_btn_Shuffle_stateChanged(int state)
+{
+    if (state == 0)
+    {
+        player->setShuffle(false);
+    }
+    else
+    {
+        player->setShuffle(true);
+    }
+}
+
+void MiniPauzer::on_btn_Repeat_stateChanged(int state)
+{
+    player->setRepeat(state);
+}
+
+void MiniPauzer::endOfPlaylistStop()
+{
+    isDetectorOn = false;
+    player->pause();
+}
+
+
+void MiniPauzer::on_btn_AutoDetector_stateChanged(int state)
+{
+    if (state == 0)
+    {
+        detector->pause();
+    }
+    else
+    {
+        detector->resume();
+    }
 }

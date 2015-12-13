@@ -1,8 +1,6 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
-#include <stable.h>
-
 class Playlist : public QObject
 {
     Q_OBJECT
@@ -18,11 +16,11 @@ public:
     QList<int> getShuffleList();
     void setPlaylist(int playlistNum, bool isShuffling);
     int getCurrentSong();
-    void nextSong(bool isShuffling, bool isPlaylistRepeating);
-    void prevSong(bool isShuffling, bool isPlaylistRepeating);
-    void reShuffle();
+    void nextSong(bool isShuffling, int repeatMode);
+    void prevSong(bool isShuffling, int repeatMode);
+    void reShuffle(bool changeSong = false);
 signals:
-    void changeCurrentSong(int currentSong);
+    void changeCurrentSong(int currentSong, bool isPlaylistRepeated);
 public slots:
 };
 

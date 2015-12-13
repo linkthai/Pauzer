@@ -13,7 +13,6 @@ AutoDetector::AutoDetector(QObject *parent) :
 {
     t = new QTimer(this);
     connect(t, SIGNAL(timeout()), this, SLOT(checkAudioOutput()));
-    t->start(500);
 
 	smallSoundDetector = new QTimer(this);
 	smallSoundDetector->setSingleShot(true);
@@ -38,6 +37,18 @@ void AutoDetector::run()
     while(1)
     {
     }
+}
+
+void AutoDetector::pause()
+{
+    if (t->isActive())
+        t->stop();
+}
+
+void AutoDetector::resume()
+{
+    if (!(t->isActive()))
+        t->start(100);
 }
 
 void AutoDetector::checkSmallSound()

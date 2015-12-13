@@ -40,6 +40,14 @@ private slots:
 
     void on_btn_Next_clicked();
 
+    void on_btn_Shuffle_stateChanged(int state);
+
+    void endOfPlaylistStop();
+
+    void on_btn_Repeat_stateChanged(int state);
+
+    void on_btn_AutoDetector_stateChanged(int state);
+
 private:
     Ui::MiniPauzer *ui;
     Manager *manager;
