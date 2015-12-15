@@ -36,7 +36,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(player, SIGNAL(songTitle(QString)), ui->lbl_Title, SLOT(setText(QString)));
     connect(player, SIGNAL(songArtist(QString)), ui->lbl_Artist, SLOT(setText(QString)));
     connect(player, SIGNAL(songAlbum(QString)), ui->lbl_Album, SLOT(setText(QString)));
-    connect(player, SIGNAL(songCover(QPixmap)), ui->coverArt, SLOT(setPixmap(QPixmap)));
+    connect(player, SIGNAL(songCover(QPixmap)), this, SLOT(on_new_pixmap(QPixmap)));
     connect(player, SIGNAL(endOfPlaylistNoRepeat()), this, SLOT(endOfPlaylistStop()));
 
     //connect current time label
@@ -50,7 +50,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 	isManuallyPlayed = false;
 	isAutoPauseAllowed = false;
 
-	isButtonPlayClickAllowed = true;
+    isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().second());
 }
@@ -66,11 +66,11 @@ MiniPauzer::~MiniPauzer()
 
 void MiniPauzer::on_btn_Play_clicked()
 {
-	if (isButtonPlayClickAllowed == true)
+    if (isButtonPlayClickAllowed == true)
 	{
-		isButtonPlayClickAllowed = false;
+        isButtonPlayClickAllowed = false;
 
-		buttonPlayClickTimer->start(500);
+        buttonPlayClickTimer->start(500);
 
 		if (player->getPlaying() == false)
 		{
@@ -188,7 +188,7 @@ void MiniPauzer::on_detected_audio(int audio_num)
 
 void MiniPauzer::releaseButtonPlay()
 {
-	isButtonPlayClickAllowed = true;
+    isButtonPlayClickAllowed = true;
 }
 
 void MiniPauzer::on_btn_Prev_clicked()
@@ -203,6 +203,7 @@ void MiniPauzer::on_btn_Next_clicked()
 
 void MiniPauzer::on_btn_Shuffle_stateChanged(int state)
 {
+    ui->btn_Shuffle->setEnabled(false);
     if (state == 0)
     {
         player->setShuffle(false);
@@ -211,6 +212,8 @@ void MiniPauzer::on_btn_Shuffle_stateChanged(int state)
     {
         player->setShuffle(true);
     }
+
+    ui->btn_Shuffle->setEnabled(true);
 }
 
 void MiniPauzer::on_btn_Repeat_stateChanged(int state)
@@ -235,4 +238,10 @@ void MiniPauzer::on_btn_AutoDetector_stateChanged(int state)
     {
         detector->resume();
     }
+}
+
+void MiniPauzer::on_new_pixmap(const QPixmap &pixmap)
+{
+    ui->coverArt->clear();
+    ui->coverArt->setPixmap(pixmap);
 }

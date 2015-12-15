@@ -24,7 +24,7 @@ private slots:
 
     void getFolderList(QStringList list);
 
-	void releaseButtonPlay();
+    void releaseButtonPlay();
 
     void on_btn_Play_clicked();
 
@@ -48,6 +48,8 @@ private slots:
 
     void on_btn_AutoDetector_stateChanged(int state);
 
+    void on_new_pixmap(const QPixmap &pixmap);
+
 private:
     Ui::MiniPauzer *ui;
     Manager *manager;
@@ -59,7 +61,7 @@ private:
 	bool isDetectorOn;
 	bool isManuallyPlayed;
 	bool isAutoPauseAllowed;
-	bool isButtonPlayClickAllowed;
+    bool isButtonPlayClickAllowed;
 };
 
 #endif // MINIPAUZER_H

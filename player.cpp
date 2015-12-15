@@ -195,7 +195,7 @@ void Player::play()
 void Player::pause()
 {
 	isPlaying = false;
-	emit changePlaying(isPlaying);
+    emit changePlaying(isPlaying);
 
     //Fade out music
     BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0.f, 750);

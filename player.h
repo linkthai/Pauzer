@@ -3,6 +3,7 @@
 
 #include "playlist.h"
 #include "manager.h"
+#include <stable.h>
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user);
 void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user);
@@ -30,7 +31,7 @@ signals:
     void songTitle(QString str);
     void songArtist(QString str);
     void songAlbum(QString str);
-    void songCover(QPixmap pic);
+    void songCover(const QPixmap &pic);
 	void changePlaying(bool isPlaying);
     void testText(QString str);
     void endOfPlaylistNoRepeat();
