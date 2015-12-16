@@ -54,7 +54,7 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     BASS_ChannelStop(channel);
     BASS_StreamFree(channel);
 
-    channel = BASS_StreamCreateFile(false, filename.unicode(), 0, 0, NULL);
+    channel = BASS_StreamCreateFile(false, reinterpret_cast<const wchar_t*>(filename.constData()), 0, 0, NULL);
 
     if (isPlaying)
     {
@@ -74,7 +74,8 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
 
 
     QString text;
-    TagLib::MPEG::File f(QFile::encodeName(filename).constData());
+    //TagLib::MPEG::File f(QFile::encodeName(filename).constData());
+    TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
 
     text = TStringToQString(f.tag()->title());
     emit songTitle(text);
