@@ -4,18 +4,18 @@
 class Song
 {
 private:
-	std::string _id;
-	std::string _path;
+    std::wstring _id;
+    std::wstring _path;
 public:
 	Song(void);
 	~Song(void);
-	Song(std::string id, std::string path);
+    Song(std::wstring id, std::wstring path);
 
-	void SetID(std::string id);
-	void SetPath(std::string path);
+    void SetID(std::wstring id);
+    void SetPath(std::wstring path);
 
-	std::string GetID() const;
-	std::string GetPath() const;
+    std::wstring GetID() const;
+    std::wstring GetPath() const;
 };
 
 #endif //SONG
