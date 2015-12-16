@@ -19,6 +19,8 @@ public:
     ~MiniPauzer();
 
 private slots:
+    void changeStyle();
+
     void updateLabelCurTime(int time);
     void updateLabelMaxLen(int legth);
 
@@ -50,12 +52,18 @@ private slots:
 
     void on_new_pixmap(const QPixmap &pixmap);
 
+    void on_btn_Close_clicked();
+
+    void on_btn_Minimize_clicked();
+
+    void on_titleBar_dragged(const QPoint &newPoint);
+
 private:
     Ui::MiniPauzer *ui;
     Manager *manager;
     Player *player;
     AutoDetector *detector;
-	QTimer *buttonPlayClickTimer;
+    QTimer *buttonPlayClickTimer;
 
 	bool isPlaying;
 	bool isDetectorOn;

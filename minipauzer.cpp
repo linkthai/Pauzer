@@ -6,9 +6,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     ui(new Ui::MiniPauzer)
 {
     ui->setupUi(this);
-    ui->coverArt->setScaledContents(true);
-    QPixmap pixmap(":/resources/cover.png");
-    ui->coverArt->setPixmap(pixmap);
+
+    changeStyle();
 
     player = new Player(this);
     detector = new AutoDetector(this);
@@ -22,6 +21,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
         detector->resume();
     else
         detector->start();
+
+    //Drag signals
+    connect(ui->titleBar, SIGNAL(titleBarDragged(QPoint)), this, SLOT(on_titleBar_dragged(QPoint)));
 
 	//Playing signals
     connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
@@ -62,6 +64,33 @@ MiniPauzer::~MiniPauzer()
     detector->exit();
     delete detector;
 	delete buttonPlayClickTimer;
+}
+
+void MiniPauzer::changeStyle()
+{
+    this->setStyleSheet("background-color: #282828;");
+    ui->titleBar->setStyleSheet("background-color: #2d2d2d");
+
+    ui->lbl_Title->setStyleSheet("color: white;");
+    ui->lbl_Artist->setStyleSheet("color: white;");
+    ui->lbl_Album->setStyleSheet("color: #e8e8e8;");
+    ui->lbl_CurTime->setStyleSheet("color: #e8e8e8;");
+    ui->lbl_songLen->setStyleSheet("color: #e8e8e8;");
+
+    ui->btn_Minimize->setIcon(QPixmap(":/icons/Minimize.png"));
+    ui->btn_Minimize->setIconSize(QSize(15, 15));
+
+    ui->btn_Maximize->setIcon(QPixmap(":/icons/Maximize.png"));
+    ui->btn_Close->setIconSize(QSize(15, 15));
+
+    ui->btn_Close->setIcon(QPixmap(":/icons/Close.png"));
+    ui->btn_Close->setIconSize(QSize(15, 15));
+
+
+    ui->coverArt->setScaledContents(true);
+    QPixmap pixmap(":/resources/cover.png");
+    ui->coverArt->setPixmap(pixmap);
+
 }
 
 void MiniPauzer::on_btn_Play_clicked()
@@ -244,4 +273,19 @@ void MiniPauzer::on_new_pixmap(const QPixmap &pixmap)
 {
     ui->coverArt->clear();
     ui->coverArt->setPixmap(pixmap);
+}
+
+void MiniPauzer::on_btn_Close_clicked()
+{
+    this->close();
+}
+
+void MiniPauzer::on_btn_Minimize_clicked()
+{
+    this->setWindowState(Qt::WindowMinimized);
+}
+
+void MiniPauzer::on_titleBar_dragged(const QPoint &newPoint)
+{
+    this->move(newPoint);
 }
