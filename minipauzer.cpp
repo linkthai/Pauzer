@@ -77,12 +77,15 @@ void MiniPauzer::changeStyle()
     ui->lbl_CurTime->setStyleSheet("color: #e8e8e8;");
     ui->lbl_songLen->setStyleSheet("color: #e8e8e8;");
 
+    ui->btn_Minimize->setAttribute(Qt::WA_NoMousePropagation);
     ui->btn_Minimize->setIcon(QPixmap(":/icons/Minimize.png"));
     ui->btn_Minimize->setIconSize(QSize(15, 15));
 
+    ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
     ui->btn_Maximize->setIcon(QPixmap(":/icons/Maximize.png"));
-    ui->btn_Close->setIconSize(QSize(15, 15));
+    ui->btn_Maximize->setIconSize(QSize(15, 15));
 
+    ui->btn_Close->setAttribute(Qt::WA_NoMousePropagation);
     ui->btn_Close->setIcon(QPixmap(":/icons/Close.png"));
     ui->btn_Close->setIconSize(QSize(15, 15));
 
@@ -283,6 +286,7 @@ void MiniPauzer::on_btn_Close_clicked()
 void MiniPauzer::on_btn_Minimize_clicked()
 {
     this->setWindowState(Qt::WindowMinimized);
+
 }
 
 void MiniPauzer::on_titleBar_dragged(const QPoint &newPoint)
