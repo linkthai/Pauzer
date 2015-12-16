@@ -15,35 +15,36 @@ Manager::~Manager()
 }
 
 
-void Manager::split(const std::string& s, char c, std::vector<std::string>& v)
+void Manager::split(const std::wstring& s, char c, std::vector<std::wstring>& v)
 {
-   std::string::size_type i = 0;
-   std::string::size_type j = s.find(c);
+   std::wstring::size_type i = 0;
+   std::wstring::size_type j = s.find(c);
 
-   while (j != std::string::npos) {
+   while (j != std::wstring::npos) {
       v.push_back(s.substr(i, j-i));
       i = ++j;
       j = s.find(c, j);
 
-      if (j == std::string::npos)
+      if (j == std::wstring::npos)
          v.push_back(s.substr(i, s.length()));
    }
 }
 
-void Manager::GetFileListing(std::string directory, std::string fileFilter, Master &list, bool recursively)
+void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Master &list, bool recursively)
 {
     if (recursively)
         GetFileListing(directory, fileFilter, list, false);
 
-    directory += "/";
+    directory += L"/";
 
     WIN32_FIND_DATA FindFileData;
     HANDLE hFind = INVALID_HANDLE_VALUE;
 
-    std::string filter = directory + (recursively ? "*" : fileFilter);
+    std::wstring filter = directory + (recursively ? L"*" : fileFilter);
 
-    WCHAR wstr[260];
-    MultiByteToWideChar( 0,0, filter.c_str(), 260, wstr, 260);
+    const wchar_t * wstr;
+    //MultiByteToWideChar( 0,0, filter, 260, wstr, 260);
+    wstr = filter.c_str();
     LPCWSTR filter_lpcwstr = wstr;
 
     hFind = FindFirstFile(filter_lpcwstr, &FindFileData);
@@ -60,11 +61,11 @@ void Manager::GetFileListing(std::string directory, std::string fileFilter, Mast
 
             std::wstring wstr(FindFileData.cFileName);
 
-            std::string str( wstr.begin(), wstr.end() );
+            std::wstring str( wstr.begin(), wstr.end() );
 
             temp.SetPath(directory + str);
             list.AddToList(temp);
-            //std::cout << directory + std::string(FindFileData.cFileName) << std::endl;
+            //std::cout << directory + std::wstring(FindFileData.cFileName) << std::endl;
         }
 
         while (FindNextFile(hFind, &FindFileData) != 0)
@@ -75,11 +76,11 @@ void Manager::GetFileListing(std::string directory, std::string fileFilter, Mast
 
                 std::wstring wstr(FindFileData.cFileName);
 
-                std::string str( wstr.begin(), wstr.end() );
+                std::wstring str( wstr.begin(), wstr.end() );
 
                 temp.SetPath(directory + str);
                 list.AddToList(temp);
-                //std::cout << directory + std::string(FindFileData.cFileName) << std::endl;
+                //std::cout << directory + std::wstring(FindFileData.cFileName) << std::endl;
             }
             else
             {
@@ -87,7 +88,7 @@ void Manager::GetFileListing(std::string directory, std::string fileFilter, Mast
                 {
                     std::wstring wstr(FindFileData.cFileName);
 
-                    std::string str( wstr.begin(), wstr.end() );
+                    std::wstring str( wstr.begin(), wstr.end() );
 
                     GetFileListing(directory + str, fileFilter, list);
                 }
@@ -103,11 +104,11 @@ void Manager::GetFileListing(std::string directory, std::string fileFilter, Mast
     }
 }
 
-void Manager::GetFiles(std::string directory, std::string fileFilter, Master &list, bool recursively)
+void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Master &list, bool recursively)
 {
-    std::vector<std::string> ex;
+    std::vector<std::wstring> ex;
     split(fileFilter, '|', ex);
-    for (int i = 0; i < ex.size(); i++)
+    for (unsigned int i = 0; i < ex.size(); i++)
     {
         GetFileListing(directory, ex[i], list, recursively);
     }
@@ -117,6 +118,6 @@ void Manager::CreateMaster(QStringList str_list)
 {
     for (int i = 0; i < str_list.size(); i++)
     {
-        GetFiles(str_list.at(i).toUtf8().constData(), "*.mp3|*.wav", master, true);
+        GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", master, true);
     }
 }

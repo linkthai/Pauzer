@@ -3,8 +3,8 @@
 
 Master::Master(void)
 {
-	_id = "";
-	_name = "";
+    _id = L"";
+    _name = L"";
 	_songCount = 0;
 }
 
@@ -15,14 +15,14 @@ Master::~Master(void)
 
 void Master::AddToList(Song song)
 {
-	song.SetID(std::to_string(_songCount));
+    song.SetID(std::to_wstring(_songCount));
 	_list.push_back(song);
 	_songCount++;
 }
 
-void Master::RemoveFromList(std::string id)
+void Master::RemoveFromList(std::wstring id)
 {
-	for (int i = 0; i < _list.size(); i++)
+    for (unsigned int i = 0; i < _list.size(); i++)
 		if (_list[i].GetID() == id)
 		{
 			_list.erase(_list.begin() + i);
@@ -41,20 +41,20 @@ Song Master::Get(int pos)
 	return _list[pos];
 }
 
-Song Master::Get(std::string id)
+Song Master::Get(std::wstring id)
 {
-	for (int i = 0; i < _list.size(); i++)
+    for (unsigned int i = 0; i < _list.size(); i++)
 		if (_list[i].GetID() == id)
 		{
 			return _list[i];
 		}
 }
-void Master::SetName(std::string name)
+void Master::SetName(std::wstring name)
 {
 	_name = name;
 }
 
-std::string Master::GetName()
+std::wstring Master::GetName()
 {
 	return _name;
 }
