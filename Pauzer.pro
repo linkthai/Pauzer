@@ -26,6 +26,7 @@ SOURCES += main.cpp \
     playlist.cpp \
     master.cpp \
     song.cpp \
+    qdraggableframe.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -38,6 +39,7 @@ HEADERS  += minipauzer.h \
     playlist.h \
     master.h \
     song.h \
+    qdraggableframe.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
@@ -67,7 +69,7 @@ LIBS += -LC:\Libraries\bass24\c -lbass \
 
 win32:LIBS += -lOle32 \
 
-DISTFILES += \
+DISTFILES +=
 
 RESOURCES += \
     resources.qrc \
