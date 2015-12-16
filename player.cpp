@@ -47,14 +47,14 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     isChangingSong = true;
     QString filename;
 
-    filename = QString::fromStdString(Manager::master.Get(songNum).GetPath());
+    filename = QString::fromStdWString(Manager::master.Get(songNum).GetPath());
 
     BASS_ChannelRemoveSync(channel, BASS_SYNC_END);
 
     BASS_ChannelStop(channel);
     BASS_StreamFree(channel);
 
-    channel = BASS_StreamCreateFile(false, filename.toLatin1(), 0, 0, NULL);
+    channel = BASS_StreamCreateFile(false, filename.unicode(), 0, 0, NULL);
 
     if (isPlaying)
     {
