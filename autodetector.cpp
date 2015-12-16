@@ -11,17 +11,23 @@ QString AutoDetector::s;
 AutoDetector::AutoDetector(QObject *parent) :
     QThread(parent)
 {
+    //Create a timer to check Windows audio outputs
     t = new QTimer(this);
     connect(t, SIGNAL(timeout()), this, SLOT(checkAudioOutput()));
 
+    //SmallSoundDetector prevents triggering
 	smallSoundDetector = new QTimer(this);
 	smallSoundDetector->setSingleShot(true);
 	connect(smallSoundDetector, SIGNAL(timeout()), this, SLOT(checkSmallSound()));
 
+    //current number of audio
 	current_num = -1;
+    //detected number of audio
 	detected = -1;
 
+    //session manager
 	pSessionManager = NULL;
+    //create an instance of session managaer
     CreateSessionManager(&pSessionManager);
 }
 
@@ -106,12 +112,24 @@ void AutoDetector::checkAudioOutput()
 		SAFE_RELEASE(sessionEnumerator);
 	}
 
+    //assign current_num
 	if (current_num == -1)
 		current_num = list.size();
 	
+    //detected always equal to actual current number of audio
 	detected = list.size();
+
+    //if the audio numbers continue for more than 1.5s undisrupted the new current_num value will change
 	if (current_num != detected && smallSoundDetector->isActive() == false)
+    {
         smallSoundDetector->start(1500);
+    }
+
+    //if the actual audio number change back to perceived current audio number, the timer will be stopped
+    if (current_num == detected && smallSoundDetector->isActive())
+    {
+        smallSoundDetector->stop();
+    }
 
 	emit audioDetected(current_num);
 }
