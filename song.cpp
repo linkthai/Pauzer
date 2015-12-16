@@ -2,34 +2,34 @@
 
 Song::Song(void)
 {
-	_id = "";
-	_path = "";
+    _id = L"";
+    _path = L"";
 }
 
 Song::~Song(void)
 {
 }
 
-Song::Song(std::string id, std::string path)
+Song::Song(std::wstring id, std::wstring path)
 {
 	_id = id;
 	_path = path;
 }
 
-void Song::SetID(std::string id) 
+void Song::SetID(std::wstring id)
 { 
 	_id = id; 
 }
-void Song::SetPath(std::string path)
+void Song::SetPath(std::wstring path)
 {
 	_path = path;
 }
 
-std::string Song::GetID() const
+std::wstring Song::GetID() const
 {
 	return _id;
 }
-std::string Song::GetPath() const
+std::wstring Song::GetPath() const
 {
 	return _path;
 }
