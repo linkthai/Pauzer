@@ -11,20 +11,32 @@ void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user)
 class Player : public QObject
 {
     Q_OBJECT
+private:
+    bool isPlaying;
+    bool isShuffling;
+    bool isRepeating;
+    bool isChangingSong;
+    unsigned long channel;
+    float volume;
+    QTimer *t;
+    Playlist *playlist;
+
+    static Player* player;
 public:
     explicit Player(QObject *parent = 0);
     ~Player();
-	bool getPlaying();
+    bool getPlaying();
+    float getVolume();
     void changeToPlaylist(int playlistNum);
-private:
-	bool isPlaying;
-    bool isShuffling;
-    bool isChangingSong;
-    unsigned long channel;
-    QTimer *t;
-    Playlist *playlist;
-    enum Repeat {NO_REPEAT = 0, ONE_SONG = 1, PLAYLIST = 2};
-    Repeat repeatMode;
+
+    static Player* getInstance()
+    {
+        if (!player)
+            player = new Player();
+
+        return player;
+    }
+
 signals:
     void posChanged(int time);
     void songLength(int length);
@@ -44,7 +56,8 @@ public slots:
     void signalUpdate();
     void changeToSong(int songNum, bool isPlaylistRepeated);
     void setShuffle(bool state);
-    void setRepeat(int state);
+    void setRepeat(bool state);
+    void setVolume(float vol);
     void checkEndPlayback();
 };
 

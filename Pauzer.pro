@@ -27,6 +27,8 @@ SOURCES += main.cpp \
     master.cpp \
     song.cpp \
     qdraggableframe.cpp \
+    volumebutton.cpp \
+    volumeslider.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -40,9 +42,12 @@ HEADERS  += minipauzer.h \
     master.h \
     song.h \
     qdraggableframe.h \
+    volumebutton.h \
+    volumeslider.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
+    volumeslider.ui
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \

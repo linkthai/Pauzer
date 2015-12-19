@@ -13,6 +13,7 @@ protected:
 public:
     explicit SliderBar(QWidget *parent = 0);
     void setDragging(bool drag);
+    bool getDragging();
 public slots:
     void setCurrentPos(int time);
     void setMaxLength(int length);

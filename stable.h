@@ -18,6 +18,11 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMouseEvent>
+#include <QDesktopWidget>
+#include <QLayout>
+#include <QGroupBox>
+#include <QPushButton>
+
 #include <bass.h>
 
 #include <fileref.h>

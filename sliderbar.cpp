@@ -11,7 +11,18 @@ void SliderBar::mousePressEvent(QMouseEvent *event)
     {
         int newVal;
         if (orientation() == Qt::Vertical)
-            newVal = minimum() + ((maximum()-minimum()) * (height()-event->y())) / height();
+        {
+            double halfHandleHeight = (0.5 * sr.height()) + 0.5;
+            int adaptedPosY = height() - event->y();
+            if ( adaptedPosY < halfHandleHeight )
+                  adaptedPosY = halfHandleHeight;
+            if ( adaptedPosY > height() - halfHandleHeight )
+                  adaptedPosY = height() - halfHandleHeight;
+            double newHeight = (height() - halfHandleHeight) - halfHandleHeight;
+            double normalizedPosition = (adaptedPosY - halfHandleHeight)  / newHeight ;
+
+            newVal = minimum() + (maximum()-minimum()) * normalizedPosition;
+        }
         else
         {
             double halfHandleWidth = (0.5 * sr.width()) + 0.5; // Correct rounding
@@ -48,6 +59,11 @@ void SliderBar::setDragging(bool drag)
 {
     if (isDragging != drag)
         isDragging = drag;
+}
+
+bool SliderBar::getDragging()
+{
+    return isDragging;
 }
 
 void SliderBar::setCurrentPos(int time)
