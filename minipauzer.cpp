@@ -79,6 +79,10 @@ void MiniPauzer::layoutSetup()
     //initialize layout
     mainGrid = new QVBoxLayout(this);
 
+    titleBarLayout = new QHBoxLayout(this);
+    rightTitleBarLayout = new QHBoxLayout(this);
+    leftTitleBarLayout = new QHBoxLayout(this);
+
     grd_Player = new QGridLayout(this);
     grd_PlayerFull = new QGridLayout(this);
     grd_SongInfo = new QVBoxLayout(this);
@@ -101,26 +105,48 @@ void MiniPauzer::layoutSetup()
     mainGrid->setContentsMargins(0, 0, 0, 0);
     mainGrid->setSpacing(0);
 
+    grip = new QSizeGrip(this);
+
     //titlebar layout
     const int title_button_size = 65;
     const int title_bar_height = 40;
 
-    ui->titleBar->setLayout(ui->rightTitleBarLayout);
-    ui->rightTitleBarLayout->setContentsMargins(0, 0, 0, 0);
+    ui->titleBar->setLayout(titleBarLayout);
+    ui->titleBar->setContentsMargins(0, 0, 0, 0);
+
     ui->btn_Close->setMinimumWidth(title_button_size);
     ui->btn_Close->setMaximumWidth(title_button_size);
     ui->btn_Maximize->setMinimumWidth(title_button_size);
     ui->btn_Maximize->setMaximumWidth(title_button_size);
     ui->btn_Minimize->setMinimumWidth(title_button_size);
     ui->btn_Minimize->setMaximumWidth(title_button_size);
-    ui->btn_Minimize->setMinimumWidth(title_button_size);
-    ui->btn_Minimize->setMaximumWidth(title_button_size);
     ui->btn_Up->setMinimumWidth(title_button_size);
     ui->btn_Up->setMaximumWidth(title_button_size);
     ui->btn_Down->setMinimumWidth(title_button_size);
     ui->btn_Down->setMaximumWidth(title_button_size);
+    ui->btn_Menu->setMinimumWidth(title_button_size);
+    ui->btn_Menu->setMaximumWidth(title_button_size);
+    ui->btn_Menu->setMinimumHeight(title_bar_height);
 
-    ui->rightTitleBarLayout->setAlignment(Qt::AlignRight);
+    rightTitleBarLayout->addWidget(ui->btn_Minimize);
+    rightTitleBarLayout->addWidget(ui->btn_Up);
+    rightTitleBarLayout->addWidget(ui->btn_Down);
+    rightTitleBarLayout->addWidget(ui->btn_Maximize);
+    rightTitleBarLayout->addWidget(ui->btn_Close);
+    rightTitleBarLayout->setAlignment(Qt::AlignRight);
+    rightTitleBarLayout->setContentsMargins(0, 0, 0, 0);
+    rightTitleBarLayout->setMargin(0);
+
+    leftTitleBarLayout->addWidget(ui->btn_Menu);
+    leftTitleBarLayout->setAlignment(Qt::AlignLeft);
+    leftTitleBarLayout->setContentsMargins(0, 0, 0, 0);
+    leftTitleBarLayout->setMargin(0);
+
+    titleBarLayout->addLayout(leftTitleBarLayout);
+    titleBarLayout->addLayout(rightTitleBarLayout);
+    titleBarLayout->setContentsMargins(0, 0, 0, 0);
+    titleBarLayout->setMargin(0);
+
     ui->titleBar->setMaximumHeight(title_bar_height);
     ui->titleBar->setMinimumHeight(title_bar_height);
 
@@ -182,6 +208,9 @@ void MiniPauzer::layoutSetup()
     grd_SongSetting->addWidget(ui->btn_AutoDetector, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_ChooseFolders, Qt::AlignRight);
 
+    grd_PlayerFull->setMargin(5);
+    grd_PlayerFull->addWidget(grip, 2, 3, 1, 1);
+    grd_PlayerFull->setAlignment(grip, Qt::AlignBottom | Qt::AlignRight);
 
 }
 
@@ -190,21 +219,46 @@ void MiniPauzer::loadData()
     //code for load some data
     //get previous state of pauzer
     //pretend we did that
+
+    QRect rec = QApplication::desktop()->screenGeometry();
+
+    //if full size doesn't have a value in data
+    FullSize.setWidth(rec.width() * 7 / 10);
+    FullSize.setHeight(rec.height() * 8 / 10);
+    //if MiniPos doesn't have a value in data
+    MiniPos.setX((rec.width() - miniWidth) / 2);
+    MiniPos.setY((rec.height() - miniHeight) / 2);
+    //if FullPos doesn't have a value in data
+    FullPos.setX((rec.width() - FullSize.width()) / 2);
+    FullPos.setY((rec.height() - FullSize.height()) / 2);
+    isFullScreen = false;
+
     changeState(State::MINI);
 
     ui->btn_AutoDetector->setChecked(true);
 
     float volume = 1;
-    ui->btn_Volume->setVolume(1);
+    ui->btn_Volume->setVolume(volume);
 }
 
 void MiniPauzer::changeState(MiniPauzer::State _state)
 {
+    QPoint p = this->pos();
+
     state = _state;
 
     //Change layout
     if (state == State::FULL)
-    {        
+    {
+        if (p.x() != 0 && p.y() != 0)
+        {
+            MiniPos.setX(p.x());
+            MiniPos.setY(p.y());
+        }
+
+        this->move(FullPos);
+        this->resize(FullSize.width(), FullSize.height());
+
         ui->btn_Down->show();
         ui->btn_Maximize->show();
         ui->btn_Up->hide();
@@ -214,14 +268,12 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grbx_Player->hide();
         grbx_PlayerFull->show();
 
-        this->resize(1000, 800);
-
         grbx_PlayerFull->setFixedHeight(150);
 
         //add cover art
         grd_PlayerFull->addWidget(ui->coverArt, 0, 0, -1, 1);
 
-        ui->coverArt->setMargin(15);
+        ui->coverArt->setContentsMargins(10, 10, 20, 20);
         ui->coverArt->setFixedHeight(grbx_PlayerFull->height());
         ui->coverArt->setFixedWidth(ui->coverArt->geometry().height());
 
@@ -233,7 +285,7 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         //add title, artist and album labels
         grbx_SongInfo->setMinimumWidth(300);
         grd_PlayerFull->addWidget(grbx_SongInfo, 1, 1, -1, 1);
-        grd_SongInfo->setContentsMargins(0, 0, 15, 18);
+        grd_SongInfo->setContentsMargins(0, 0, 15, 10);
         ui->lbl_Title->setContentsMargins(0, 0, 0, 0);
         ui->lbl_Artist->setContentsMargins(0, 0, 0, 0);
         grd_SongInfo->setSpacing(10);
@@ -249,9 +301,17 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongSetting->setMargin(15);
         grd_SongSetting->setSpacing(25);
 
+        if (isFullScreen)
+            emit ui->btn_Maximize->clicked();
+
     }
     else //state == State::MINI
     {
+        if (p.x() != 0 && p.y() != 0)
+        {
+            FullPos.setX(p.x());
+            FullPos.setY(p.y());
+        }
 
         ui->btn_Up->show();
         ui->btn_Maximize->hide();
@@ -268,6 +328,7 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_Player->addWidget(ui->coverArt, 0, 0, -1, 1);
 
         ui->coverArt->setMargin(0);
+        ui->coverArt->setContentsMargins(0, 0, 0, 0);
         ui->coverArt->setFixedHeight(grbx_Player->height());
         ui->coverArt->setFixedWidth(ui->coverArt->geometry().height());
 
@@ -295,20 +356,28 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongSetting->setContentsMargins(15, 5, 20, 15);
         grd_SongSetting->setSpacing(20);
 
-        this->resize(600, 250);
+        this->resize(miniWidth, miniHeight);
+        this->move(MiniPos);
+    }
+}
 
+void MiniPauzer::resizeEvent(QResizeEvent *event)
+{
+    if (state == State::FULL)
+    {
+        FullSize.setWidth(this->width());
+        FullSize.setHeight(this->height());
     }
 }
 
 void MiniPauzer::changeStyle()
 {
-    QRect rec = QApplication::desktop()->screenGeometry();
-    //this->setWindowState(Qt::m);
-
-    //this->resize(QSize(rec.width(), rec.height()));
-
-    this->setStyleSheet("background-color: #282828;");
+    //this->setStyleSheet("background-color: #282828;");
     ui->titleBar->setStyleSheet("background-color: #2d2d2d");
+
+    grbx_Player->setStyleSheet("border: 0px; background-color: #282828;");
+    grbx_PlayerFull->setStyleSheet("QGroupBox{border-top: 2px solid #2fdd69;"
+                                   "background-color: #282828;}");
 
     ui->lbl_Title->setStyleSheet("color: white;");
     ui->lbl_Artist->setStyleSheet("color: white;");
@@ -320,9 +389,18 @@ void MiniPauzer::changeStyle()
     ui->btn_Minimize->setIcon(QPixmap(":/icons/Minimize.png"));
     ui->btn_Minimize->setIconSize(QSize(15, 15));
 
-    ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
-    ui->btn_Maximize->setIcon(QPixmap(":/icons/Maximize.png"));
-    ui->btn_Maximize->setIconSize(QSize(15, 15));
+    if (this->isMaximized())
+    {
+        ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
+        ui->btn_Maximize->setIcon(QPixmap(":/icons/Restore.png"));
+        ui->btn_Maximize->setIconSize(QSize(15, 15));
+    }
+    else
+    {
+        ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
+        ui->btn_Maximize->setIcon(QPixmap(":/icons/Maximize.png"));
+        ui->btn_Maximize->setIconSize(QSize(15, 15));
+    }
 
     ui->btn_Close->setAttribute(Qt::WA_NoMousePropagation);
     ui->btn_Close->setIcon(QPixmap(":/icons/Close.png"));
@@ -336,6 +414,8 @@ void MiniPauzer::changeStyle()
     ui->btn_Down->setIcon(QPixmap(":/icons/Down.png"));
     ui->btn_Down->setIconSize(QSize(15, 15));
 
+    ui->btn_Menu->setAttribute(Qt::WA_NoMousePropagation);
+
     ui->coverArt->setScaledContents(true);
     QPixmap pixmap(":/resources/cover.png");
     ui->coverArt->setPixmap(pixmap);
@@ -343,6 +423,13 @@ void MiniPauzer::changeStyle()
     ui->lbl_Title->setMinimumHeight(20);
     ui->lbl_Artist->setMinimumHeight(18);
     ui->lbl_Album->setMinimumHeight(16);
+
+    grip->setStyleSheet("QSizeGrip {"
+                        "width: 15px;"
+                        "height: 15px;"
+                        "image: url(:/icons/Grip.png); }"
+                        "QSizeGrip:hover {"
+                        "image: url(:/icons/Grip_Hover.png); }");
 }
 
 void MiniPauzer::on_btn_Play_clicked()
@@ -522,7 +609,24 @@ void MiniPauzer::on_btn_Down_clicked()
 
 void MiniPauzer::on_btn_Maximize_clicked()
 {
-    this->setWindowState(Qt::WindowFullScreen);
+    this->setWindowState(this->windowState() ^ Qt::WindowMaximized);
+
+    if (this->isMaximized())
+    {
+        isFullScreen = true;
+
+        ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
+        ui->btn_Maximize->setIcon(QPixmap(":/icons/Restore.png"));
+        ui->btn_Maximize->setIconSize(QSize(15, 15));
+    }
+    else
+    {
+        isFullScreen = false;
+
+        ui->btn_Maximize->setAttribute(Qt::WA_NoMousePropagation);
+        ui->btn_Maximize->setIcon(QPixmap(":/icons/Maximize.png"));
+        ui->btn_Maximize->setIconSize(QSize(15, 15));
+    }
 }
 
 void MiniPauzer::on_btn_AutoDetector_toggled(bool checked)

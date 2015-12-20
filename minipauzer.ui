@@ -17,11 +17,10 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#MiniPauzer{
-	padding: 2px;
-	margin: 2px;
-    border-style: solid 2px;
-	border-color: green;
+   <string notr="true">QWidget#MiniPauzer{	
+    border: 1px solid black;
+    outline-style: solid;
+    outline-color: red;
 }</string>
   </property>
   <widget class="QPushButton" name="btn_ChooseFolders">
@@ -235,89 +234,54 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QToolButton" name="btn_Menu">
     <property name="geometry">
      <rect>
-      <x>12</x>
-      <y>2</y>
-      <width>162</width>
-      <height>18</height>
+      <x>10</x>
+      <y>0</y>
+      <width>27</width>
+      <height>41</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="rightTitleBarLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="btn_Minimize">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QPushButton#btn_Minimize{
+    <property name="styleSheet">
+     <string notr="true"> QToolButton#btn_Menu{
 border: none;
 margin: 0px;
 padding: 0px;
+background-color: #2fdd69;
 	
 }
 
- QPushButton#btn_Minimize:pressed {
+ QToolButton#btn_Menu:pressed {
      background-color: white;     
  }
 
- QPushButton#btn_Minimize:hover {
-     background-color: #3d3d3d;
+ QToolButton#btn_Menu:hover {
+background-color: #2fdd69;
 
  }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_Up">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QPushButton#btn_Up{
-border: none;
-margin: 0px;
-padding: 0px;
-	
-}
-
- QPushButton#btn_Up:pressed {
-     background-color: white;     
- }
-
- QPushButton#btn_Up:hover {
-     background-color: #3d3d3d;
-
- }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_Down">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QPushButton#btn_Down{
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Down">
+    <property name="geometry">
+     <rect>
+      <x>112</x>
+      <y>3</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> QPushButton#btn_Down{
 border: none;
 margin: 0px;
 padding: 0px;
@@ -332,22 +296,100 @@ padding: 0px;
      background-color: #3d3d3d;
 
  }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_Maximize">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QPushButton#btn_Maximize{
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Minimize">
+    <property name="geometry">
+     <rect>
+      <x>44</x>
+      <y>3</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> QPushButton#btn_Minimize{
+border: none;
+margin: 0px;
+padding: 0px;
+	
+}
+
+ QPushButton#btn_Minimize:pressed {
+     background-color: white;     
+ }
+
+ QPushButton#btn_Minimize:hover {
+     background-color: #3d3d3d;
+
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Up">
+    <property name="geometry">
+     <rect>
+      <x>78</x>
+      <y>3</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> QPushButton#btn_Up{
+border: none;
+margin: 0px;
+padding: 0px;
+	
+}
+
+ QPushButton#btn_Up:pressed {
+     background-color: white;     
+ }
+
+ QPushButton#btn_Up:hover {
+     background-color: #3d3d3d;
+
+ }</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Maximize">
+    <property name="geometry">
+     <rect>
+      <x>146</x>
+      <y>3</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> QPushButton#btn_Maximize{
 border: none;
 margin: 0px;
 padding: 0px;
@@ -362,22 +404,28 @@ padding: 0px;
      background-color: #3d3d3d;
 
  }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_Close">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"> QPushButton#btn_Close{
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Close">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>3</y>
+      <width>32</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"> QPushButton#btn_Close{
 border: none;
 margin: 0px;
 padding: 0px;
@@ -392,131 +440,9 @@ padding: 0px;
      background-color: #e54a4a;
 
  }</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QSplitter" name="playerSettingSplitter">
-   <property name="geometry">
-    <rect>
-     <x>880</x>
-     <y>770</y>
-     <width>69</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <widget class="QPushButton" name="btn_AutoDetector">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	width: 16px;
-	height: 16px;
-	image: url(:/icons/Detector_Off.png);
-}
-
-QPushButton:checked {
-	image: url(:/icons/Detector_On.png);
-}
-
-
-QPushButton:checked:hover {
-    image: url(:/icons/Detector_On_Hover.png);
-}
-
-QPushButton:hover {
-    image: url(:/icons/Detector_Off_Hover.png);
-}</string>
     </property>
     <property name="text">
      <string/>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_Shuffle">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	width: 22px;
-	height: 22px;
-    image: url(:/icons/Shuffle_Off.png);
-}
-
-QPushButton:checked {
-	image: url(:/icons/Shuffle_On.png);
-}
-
-
-QPushButton:checked:hover {
-    image: url(:/icons/Shuffle_On_Hover.png);
-}
-
-QPushButton:hover {
-    image: url(:/icons/Shuffle_Off_Hover.png);
-}
-</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btn_Repeat">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	width: 18px;
-	height: 18px;
-    image: url(:/icons/Repeat_NoRepeat.png);
-}
-
-QPushButton:checked {
-    image: url(:/icons/Repeat_OneSong.png);
-}
-
-
-QPushButton:checked:hover {
-    image: url(:/icons/Repeat_OneSong_Hover.png);
-}
-
-QPushButton:hover {
-    image: url(:/icons/Repeat_NoRepeat_Hover.png);
-}</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -682,6 +608,136 @@ QPushButton:disabled {
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_AutoDetector">
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>770</y>
+     <width>19</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	width: 16px;
+	height: 16px;
+	image: url(:/icons/Detector_Off.png);
+}
+
+QPushButton:checked {
+	image: url(:/icons/Detector_On.png);
+}
+
+
+QPushButton:checked:hover {
+    image: url(:/icons/Detector_On_Hover.png);
+}
+
+QPushButton:hover {
+    image: url(:/icons/Detector_Off_Hover.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_Repeat">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>770</y>
+     <width>19</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	width: 18px;
+	height: 18px;
+    image: url(:/icons/Repeat_NoRepeat.png);
+}
+
+QPushButton:checked {
+    image: url(:/icons/Repeat_OneSong.png);
+}
+
+
+QPushButton:checked:hover {
+    image: url(:/icons/Repeat_OneSong_Hover.png);
+}
+
+QPushButton:hover {
+    image: url(:/icons/Repeat_NoRepeat_Hover.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btn_Shuffle">
+   <property name="geometry">
+    <rect>
+     <x>895</x>
+     <y>770</y>
+     <width>19</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	width: 22px;
+	height: 22px;
+    image: url(:/icons/Shuffle_Off.png);
+}
+
+QPushButton:checked {
+	image: url(:/icons/Shuffle_On.png);
+}
+
+
+QPushButton:checked:hover {
+    image: url(:/icons/Shuffle_On_Hover.png);
+}
+
+QPushButton:hover {
+    image: url(:/icons/Shuffle_Off_Hover.png);
+}
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
    </property>
   </widget>
   <zorder>btn_Prev</zorder>

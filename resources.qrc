@@ -38,5 +38,8 @@
         <file>icons/Volume_Off_Hover.png</file>
         <file>icons/Volume_On.png</file>
         <file>icons/Volume_On_Hover.png</file>
+        <file>icons/Grip.png</file>
+        <file>icons/Grip_Hover.png</file>
+        <file>icons/Restore.png</file>
     </qresource>
 </RCC>

@@ -15,6 +15,9 @@ class MiniPauzer : public QWidget
     Q_OBJECT
 
 private:
+    static const int miniWidth = 600;
+    static const int miniHeight = 250;
+
     enum class State { FULL, MINI };
 
     State state;
@@ -30,6 +33,10 @@ private:
     bool isButtonPlayClickAllowed;
 
     QVBoxLayout *mainGrid;
+
+    QHBoxLayout *titleBarLayout;
+    QHBoxLayout *rightTitleBarLayout;
+    QHBoxLayout *leftTitleBarLayout;
 
     QGridLayout *grd_Player;
     QGridLayout *grd_PlayerFull;
@@ -48,10 +55,20 @@ private:
     QHBoxLayout *grd_Manager;
     QGroupBox *grbx_Manager;
 
+    QSizeGrip *grip;
+
+    QPoint MiniPos;
+    QPoint FullPos;
+    QSize FullSize;
+    bool isFullScreen;
+
     void layoutSetup();
     void loadData();
     void changeStyle();
     void changeState(State _state);
+
+protected:
+    void resizeEvent(QResizeEvent * event);
 
 public:
     explicit MiniPauzer(QWidget *parent = 0);

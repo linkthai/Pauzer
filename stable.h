@@ -22,6 +22,7 @@
 #include <QLayout>
 #include <QGroupBox>
 #include <QPushButton>
+#include <QSizeGrip>
 
 #include <bass.h>
 
