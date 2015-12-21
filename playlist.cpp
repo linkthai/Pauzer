@@ -49,7 +49,7 @@ int Playlist::getCurrentSong()
     return currentSong;
 }
 
-void Playlist::nextSong(bool isShuffling, int repeatMode)
+void Playlist::nextSong(bool isShuffling)
 {
     int num;
 
@@ -87,7 +87,7 @@ void Playlist::nextSong(bool isShuffling, int repeatMode)
         emit changeCurrentSong(currentSong, false);
 }
 
-void Playlist::prevSong(bool isShuffling, int repeatMode)
+void Playlist::prevSong(bool isShuffling)
 {
     int num;
 

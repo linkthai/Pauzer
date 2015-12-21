@@ -16,8 +16,8 @@ public:
     QList<int> getShuffleList();
     void setPlaylist(int playlistNum, bool isShuffling);
     int getCurrentSong();
-    void nextSong(bool isShuffling, int repeatMode);
-    void prevSong(bool isShuffling, int repeatMode);
+    void nextSong(bool isShuffling);
+    void prevSong(bool isShuffling);
     void reShuffle(bool changeSong = false);
 signals:
     void changeCurrentSong(int currentSong, bool isPlaylistRepeated);

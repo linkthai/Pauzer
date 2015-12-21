@@ -24,10 +24,10 @@ public:
     AutoDetector(QObject *parent = 0);
 	~AutoDetector();
     void run();
+    void start();
     void pause();
     void resume();
     static void emitSignals(QString str);
-    static QString s;
 private slots:
     void checkAudioOutput();
 	void checkSmallSound();

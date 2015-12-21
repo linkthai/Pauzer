@@ -6,14 +6,11 @@
         obj = NULL; \
     }
 
-QString AutoDetector::s;
-
 AutoDetector::AutoDetector(QObject *parent) :
     QThread(parent)
 {
     //Create a timer to check Windows audio outputs
     t = new QTimer(this);
-    connect(t, SIGNAL(timeout()), this, SLOT(checkAudioOutput()));
 
     //SmallSoundDetector prevents triggering
 	smallSoundDetector = new QTimer(this);
@@ -43,6 +40,12 @@ void AutoDetector::run()
     while(1)
     {
     }
+}
+
+void AutoDetector::start()
+{
+    connect(t, SIGNAL(timeout()), this, SLOT(checkAudioOutput()));
+
 }
 
 void AutoDetector::pause()

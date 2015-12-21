@@ -1,6 +1,7 @@
 #include "player.h"
 
 bool endOfPlayback;
+Player* Player::player = NULL;
 
 Player::Player(QObject *parent) :
     QObject(parent)
@@ -20,7 +21,8 @@ Player::Player(QObject *parent) :
     isChangingSong = false;
     endOfPlayback = false;
 
-    repeatMode = Repeat::NO_REPEAT;
+    isRepeating = false;
+    volume = 1.0;
 
     playlist = new Playlist(this);
     connect(playlist, SIGNAL(changeCurrentSong(int, bool)), this, SLOT(changeToSong(int, bool)));
@@ -54,16 +56,13 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     BASS_ChannelStop(channel);
     BASS_StreamFree(channel);
 
-    channel = BASS_StreamCreateFile(false, reinterpret_cast<const wchar_t*>(filename.constData()), 0, 0, NULL);
+    channel = BASS_StreamCreateFile(false, reinterpret_cast<const wchar_t*>(filename.constData()), 0, 0, NULL);   
+
+    BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, volume);
 
     if (isPlaying)
     {
-        if (isPlaylistRepeated == true && repeatMode == Repeat::NO_REPEAT)
-        {
-            emit endOfPlaylistNoRepeat();
-        }
-        else
-            BASS_ChannelPlay(channel, false);
+        BASS_ChannelPlay(channel, false);
     }
     else
     {
@@ -116,7 +115,7 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
 
 void Player::setShuffle(bool state)
 {
-    if (state == true)
+    if (state)
     {
         isShuffling = true;
         playlist->reShuffle(true);
@@ -127,27 +126,53 @@ void Player::setShuffle(bool state)
     }
 }
 
-void Player::setRepeat(int state)
+void Player::setRepeat(bool state)
 {
-    switch(state)
+    if (state)
     {
-    case 0:
-        repeatMode = Repeat::NO_REPEAT;
-        break;
-    case 1:
-        repeatMode = Repeat::ONE_SONG;
-        break;
-    default:
-        repeatMode = Repeat::PLAYLIST;
-        break;
+        isRepeating = true;
     }
+    else
+    {
+        isRepeating = false;
+    }
+}
+
+void Player::setVolume(float vol)
+{
+    if (vol < 0 || vol > 1)
+        return;
+
+    volume = vol;
+
+    if (BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED)
+        return;
+
+    BASS_ChannelSetAttribute(
+        channel,
+        BASS_ATTRIB_VOL,
+        volume
+    );
+}
+
+float Player::getVolume()
+{
+    float vol;
+
+    BASS_ChannelGetAttribute(
+        channel,
+        BASS_ATTRIB_VOL,
+        &vol
+    );
+
+    return vol;
 }
 
 void Player::checkEndPlayback()
 {
-    if (endOfPlayback == true)
+    if (endOfPlayback)
     {
-        if (repeatMode == Repeat::ONE_SONG)
+        if (isRepeating)
         {
             setPosition(0);
             BASS_ChannelPlay(channel, false);
@@ -190,7 +215,7 @@ void Player::play()
 
     //Fade in music after starting or resuming
     BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, 0);
-    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 1.0, 750);
+    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, volume, 750);
 }
 
 void Player::pause()
@@ -209,19 +234,20 @@ void Player::pause()
 void Player::nextSong()
 {
     BASS_ChannelStop(channel);
-    playlist->nextSong(isShuffling, repeatMode);
+    playlist->nextSong(isShuffling);
 }
 
 void Player::prevSong()
 {
     BASS_ChannelStop(channel);
-    playlist->prevSong(isShuffling, repeatMode);
+    playlist->prevSong(isShuffling);
 }
 
 bool Player::getPlaying()
 {
     return isPlaying;
 }
+
 
 void Player::setPosition(int cur)
 {

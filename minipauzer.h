@@ -14,13 +14,70 @@ class MiniPauzer : public QWidget
 {
     Q_OBJECT
 
+private:
+    static const int miniWidth = 600;
+    static const int miniHeight = 250;
+
+    enum class State { FULL, MINI };
+
+    State state;
+    Ui::MiniPauzer *ui;
+    Manager *manager;
+    AutoDetector *detector;
+    QTimer *buttonPlayClickTimer;
+
+    bool isPlaying;
+    bool isDetectorOn;
+    bool isManuallyPlayed;
+    bool isAutoPauseAllowed;
+    bool isButtonPlayClickAllowed;
+
+    QVBoxLayout *mainGrid;
+
+    QHBoxLayout *titleBarLayout;
+    QHBoxLayout *rightTitleBarLayout;
+    QHBoxLayout *leftTitleBarLayout;
+
+    QGridLayout *grd_Player;
+    QGridLayout *grd_PlayerFull;
+    QVBoxLayout *grd_SongInfo;
+    QHBoxLayout *grd_SongProgress;
+    QHBoxLayout *grd_SongButton;
+    QHBoxLayout *grd_SongSetting;
+
+    QGroupBox *grbx_Player;
+    QGroupBox *grbx_PlayerFull;
+    QGroupBox *grbx_SongInfo;
+    QGroupBox *grbx_SongProgress;
+    QGroupBox *grbx_SongButton;
+    QGroupBox *grbx_SongSetting;
+
+    QHBoxLayout *grd_Manager;
+    QGroupBox *grbx_Manager;
+
+    QSizeGrip *grip;
+
+    QPoint MiniPos;
+    QPoint FullPos;
+    QSize FullSize;
+    bool isFullScreen;
+
+    void layoutSetup();
+    void loadData();
+    void changeStyle();
+    void changeState(State _state);
+
+protected:
+    void resizeEvent(QResizeEvent * event);
+
 public:
     explicit MiniPauzer(QWidget *parent = 0);
     ~MiniPauzer();
 
-private slots:
-    void changeStyle();
+    //PS: THIS IS TEMPORARY UNTIL SWITCH PLAYER TO SINGLETON PATTERN
+    Player *player;
 
+private slots:
     void updateLabelCurTime(int time);
     void updateLabelMaxLen(int legth);
 
@@ -42,13 +99,7 @@ private slots:
 
     void on_btn_Next_clicked();
 
-    void on_btn_Shuffle_stateChanged(int state);
-
     void endOfPlaylistStop();
-
-    void on_btn_Repeat_stateChanged(int state);
-
-    void on_btn_AutoDetector_stateChanged(int state);
 
     void on_new_pixmap(const QPixmap &pixmap);
 
@@ -58,18 +109,16 @@ private slots:
 
     void on_titleBar_dragged(const QPoint &newPoint);
 
-private:
-    Ui::MiniPauzer *ui;
-    Manager *manager;
-    Player *player;
-    AutoDetector *detector;
-    QTimer *buttonPlayClickTimer;
+    void on_btn_Up_clicked();
+    void on_btn_Down_clicked();
+    void on_btn_Maximize_clicked();
 
-	bool isPlaying;
-	bool isDetectorOn;
-	bool isManuallyPlayed;
-	bool isAutoPauseAllowed;
-    bool isButtonPlayClickAllowed;
+    void on_btn_AutoDetector_toggled(bool checked);
+
+    void on_btn_Shuffle_toggled(bool checked);
+
+    void on_btn_Repeat_toggled(bool checked);
+    void on_btn_Volume_toggled(bool checked);
 };
 
 #endif // MINIPAUZER_H
