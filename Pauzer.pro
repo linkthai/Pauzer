@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +28,11 @@ SOURCES += main.cpp \
     master.cpp \
     song.cpp \
     qdraggableframe.cpp \
+    artist.cpp \
+    album.cpp \
+    xml_common.cpp \
+    xml_bus.cpp \
+    xml_data.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -40,6 +46,11 @@ HEADERS  += minipauzer.h \
     master.h \
     song.h \
     qdraggableframe.h \
+    artist.h \
+    album.h \
+    xml_common.h \
+    xml_bus.h \
+    xml_data.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
