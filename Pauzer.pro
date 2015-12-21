@@ -28,11 +28,13 @@ SOURCES += main.cpp \
     master.cpp \
     song.cpp \
     qdraggableframe.cpp \
-    artist.cpp \
-    album.cpp \
-    xml_common.cpp \
+    volumebutton.cpp \
+    volumeslider.cpp \
     xml_bus.cpp \
-    xml_data.cpp
+    xml_common.cpp \
+    xml_data.cpp \
+    album.cpp \
+    artist.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -46,14 +48,17 @@ HEADERS  += minipauzer.h \
     master.h \
     song.h \
     qdraggableframe.h \
-    artist.h \
-    album.h \
-    xml_common.h \
+    volumebutton.h \
+    volumeslider.h \
     xml_bus.h \
-    xml_data.h
+    xml_common.h \
+    xml_data.h \
+    album.h \
+    artist.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
+    volumeslider.ui
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \
