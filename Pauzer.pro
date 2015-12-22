@@ -35,6 +35,7 @@ SOURCES += main.cpp \
     xml_data.cpp \
     album.cpp \
     artist.cpp \
+    xml_parser.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -55,6 +56,7 @@ HEADERS  += minipauzer.h \
     xml_data.h \
     album.h \
     artist.h \
+    xml_parser.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \

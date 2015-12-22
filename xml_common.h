@@ -7,8 +7,8 @@ class Xml_Common
 public:
     Xml_Common();
     QDomElement creatRoot(QString name);
-    QDomElement creatNode(QString name, QDomElement dad);
-    QDomNode creatNode(QDomElement child, QDomElement dad, bool allChild = true);
+    QDomElement creatNode(QString name, QDomElement &dad);
+    QDomElement creatNode(QDomElement child, QDomElement &dad, bool allChild = true);
 };
 
 #endif // XML_COMMON_H

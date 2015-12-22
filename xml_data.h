@@ -2,7 +2,7 @@
 #define XML_DATA_H
 #include "xml_common.h"
 
-class Xml_Data : Xml_Common
+class Xml_Data : public Xml_Common
 {
 public:
     Xml_Data();

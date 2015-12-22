@@ -31,7 +31,7 @@ QString Xml_Data::writeXml(QDomElement data, const QString &filename)
     {
         // Error while loading file
         std::cerr << "Error while loading file" << std::endl;
-       result = "Error while loading file";
+        result = "Error while loading file";
     }
 
     QTextStream stream(&file);

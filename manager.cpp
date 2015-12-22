@@ -2,6 +2,7 @@
 #include <QStringList>
 
 Master Manager::master;
+Xml_Parser Manager::parser;
 
 Manager::Manager(QObject *parent) :
     QObject(parent)
@@ -30,10 +31,10 @@ void Manager::split(const std::wstring& s, char c, std::vector<std::wstring>& v)
    }
 }
 
-void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Master &list, bool recursively)
+void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively)
 {
     if (recursively)
-        GetFileListing(directory, fileFilter, list, false);
+        GetFileListing(directory, fileFilter, parser, false);
 
     directory += L"/";
 
@@ -43,7 +44,6 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
     std::wstring filter = directory + (recursively ? L"*" : fileFilter);
 
     const wchar_t * wstr;
-    //MultiByteToWideChar( 0,0, filter, 260, wstr, 260);
     wstr = filter.c_str();
     LPCWSTR filter_lpcwstr = wstr;
 
@@ -57,29 +57,50 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
     {
         if (!recursively)
         {
-            Song temp;
+            //Song temp;
 
             std::wstring wstr(FindFileData.cFileName);
 
             std::wstring str( wstr.begin(), wstr.end() );
 
-            temp.SetPath(directory + str);
-            list.AddToList(temp);
-            //std::cout << directory + std::wstring(FindFileData.cFileName) << std::endl;
+            QString title, artist, album, filename;
+            filename = QString::fromStdWString(directory + str);
+
+            TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+
+            title = TStringToQString(f.tag()->title());
+            artist = TStringToQString(f.tag()->artist());
+            album = TStringToQString(f.tag()->album());
+
+            parser.AddToDom(title, artist, album, filename);
+
+//            temp.SetPath(directory + str);
+//            list.AddToList(temp);
         }
 
         while (FindNextFile(hFind, &FindFileData) != 0)
         {
             if (!recursively)
             {
-                Song temp;
+                //Song temp;
 
                 std::wstring wstr(FindFileData.cFileName);
 
                 std::wstring str( wstr.begin(), wstr.end() );
 
-                temp.SetPath(directory + str);
-                list.AddToList(temp);
+                QString title, artist, album, filename;
+                filename = QString::fromStdWString(directory + str);
+
+                TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+
+                title = TStringToQString(f.tag()->title());
+                artist = TStringToQString(f.tag()->artist());
+                album = TStringToQString(f.tag()->album());
+
+                parser.AddToDom(title, artist, album, filename);
+
+                //temp.SetPath(directory + str);
+                //list.AddToList(temp);
                 //std::cout << directory + std::wstring(FindFileData.cFileName) << std::endl;
             }
             else
@@ -90,7 +111,7 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
 
                     std::wstring str( wstr.begin(), wstr.end() );
 
-                    GetFileListing(directory + str, fileFilter, list);
+                    GetFileListing(directory + str, fileFilter, parser);
                 }
             }
         }
@@ -104,13 +125,13 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
     }
 }
 
-void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Master &list, bool recursively)
+void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively)
 {
     std::vector<std::wstring> ex;
     split(fileFilter, '|', ex);
     for (unsigned int i = 0; i < ex.size(); i++)
     {
-        GetFileListing(directory, ex[i], list, recursively);
+        GetFileListing(directory, ex[i], parser, recursively);
     }
 }
 
@@ -118,6 +139,6 @@ void Manager::CreateMaster(QStringList str_list)
 {
     for (int i = 0; i < str_list.size(); i++)
     {
-        GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", master, true);
+        GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", parser, true);
     }
 }

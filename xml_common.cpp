@@ -12,7 +12,7 @@ QDomElement Xml_Common::creatRoot(QString name)
     doc.appendChild(result);
     return result;
 }
-QDomElement Xml_Common::creatNode(QString name, QDomElement dad)
+QDomElement Xml_Common::creatNode(QString name, QDomElement &dad)
 {
     QDomElement result;
     QDomDocument doc = dad.ownerDocument();
@@ -20,12 +20,12 @@ QDomElement Xml_Common::creatNode(QString name, QDomElement dad)
     dad.appendChild(result);
     return result;
 }
-QDomNode Xml_Common::creatNode(QDomElement node, QDomElement dad, bool allChild)
+QDomElement Xml_Common::creatNode(QDomElement node, QDomElement &dad, bool allChild)
 {
     QDomNode result;
     QDomDocument doc;
     result = doc.importNode(node, allChild);
     dad.appendChild(result);
-    return result;
+    return result.toElement();
 }
 
