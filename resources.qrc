@@ -27,7 +27,6 @@
         <file>icons/Shuffle_Off_Hover.png</file>
         <file>icons/Shuffle_On.png</file>
         <file>icons/Shuffle_On_Hover.png</file>
-        <file>icons/Untitled.jpg</file>
         <file>icons/Next.png</file>
         <file>icons/Next_Hover.png</file>
         <file>icons/Next_Inactive.png</file>
@@ -41,5 +40,11 @@
         <file>icons/Grip.png</file>
         <file>icons/Grip_Hover.png</file>
         <file>icons/Restore.png</file>
+        <file>icons/Menu_Folders.png</file>
+        <file>icons/Menu_Folders_Hover.png</file>
+        <file>icons/Menu_Settings.png</file>
+        <file>icons/Menu_Settings_Hover.png</file>
+        <file>icons/Pauzer.png</file>
+        <file>icons/Pauzer_Hover.png</file>
     </qresource>
 </RCC>

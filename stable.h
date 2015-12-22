@@ -23,6 +23,9 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QSizeGrip>
+#include <QMenu>
+#include <QAction>
+#include <QFrame>
 
 #include <bass.h>
 

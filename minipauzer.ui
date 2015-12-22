@@ -23,19 +23,6 @@
     outline-color: red;
 }</string>
   </property>
-  <widget class="QPushButton" name="btn_ChooseFolders">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>770</y>
-     <width>151</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Choose Music Folders</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="lbl_Title">
    <property name="geometry">
     <rect>
@@ -60,7 +47,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Title</string>
+    <string>Song Title</string>
    </property>
    <property name="textFormat">
     <enum>Qt::PlainText</enum>
@@ -209,8 +196,36 @@
      <x>224</x>
      <y>670</y>
      <width>711</width>
-     <height>22</height>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QSlider::groove:horizontal {
+    height: 2px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    background: white;
+	border: 2px solid white;
+    border-radius: 10px;
+}
+
+QSlider::handle:horizontal {
+	border: 1px solid #3eba58;
+	background-color: #3eba58;
+	width: 6px;
+	margin: -2px;
+	margin-top: -8px;
+	margin-bottom: -8px;
+	border-radius: 2px;
+}
+
+QSlider::handle:horizontal:hover {
+	background-color: #61d169;
+	box-shadow: 10px 10px 5px #3eba58;
+}
+
+QSlider::sub-page {
+	background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #88e588, stop:1 #61d169);
+	border-radius: 10px;
+}</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -247,17 +262,24 @@
      <string notr="true"> QToolButton#btn_Menu{
 border: none;
 margin: 0px;
-padding: 0px;
-background-color: #2fdd69;
-	
+padding: 10px;
+background-color: #61d169;
+border-right: 6px solid #3eba58;
+image: url(:/icons/Pauzer.png);
+}
+
+QToolButton::menu-indicator#btn_Menu{
+	image: none;
 }
 
  QToolButton#btn_Menu:pressed {
-     background-color: white;     
+     background-color: #3eba58;
+	border-right: 0px;
+	image: url(:/icons/Pauzer_Hover.png);     
  }
 
  QToolButton#btn_Menu:hover {
-background-color: #2fdd69;
+image: url(:/icons/Pauzer_Hover.png);
 
  }</string>
     </property>
@@ -740,10 +762,11 @@ QPushButton:hover {
     <bool>true</bool>
    </property>
   </widget>
+  <zorder>btn_AutoDetector</zorder>
+  <zorder>btn_Repeat</zorder>
+  <zorder>btn_Shuffle</zorder>
   <zorder>btn_Prev</zorder>
   <zorder>btn_Next</zorder>
-  <zorder>playerSettingSplitter</zorder>
-  <zorder>btn_ChooseFolders</zorder>
   <zorder>lbl_Title</zorder>
   <zorder>lbl_Album</zorder>
   <zorder>coverArt</zorder>

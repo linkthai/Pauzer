@@ -4,7 +4,9 @@
 MiniPauzer::MiniPauzer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MiniPauzer)
-{    
+{
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+
     player = Player::getInstance();
     detector = new AutoDetector(this);
 
@@ -16,6 +18,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     loadData();
 
     changeStyle();
+
+    createMenu();
 
 	buttonPlayClickTimer = new QTimer(this);
 	buttonPlayClickTimer->setSingleShot(true);
@@ -206,7 +210,6 @@ void MiniPauzer::layoutSetup()
     grd_SongSetting->addWidget(ui->btn_Repeat, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_Shuffle, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_AutoDetector, Qt::AlignRight);
-    grd_SongSetting->addWidget(ui->btn_ChooseFolders, Qt::AlignRight);
 
     grd_PlayerFull->setMargin(5);
     grd_PlayerFull->addWidget(grip, 2, 3, 1, 1);
@@ -288,7 +291,7 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongInfo->setContentsMargins(0, 0, 15, 10);
         ui->lbl_Title->setContentsMargins(0, 0, 0, 0);
         ui->lbl_Artist->setContentsMargins(0, 0, 0, 0);
-        grd_SongInfo->setSpacing(10);
+        grd_SongInfo->setSpacing(5);
 
         //add player button
         grd_PlayerFull->addWidget(grbx_SongButton, 1, 2, 1, 1);
@@ -302,7 +305,7 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongSetting->setSpacing(25);
 
         if (isFullScreen)
-            emit ui->btn_Maximize->clicked();
+            this->setWindowState(this->windowState() ^ Qt::WindowMaximized);
 
     }
     else //state == State::MINI
@@ -312,6 +315,9 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
             FullPos.setX(p.x());
             FullPos.setY(p.y());
         }
+
+        if (isFullScreen)
+            this->setWindowState(this->windowState() ^ Qt::WindowMaximized);
 
         ui->btn_Up->show();
         ui->btn_Maximize->hide();
@@ -358,15 +364,6 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
 
         this->resize(miniWidth, miniHeight);
         this->move(MiniPos);
-    }
-}
-
-void MiniPauzer::resizeEvent(QResizeEvent *event)
-{
-    if (state == State::FULL)
-    {
-        FullSize.setWidth(this->width());
-        FullSize.setHeight(this->height());
     }
 }
 
@@ -430,6 +427,64 @@ void MiniPauzer::changeStyle()
                         "image: url(:/icons/Grip.png); }"
                         "QSizeGrip:hover {"
                         "image: url(:/icons/Grip_Hover.png); }");
+}
+
+void MiniPauzer::createMenu()
+{
+    menu = new QMenu(this);
+    ui->btn_Menu->setMenu(menu);
+    ui->btn_Menu->setPopupMode(QToolButton::InstantPopup);
+    ui->btn_Menu->setArrowType(Qt::NoArrow);
+
+    openFoldersAct = new QAction(tr("&Open Folders"), this);
+    openFoldersAct->setIcon(QPixmap(":/icons/Menu_Folders_Hover.png"));
+    openFoldersAct->setText(tr("Open Folders"));
+    connect(openFoldersAct, SIGNAL(triggered()), this, SLOT(openFolders()));
+
+    settingsAct = new QAction(tr("&Settings"), this);
+    settingsAct->setIcon(QPixmap(":/icons/Menu_Settings_Hover.png"));
+    settingsAct->setIconText(tr("Settings"));
+
+    menu->addAction(openFoldersAct);
+    menu->addSeparator();
+    menu->addAction(settingsAct);
+    menu->setSizeIncrement(100, 100);
+    //menu-
+
+    menu->setStyleSheet("QMenu {"
+                        "background-color: #383838;"
+                        "color: white;"
+                        "margin: 2px;"
+                        "padding: 4px;"
+                        "}"
+                        "QMenu::item {"
+                        "padding-left: 35px;"
+                        "padding-right: 35px;"
+                        "padding-top: 5px;"
+                        "padding-bottom: 5px;"
+                        "margin-top: 5px;"
+                        "margin-bottom: 5px;"
+                        "text-align: center;"
+                        "border: 1px solid transparent;"
+                        "}"
+                        "QMenu::item:selected {"
+                        "background-color: #2fdd69;"
+                        "}"
+                        "QMenu::separator {"
+                        "height: 1px;"
+                        "background: gray;"
+                        "margin-left: 2px;"
+                        "margin-right: 2px;"
+                        "}");
+}
+
+void MiniPauzer::resizeEvent(QResizeEvent *event)
+{
+    if (state == State::FULL && !isFullScreen)
+    {
+        FullSize.setWidth(this->width());
+        FullSize.setHeight(this->height());
+    }
 }
 
 void MiniPauzer::on_btn_Play_clicked()
@@ -504,7 +559,7 @@ void MiniPauzer::updateLabelMaxLen(int legth)
     ui->lbl_songLen->setText(text);
 }
 
-void MiniPauzer::on_btn_ChooseFolders_clicked()
+void MiniPauzer::openFolders()
 {
     FolderDialog *dialog = new FolderDialog();
     dialog->setModal(true);
