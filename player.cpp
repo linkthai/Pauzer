@@ -73,7 +73,6 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
 
 
     QString text;
-    //TagLib::MPEG::File f(QFile::encodeName(filename).constData());
     TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
 
     text = TStringToQString(f.tag()->title());
@@ -247,7 +246,6 @@ bool Player::getPlaying()
 {
     return isPlaying;
 }
-
 
 void Player::setPosition(int cur)
 {

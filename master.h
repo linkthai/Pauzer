@@ -23,6 +23,7 @@ public:
     void SetName(std::wstring name);
     std::wstring GetName();
 	int GetCount();
+    void ClearList();
 };
 
 #endif // MASTER
