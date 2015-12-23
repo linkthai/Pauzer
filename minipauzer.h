@@ -62,9 +62,14 @@ private:
     QSize FullSize;
     bool isFullScreen;
 
+    QMenu *menu;
+    QAction *openFoldersAct;
+    QAction *settingsAct;
+
     void layoutSetup();
     void loadData();
     void changeStyle();
+    void createMenu();
     void changeState(State _state);
 
 protected:
@@ -91,7 +96,7 @@ private slots:
 
     void on_sliderBar_sliderReleased();
 
-    void on_btn_ChooseFolders_clicked();
+    void openFolders();
 
 	void on_detected_audio(int audio_num);
 

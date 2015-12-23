@@ -247,7 +247,6 @@ bool Player::getPlaying()
     return isPlaying;
 }
 
-
 void Player::setPosition(int cur)
 {
     if (isChangingSong == false)

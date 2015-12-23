@@ -22,6 +22,9 @@ FolderDialog::FolderDialog(QWidget *parent) :
     ui->treeView->hideColumn(1);
     ui->treeView->hideColumn(2);
     ui->treeView->hideColumn(3);
+
+    this->setLayout(ui->verticalLayout);
+    ui->verticalLayout->setMargin(20);
 }
 
 FolderDialog::~FolderDialog()

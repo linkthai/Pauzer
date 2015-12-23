@@ -63,3 +63,9 @@ int Master::GetCount()
 {
 	return _songCount;
 }
+
+void Master::ClearList()
+{
+    _songCount = 0;
+    _list.clear();
+}

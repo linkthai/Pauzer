@@ -25,6 +25,10 @@
 #include <QSizeGrip>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QMenu>
+#include <QAction>
+#include <QFrame>
+#include <QFileInfo>
 
 #include <bass.h>
 

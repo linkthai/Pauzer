@@ -4,6 +4,7 @@
 #include "xml_bus.h"
 #include "xml_data.h"
 #include "song.h"
+#include "master.h"
 
 class Xml_Parser
 {
@@ -13,8 +14,9 @@ public:
     QStringList GetAllArtist();
     QStringList GetAlbumsByArtist(QString artistName);
     QList<Song> GetSongsByAlbum(QString albumName);
-    QList<Song> GetSongsByPlaylist(QString playlistName);
+    void GetSongsInPlaylist(Master &list);
 
+    void Init();
     void SavePlaylist();
     void SaveChoosenFolder(QString path);
     void AddToDom(QString title, QString artist, QString album, QString path);
