@@ -66,7 +66,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     isButtonPlayClickAllowed = true;
 
-    qsrand(QTime::currentTime().second());
+    qsrand(QTime::currentTime().msecsSinceStartOfDay());
+    player->changeToPlaylist(0);
 }
 
 MiniPauzer::~MiniPauzer()
@@ -248,7 +249,6 @@ void MiniPauzer::loadData()
     {
         manager->parser.LoadData(XmlPath);
         manager->parser.GetSongsInPlaylist(manager->master);
-        player->changeToPlaylist(0);
     }
 }
 

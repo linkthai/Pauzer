@@ -60,20 +60,14 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
 
     BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, volume);
 
-    if (isPlaying)
-    {
-        BASS_ChannelPlay(channel, false);
-    }
-    else
-    {
-        BASS_ChannelPause(channel);
-    }
-
     BASS_ChannelSetSync(channel, BASS_SYNC_END, 0, &EndOfPlayback, 0);
 
 
     QString title, artist, album;
     TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+
+    if (!f.isValid())
+        this->nextSong();
 
     title = TStringToQString(f.tag()->title());
     artist = TStringToQString(f.tag()->artist());
@@ -110,6 +104,16 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     emit songLength(BASS_ChannelBytes2Seconds(channel, BASS_ChannelGetLength(channel, BASS_POS_BYTE)));
     BASS_ChannelSetPosition(channel, 0, BASS_POS_BYTE);
     signalUpdate();
+
+    if (isPlaying)
+    {
+        BASS_ChannelPlay(channel, false);
+    }
+    else
+    {
+        BASS_ChannelPause(channel);
+    }
+
     isChangingSong = false;
 }
 
