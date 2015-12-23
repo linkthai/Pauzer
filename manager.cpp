@@ -83,6 +83,7 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
             artist = TStringToQString(f.tag()->artist());
             album = TStringToQString(f.tag()->album());
 
+            CheckSongInfo(title, artist, album, filename);
             parser.AddToDom(title, artist, album, filename);
 
             Song temp;
@@ -107,6 +108,7 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
                 artist = TStringToQString(f.tag()->artist());
                 album = TStringToQString(f.tag()->album());
 
+                CheckSongInfo(title, artist, album, filename);
                 parser.AddToDom(title, artist, album, filename);
 
                 Song temp;
@@ -152,8 +154,31 @@ void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Master &
 
 void Manager::CreateMaster(QStringList str_list)
 {
+    if (master.GetCount() != 0)
+        master.ClearList();
     for (int i = 0; i < str_list.size(); i++)
     {
         GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", master, parser, true);
+    }
+}
+
+void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, const QString &path)
+{
+    if (title == "")
+    {
+        QStringList name = path.split("/");
+        title = name.value(name.length() - 1);
+        name = title.split(".");
+        title = name.value(0);
+    }
+
+    if (album == "")
+    {
+        album = "Unknown";
+    }
+
+    if (artist == "")
+    {
+        artist = "Unknown";
     }
 }

@@ -72,17 +72,18 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     BASS_ChannelSetSync(channel, BASS_SYNC_END, 0, &EndOfPlayback, 0);
 
 
-    QString text;
+    QString title, artist, album;
     TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
 
-    text = TStringToQString(f.tag()->title());
-    emit songTitle(text);
+    title = TStringToQString(f.tag()->title());
+    artist = TStringToQString(f.tag()->artist());
+    album = TStringToQString(f.tag()->album());
 
-    text = TStringToQString(f.tag()->artist());
-    emit songArtist(text);
+    Manager::CheckSongInfo(title, artist, album, filename);
 
-    text = TStringToQString(f.tag()->album());
-    emit songAlbum(text);
+    emit songTitle(title);
+    emit songArtist(artist);
+    emit songAlbum(album);
 
     TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
     TagLib::ID3v2::FrameList framelist = tag->frameList("APIC");
