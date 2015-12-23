@@ -5,7 +5,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MiniPauzer)
 {
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
 
     player = Player::getInstance();
     detector = new AutoDetector(this);
