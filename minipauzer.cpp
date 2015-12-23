@@ -5,7 +5,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MiniPauzer)
 {
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
 
     player = Player::getInstance();
     detector = new AutoDetector(this);
@@ -66,7 +66,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     isButtonPlayClickAllowed = true;
 
-    qsrand(QTime::currentTime().second());
+    qsrand(QTime::currentTime().msecsSinceStartOfDay());
+    player->changeToPlaylist(0);
 }
 
 MiniPauzer::~MiniPauzer()
@@ -248,7 +249,6 @@ void MiniPauzer::loadData()
     {
         manager->parser.LoadData(XmlPath);
         manager->parser.GetSongsInPlaylist(manager->master);
-        player->changeToPlaylist(0);
     }
 }
 
