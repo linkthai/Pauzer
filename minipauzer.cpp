@@ -67,7 +67,13 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
-    player->changeToPlaylist(0);
+    QString XmlPath = "Master.xml";
+    if (manager->fileExists(XmlPath))
+    {
+        manager->parser.LoadData(XmlPath);
+        manager->parser.GetSongsInPlaylist(manager->master);
+        player->changeToPlaylist(0);
+    }
 }
 
 MiniPauzer::~MiniPauzer()
@@ -243,13 +249,6 @@ void MiniPauzer::loadData()
 
     float volume = 1;
     ui->btn_Volume->setVolume(volume);
-
-    QString XmlPath = "Master.xml";
-    if (manager->fileExists(XmlPath))
-    {
-        manager->parser.LoadData(XmlPath);
-        manager->parser.GetSongsInPlaylist(manager->master);
-    }
 }
 
 void MiniPauzer::changeState(MiniPauzer::State _state)
