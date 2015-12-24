@@ -105,14 +105,17 @@ void AutoDetector::checkAudioOutput()
 
 					if (peak != 0)
 						list.append(peak);
+
+                    SAFE_RELEASE(pAudioMeterInfo);
 				}
 
-				SAFE_RELEASE(pAudioSessionControl2);
-			}
+                SAFE_RELEASE(pAudioSessionControl2);
+            }
+
+            SAFE_RELEASE(sessionControl);
 		}
 
-		SAFE_RELEASE(sessionControl);
-		SAFE_RELEASE(sessionEnumerator);
+        SAFE_RELEASE(sessionEnumerator);
 	}
 
     //assign current_num

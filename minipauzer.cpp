@@ -67,7 +67,14 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
-    player->changeToPlaylist(0);
+
+    QString XmlPath = "Master.xml";
+    if (manager->fileExists(XmlPath))
+    {
+        manager->parser.LoadData(XmlPath);
+        manager->parser.GetSongsInPlaylist(manager->master);
+        player->changeToPlaylist(0);
+    }
 }
 
 MiniPauzer::~MiniPauzer()
@@ -243,13 +250,6 @@ void MiniPauzer::loadData()
 
     float volume = 1;
     ui->btn_Volume->setVolume(volume);
-
-    QString XmlPath = "Master.xml";
-    if (manager->fileExists(XmlPath))
-    {
-        manager->parser.LoadData(XmlPath);
-        manager->parser.GetSongsInPlaylist(manager->master);
-    }
 }
 
 void MiniPauzer::changeState(MiniPauzer::State _state)
@@ -294,11 +294,10 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongProgress->setSpacing(15);
 
         //add title, artist and album labels
-        grbx_SongInfo->setMinimumWidth(300);
+        grbx_SongInfo->setFixedWidth(400);
         grd_PlayerFull->addWidget(grbx_SongInfo, 1, 1, -1, 1);
         grd_SongInfo->setContentsMargins(0, 0, 15, 10);
         ui->lbl_Title->setContentsMargins(0, 0, 0, 0);
-        ui->lbl_Artist->setContentsMargins(0, 0, 0, 0);
         grd_SongInfo->setSpacing(5);
 
         //add player button
@@ -348,7 +347,8 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
 
         //add title, artist and album labels
         grd_Player->addWidget(grbx_SongInfo, 0, 1, 1, -1);
-        grd_SongInfo->setContentsMargins(15, 5, 15, 10);
+        grbx_SongInfo->setFixedWidth(miniWidth - ui->coverArt->height());
+        grd_SongInfo->setContentsMargins(15, 5, 15, 5);
         ui->lbl_Artist->setContentsMargins(0, -4, 0, 0);
         grd_SongInfo->setSpacing(0);
 

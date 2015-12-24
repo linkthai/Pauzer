@@ -40,7 +40,7 @@
    </property>
    <property name="font">
     <font>
-     <family>Calibri</family>
+     <family>Segoe UI</family>
      <pointsize>18</pointsize>
      <weight>50</weight>
      <bold>false</bold>
@@ -76,10 +76,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Calibri Light</family>
+     <family>Segoe UI</family>
      <pointsize>9</pointsize>
      <weight>50</weight>
-     <italic>true</italic>
+     <italic>false</italic>
      <bold>false</bold>
     </font>
    </property>
@@ -126,10 +126,10 @@
    </property>
    <property name="font">
     <font>
-     <family>Calibri</family>
+     <family>Segoe UI</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
-     <italic>true</italic>
+     <italic>false</italic>
      <bold>false</bold>
     </font>
    </property>
