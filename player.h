@@ -27,7 +27,6 @@ public:
     ~Player();
     bool getPlaying();
     float getVolume();
-    void changeToPlaylist(int playlistNum);
 
     static Player* getInstance()
     {
@@ -55,6 +54,7 @@ public slots:
     void setPosition(int cur);
     void signalUpdate();
     void changeToSong(int songNum, bool isPlaylistRepeated);
+    void changeToPlaylist(int playlistNum);
     void setShuffle(bool state);
     void setRepeat(bool state);
     void setVolume(float vol);

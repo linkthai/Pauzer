@@ -7,6 +7,9 @@ FolderDialog::FolderDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //set title
+    this->setWindowTitle(tr("Select folders"));
+
     // Creates our new model and populate
     QString mPath = "C:/";
     dirModel = new CheckableFileSystemModel();
@@ -39,7 +42,7 @@ void FolderDialog::accept()
     if (list.length() == 0)
     {
         QMessageBox msgBox;
-        msgBox.setText("Please select at least one folder!");
+        msgBox.setText(tr("Please select at least one folder!"));
         msgBox.exec();
     }
     else

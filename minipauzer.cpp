@@ -9,6 +9,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     player = Player::getInstance();
     detector = new AutoDetector(this);
+    creator = new LibraryCreator(this);
 
     ui->setupUi(this);
 
@@ -63,18 +64,14 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     isDetectorOn = false;
 	isManuallyPlayed = false;
 	isAutoPauseAllowed = false;
+    isProcessCanceled = false;
 
     isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
-    QString XmlPath = "Master.xml";
-    if (manager->fileExists(XmlPath))
-    {
-        manager->parser.LoadData(XmlPath);
-        manager->parser.GetSongsInPlaylist(manager->master);
+    if (Manager::LoadSongToMaster())
         player->changeToPlaylist(0);
-    }
 }
 
 MiniPauzer::~MiniPauzer()
@@ -569,7 +566,7 @@ void MiniPauzer::updateLabelMaxLen(int legth)
 
 void MiniPauzer::openFolders()
 {
-    FolderDialog *dialog = new FolderDialog();
+    dialog = new FolderDialog();
     dialog->setModal(true);
 
     connect(dialog, SIGNAL(createdFolderList(QStringList)), this, SLOT(getFolderList(QStringList)));
@@ -580,10 +577,46 @@ void MiniPauzer::openFolders()
 
 void MiniPauzer::getFolderList(QStringList list)
 {
-    Manager::CreateMaster(list);
+    creator->setList(list);
+    creator->start();
 
-    player->changeToPlaylist(0);
+    widget = new ProcessWidget(this);
+
+    connect(creator, SIGNAL(finished()), this, SLOT(processFinished()));
+    connect(widget, SIGNAL(processCanceled()), this, SLOT(processTerminated()));
+    isProcessCanceled = false;
+
+    widget->setModal(true);
+    widget->show();
 }
+
+void MiniPauzer::processFinished()
+{
+    //user canceled the process midway
+    if (isProcessCanceled)
+    {
+        Manager::CreationProcessSuccess(false);
+    }
+    else //run successfully
+    {
+        Manager::CreationProcessSuccess(true);
+        if (widget)
+        {
+            widget->close();
+            delete widget;
+        }
+
+        player->changeToPlaylist(0);
+    }
+}
+
+void MiniPauzer::processTerminated()
+{
+    isProcessCanceled = true;
+
+    Manager::LoadSongToMaster();
+}
+
 
 void MiniPauzer::on_detected_audio(int audio_num)
 {

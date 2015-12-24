@@ -35,7 +35,9 @@ SOURCES += main.cpp \
     xml_data.cpp \
     album.cpp \
     artist.cpp \
-    xml_parser.cpp
+    xml_parser.cpp \
+    librarycreator.cpp \
+    processwidget.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -56,11 +58,14 @@ HEADERS  += minipauzer.h \
     xml_data.h \
     album.h \
     artist.h \
-    xml_parser.h
+    xml_parser.h \
+    librarycreator.h \
+    processwidget.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
-    volumeslider.ui
+    volumeslider.ui \
+    processwidget.ui
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \

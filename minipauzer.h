@@ -5,6 +5,8 @@
 #include "manager.h"
 #include "folderdialog.h"
 #include "autodetector.h"
+#include "librarycreator.h"
+#include "processwidget.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -20,10 +22,13 @@ private:
 
     enum class State { FULL, MINI };
 
+    ProcessWidget *widget;
+    FolderDialog *dialog;
+
     State state;
     Ui::MiniPauzer *ui;
-    Manager *manager;
     AutoDetector *detector;
+    LibraryCreator *creator;
     QTimer *buttonPlayClickTimer;
 
     bool isPlaying;
@@ -31,6 +36,7 @@ private:
     bool isManuallyPlayed;
     bool isAutoPauseAllowed;
     bool isButtonPlayClickAllowed;
+    bool isProcessCanceled;
 
     QVBoxLayout *mainGrid;
 
@@ -124,6 +130,9 @@ private slots:
 
     void on_btn_Repeat_toggled(bool checked);
     void on_btn_Volume_toggled(bool checked);
+
+    void processFinished();
+    void processTerminated();
 };
 
 #endif // MINIPAUZER_H

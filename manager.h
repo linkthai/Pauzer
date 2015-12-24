@@ -18,10 +18,13 @@ private:
 public:
     static Master master;
     static Xml_Parser parser;
+    static void CreationProcessSuccess(bool isSuccessful);
     static void CreateMaster(QStringList str_list);
     static void CheckSongInfo(QString &title, QString &artist, QString &album, const QString &path);
+    static bool LoadSongToMaster();
+    static bool fileExists(QString path);
     explicit Manager(QObject *parent = 0);
-    bool fileExists(QString path);
+
     ~Manager();
 };
 
