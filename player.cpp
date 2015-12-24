@@ -66,9 +66,6 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     QString title, artist, album;
     TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
 
-    if (!f.isValid())
-        this->nextSong();
-
     title = TStringToQString(f.tag()->title());
     artist = TStringToQString(f.tag()->artist());
     album = TStringToQString(f.tag()->album());
