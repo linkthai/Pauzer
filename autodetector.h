@@ -1,8 +1,6 @@
 #ifndef AUTODETECTOR_H
 #define AUTODETECTOR_H
 
-#include <QThread>
-#include <QTimer>
 #include <mmdeviceapi.h>
 #include <audiopolicy.h>
 #include <endpointvolume.h>

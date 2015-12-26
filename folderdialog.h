@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QFileSystemModel>
 #include <QStandardItemModel>
+#include <QStandardPaths>
+#include <QDesktopServices>
 #include "checkablefilesystemmodel.h"
 
 namespace Ui {

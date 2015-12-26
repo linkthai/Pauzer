@@ -5,6 +5,9 @@
 #include "manager.h"
 #include "folderdialog.h"
 #include "autodetector.h"
+#include "librarycreator.h"
+#include "processwidget.h"
+#include "playlistqueuewidget.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -20,10 +23,13 @@ private:
 
     enum class State { FULL, MINI };
 
+    ProcessWidget *widget;
+    FolderDialog *dialog;
+
     State state;
     Ui::MiniPauzer *ui;
-    Manager *manager;
     AutoDetector *detector;
+    LibraryCreator *creator;
     QTimer *buttonPlayClickTimer;
 
     bool isPlaying;
@@ -31,6 +37,7 @@ private:
     bool isManuallyPlayed;
     bool isAutoPauseAllowed;
     bool isButtonPlayClickAllowed;
+    bool isProcessCanceled;
 
     QVBoxLayout *mainGrid;
 
@@ -54,6 +61,11 @@ private:
 
     QHBoxLayout *grd_Manager;
     QGroupBox *grbx_Manager;
+
+    QVBoxLayout *grd_LeftPanel;
+    QGroupBox *grbx_LeftPanel;
+
+    PlaylistQueueWidget *queuePanel;
 
     QSizeGrip *grip;
 
@@ -98,7 +110,7 @@ private slots:
 
     void openFolders();
 
-	void on_detected_audio(int audio_num);
+    void detectAudio(int audio_num);
 
     void on_btn_Prev_clicked();
 
@@ -106,13 +118,13 @@ private slots:
 
     void endOfPlaylistStop();
 
-    void on_new_pixmap(const QPixmap &pixmap);
+    void setCoverArt(const QPixmap &pixmap);
 
     void on_btn_Close_clicked();
 
     void on_btn_Minimize_clicked();
 
-    void on_titleBar_dragged(const QPoint &newPoint);
+    void titleBardragged(const QPoint &newPoint);
 
     void on_btn_Up_clicked();
     void on_btn_Down_clicked();
@@ -124,6 +136,9 @@ private slots:
 
     void on_btn_Repeat_toggled(bool checked);
     void on_btn_Volume_toggled(bool checked);
+
+    void processFinished();
+    void processTerminated();
 };
 
 #endif // MINIPAUZER_H

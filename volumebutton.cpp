@@ -6,7 +6,7 @@ VolumeButton::VolumeButton(QWidget *parent) :
     this->setMouseTracking(true);
     dialog = new VolumeSlider(this);
     dialog->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    dialog->setSize(80, 210);
+    dialog->setSize(60, 210);
     dialog->setMouseTracking(true);
     dialog->hide();
 

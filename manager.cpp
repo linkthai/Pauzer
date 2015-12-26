@@ -142,20 +142,28 @@ void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Master &
 {
     std::vector<std::wstring> ex;
     split(fileFilter, '|', ex);
-    parser.Init();
 
     for (unsigned int i = 0; i < ex.size(); i++)
     {
         GetFileListing(directory, ex[i], list, parser, recursively);
     }
+}
 
-    parser.SaveChoosenFolder("Master.xml");
+void Manager::CreationProcessSuccess(bool isSuccessful)
+{
+    if (isSuccessful)
+    {
+        parser.SaveChoosenFolder("Master.xml");
+    }
 }
 
 void Manager::CreateMaster(QStringList str_list)
 {
     if (master.GetCount() != 0)
         master.ClearList();
+
+    parser.Init();
+
     for (int i = 0; i < str_list.size(); i++)
     {
         GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", master, parser, true);
@@ -181,4 +189,16 @@ void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, con
     {
         artist = "Unknown";
     }
+}
+
+bool Manager::LoadSongToMaster()
+{
+    QString XmlPath = "Master.xml";
+    if (fileExists(XmlPath))
+    {
+        parser.LoadData(XmlPath);
+        parser.GetSongsInPlaylist(master);
+        return true;
+    }
+    return false;
 }
