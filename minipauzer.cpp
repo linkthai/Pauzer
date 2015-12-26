@@ -11,6 +11,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
     widget = new ProcessWidget(this);
+    widget->setModal(true);
 
     connect(creator, SIGNAL(finished()), this, SLOT(processFinished()));
     connect(widget, SIGNAL(processCanceled()), this, SLOT(processTerminated()));
@@ -40,7 +41,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(player, SIGNAL(changePlaying(bool)), ui->btn_Play, SLOT(setChecked(bool)));
 
     //Drag signals
-    connect(ui->titleBar, SIGNAL(titleBarDragged(QPoint)), this, SLOT(on_titleBar_dragged(QPoint)));
+    connect(ui->titleBar, SIGNAL(titleBarDragged(QPoint)), this, SLOT(titleBardragged(QPoint)));
 
     //connect slider and stream
     connect(player, SIGNAL(posChanged(int)), ui->sliderBar, SLOT(setCurrentPos(int)));
@@ -52,14 +53,14 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(player, SIGNAL(songTitle(QString)), ui->lbl_Title, SLOT(setText(QString)));
     connect(player, SIGNAL(songArtist(QString)), ui->lbl_Artist, SLOT(setText(QString)));
     connect(player, SIGNAL(songAlbum(QString)), ui->lbl_Album, SLOT(setText(QString)));
-    connect(player, SIGNAL(songCover(QPixmap)), this, SLOT(on_new_pixmap(QPixmap)));
+    connect(player, SIGNAL(songCover(QPixmap)), this, SLOT(setCoverArt(QPixmap)));
     connect(player, SIGNAL(endOfPlaylistNoRepeat()), this, SLOT(endOfPlaylistStop()));
 
     //connect current time label
     connect(player, SIGNAL(posChanged(int)), this, SLOT(updateLabelCurTime(int)));
 
     //emit audio detection
-    connect(detector, SIGNAL(audioDetected(int)), this, SLOT(on_detected_audio(int)));
+    connect(detector, SIGNAL(audioDetected(int)), this, SLOT(detectAudio(int)));
 
     //connect player and volume button
     connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
@@ -84,6 +85,7 @@ MiniPauzer::~MiniPauzer()
     delete player;
     detector->exit();
     delete detector;
+    delete widget;
     delete buttonPlayClickTimer;
 }
 
@@ -92,16 +94,16 @@ void MiniPauzer::layoutSetup()
     //initialize layout
     mainGrid = new QVBoxLayout(this);
 
-    titleBarLayout = new QHBoxLayout(this);
-    rightTitleBarLayout = new QHBoxLayout(this);
-    leftTitleBarLayout = new QHBoxLayout(this);
+    titleBarLayout = new QHBoxLayout();
+    rightTitleBarLayout = new QHBoxLayout();
+    leftTitleBarLayout = new QHBoxLayout();
 
-    grd_Player = new QGridLayout(this);
-    grd_PlayerFull = new QGridLayout(this);
-    grd_SongInfo = new QVBoxLayout(this);
-    grd_SongProgress = new QHBoxLayout(this);
-    grd_SongButton = new QHBoxLayout(this);
-    grd_SongSetting = new QHBoxLayout(this);
+    grd_Player = new QGridLayout();
+    grd_PlayerFull = new QGridLayout();
+    grd_SongInfo = new QVBoxLayout();
+    grd_SongProgress = new QHBoxLayout();
+    grd_SongButton = new QHBoxLayout();
+    grd_SongSetting = new QHBoxLayout();
 
     grbx_Player = new QGroupBox(this);
     grbx_PlayerFull = new QGroupBox(this);
@@ -110,8 +112,13 @@ void MiniPauzer::layoutSetup()
     grbx_SongButton = new QGroupBox(this);
     grbx_SongSetting = new QGroupBox(this);
 
-    grd_Manager = new QHBoxLayout(this);
+    grd_Manager = new QHBoxLayout();
     grbx_Manager = new QGroupBox(this);
+
+    grd_LeftPanel = new QVBoxLayout();
+    grbx_LeftPanel = new QGroupBox(this);
+
+    queuePanel = new PlaylistQueueWidget();
 
     this->setLayout(mainGrid);
     mainGrid->setMargin(0);
@@ -168,8 +175,51 @@ void MiniPauzer::layoutSetup()
 
     //Manager layout
     grbx_Manager->setLayout(grd_Manager);
-    grbx_Manager->setStyleSheet("border:0; background-color: #bdc3c7");
+    grbx_Manager->setStyleSheet("QGroupBox#grbx_Manager {border:0;}");
+    grbx_Manager->setContentsMargins(0, 0, 0, 0);
+    grd_Manager->setMargin(0);
+    grd_Manager->setContentsMargins(0, 0, 0, 0);
     mainGrid->addWidget(grbx_Manager, Qt::AlignTop);
+
+    grd_Manager->setDirection(QBoxLayout::LeftToRight);
+
+    //---------LeftPanel--------------------
+    grd_Manager->addWidget(grbx_LeftPanel, 0, Qt::AlignLeft);
+    grbx_LeftPanel->setLayout(grd_LeftPanel);
+    grbx_LeftPanel->setFixedWidth(250);
+    grbx_LeftPanel->setContentsMargins(0, 0, 0, 0);
+    grd_LeftPanel->setMargin(0);
+
+    grd_LeftPanel->setDirection(QBoxLayout::TopToBottom);
+
+    grd_LeftPanel->addSpacing(20);
+    grd_LeftPanel->addWidget(ui->lbl_Icon, 0, Qt::AlignTop | Qt::AlignCenter);
+    ui->lbl_Icon->setFixedSize(150, 150);
+    grd_LeftPanel->addSpacing(10);
+
+    ui->spr_Icon->setFrameShape(QFrame::HLine);
+    ui->spr_Icon->setFrameShadow(QFrame::Sunken);
+    ui->spr_Icon->setFixedHeight(1);
+    ui->spr_Icon->setContentsMargins(10, 0, 10, 0);
+    grd_LeftPanel->addWidget(ui->spr_Icon);
+
+    grd_LeftPanel->addWidget(ui->btn_Master, 1, Qt::AlignTop);
+    ui->btn_Master->setFixedHeight(50);
+
+    //----------MidPanel-----------------------
+    grd_Manager->addStretch(1);
+
+    //------------PlaylistQueuePanel------------
+    grd_Manager->addWidget(queuePanel, 2, Qt::AlignRight);
+    queuePanel->setFixedWidth(300);
+    queuePanel->setContentsMargins(0, 0, 0, 0);
+
+
+    queuePanel->setStyleSheet("QWidget {"
+                              "border: 0px;"
+                              "background-color: #262626;"
+                              "}");
+
 
     //Player layout
     grbx_Player->setLayout(grd_Player);
@@ -245,7 +295,7 @@ void MiniPauzer::loadData()
     FullPos.setY((rec.height() - FullSize.height()) / 2);
     isFullScreen = false;
 
-    changeState(State::MINI);
+    changeState(State::FULL);
 
     ui->btn_AutoDetector->setChecked(true);
 
@@ -436,6 +486,42 @@ void MiniPauzer::changeStyle()
                         "image: url(:/icons/Grip.png); }"
                         "QSizeGrip:hover {"
                         "image: url(:/icons/Grip_Hover.png); }");
+
+    grbx_LeftPanel->setStyleSheet("QGroupBox{"
+                                  "border: 0px;"
+                                  "background-color: #262626;"
+                                  "border-right: 1px solid #808080;"
+                                  "}");
+
+    ui->lbl_Icon->setPixmap(QPixmap(":/icons/Pauzer_Icon.png"));
+    ui->lbl_Icon->setScaledContents(true);
+
+    ui->spr_Icon->setStyleSheet("background-color: #404040;"
+                                "margin: 10px;");
+
+    ui->btn_Master->setCheckable(true);
+    ui->btn_Master->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui->btn_Master->setIcon(QIcon(":/icons/Master.png"));
+    ui->btn_Master->setIconSize(QSize(24, 24));
+    ui->btn_Master->setFont(QFont("UTM Avo"));
+    ui->btn_Master->setText(tr(" Master Playlist"));
+    ui->btn_Master->setStyleSheet("QToolButton{"
+                                  "text-align: left;"
+                                  "border: 0px;"
+                                  "padding-left: 20px;"
+                                  "font-size: 18px;"
+                                  "background-color: transparent;"
+                                  "color: white;"
+                                  "}"
+                                  "QToolButton:hover{"
+                                  "background-color: #595959;"
+                                  "}"
+                                  "QToolButton:checked{"
+                                  "background-color: #3eba58;"
+                                  "}"
+                                  "QToolButton:checked:hover{"
+                                  "background-color: #61d169;"
+                                  "}");
 }
 
 void MiniPauzer::createMenu()
@@ -586,7 +672,6 @@ void MiniPauzer::getFolderList(QStringList list)
 
     isProcessCanceled = false;
 
-    widget->setModal(true);
     widget->show();
 }
 
@@ -617,7 +702,7 @@ void MiniPauzer::processTerminated()
 }
 
 
-void MiniPauzer::on_detected_audio(int audio_num)
+void MiniPauzer::detectAudio(int audio_num)
 {
 	if (isDetectorOn)
 	{
@@ -670,7 +755,7 @@ void MiniPauzer::endOfPlaylistStop()
     player->pause();
 }
 
-void MiniPauzer::on_new_pixmap(const QPixmap &pixmap)
+void MiniPauzer::setCoverArt(const QPixmap &pixmap)
 {
     ui->coverArt->clear();
     ui->coverArt->setPixmap(pixmap);
@@ -687,7 +772,7 @@ void MiniPauzer::on_btn_Minimize_clicked()
 
 }
 
-void MiniPauzer::on_titleBar_dragged(const QPoint &newPoint)
+void MiniPauzer::titleBardragged(const QPoint &newPoint)
 {
     this->move(newPoint);
 }
