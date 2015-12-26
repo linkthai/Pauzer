@@ -9,6 +9,11 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     player = Player::getInstance();
     detector = new AutoDetector(this);
+    creator = new LibraryCreator(this);
+    widget = new ProcessWidget(this);
+
+    connect(creator, SIGNAL(finished()), this, SLOT(processFinished()));
+    connect(widget, SIGNAL(processCanceled()), this, SLOT(processTerminated()));
 
     ui->setupUi(this);
 
@@ -63,17 +68,14 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     isDetectorOn = false;
 	isManuallyPlayed = false;
 	isAutoPauseAllowed = false;
+    isProcessCanceled = false;
 
     isButtonPlayClickAllowed = true;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
-    QString XmlPath = "Master.xml";
-    if (manager->fileExists(XmlPath))
-    {
-        manager->parser.LoadData(XmlPath);
-        manager->parser.GetSongsInPlaylist(manager->master);
+
+    if (Manager::LoadSongToMaster())
         player->changeToPlaylist(0);
-    }
 }
 
 MiniPauzer::~MiniPauzer()
@@ -293,11 +295,10 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongProgress->setSpacing(15);
 
         //add title, artist and album labels
-        grbx_SongInfo->setMinimumWidth(300);
+        grbx_SongInfo->setFixedWidth(400);
         grd_PlayerFull->addWidget(grbx_SongInfo, 1, 1, -1, 1);
         grd_SongInfo->setContentsMargins(0, 0, 15, 10);
         ui->lbl_Title->setContentsMargins(0, 0, 0, 0);
-        ui->lbl_Artist->setContentsMargins(0, 0, 0, 0);
         grd_SongInfo->setSpacing(5);
 
         //add player button
@@ -347,7 +348,8 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
 
         //add title, artist and album labels
         grd_Player->addWidget(grbx_SongInfo, 0, 1, 1, -1);
-        grd_SongInfo->setContentsMargins(15, 5, 15, 10);
+        grbx_SongInfo->setFixedWidth(miniWidth - ui->coverArt->height());
+        grd_SongInfo->setContentsMargins(15, 5, 15, 5);
         ui->lbl_Artist->setContentsMargins(0, -4, 0, 0);
         grd_SongInfo->setSpacing(0);
 
@@ -568,7 +570,7 @@ void MiniPauzer::updateLabelMaxLen(int legth)
 
 void MiniPauzer::openFolders()
 {
-    FolderDialog *dialog = new FolderDialog();
+    dialog = new FolderDialog();
     dialog->setModal(true);
 
     connect(dialog, SIGNAL(createdFolderList(QStringList)), this, SLOT(getFolderList(QStringList)));
@@ -579,10 +581,41 @@ void MiniPauzer::openFolders()
 
 void MiniPauzer::getFolderList(QStringList list)
 {
-    Manager::CreateMaster(list);
+    creator->setList(list);
+    creator->start();
 
-    player->changeToPlaylist(0);
+    isProcessCanceled = false;
+
+    widget->setModal(true);
+    widget->show();
 }
+
+void MiniPauzer::processFinished()
+{
+    //user canceled the process midway
+    if (isProcessCanceled)
+    {
+        Manager::CreationProcessSuccess(false);
+    }
+    else //run successfully
+    {
+        Manager::CreationProcessSuccess(true);
+        if (widget)
+        {
+            widget->close();
+        }
+
+        player->changeToPlaylist(0);
+    }
+}
+
+void MiniPauzer::processTerminated()
+{
+    isProcessCanceled = true;
+
+    Manager::LoadSongToMaster();
+}
+
 
 void MiniPauzer::on_detected_audio(int audio_num)
 {
