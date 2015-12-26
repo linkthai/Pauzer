@@ -1,5 +1,5 @@
-#ifndef SONG
-#define SONG
+#ifndef SONG_H
+#define SONG_H
 
 class Song
 {

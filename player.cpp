@@ -40,7 +40,7 @@ Player::~Player()
 
 void Player::changeToPlaylist(int playlistNum)
 {
-    playlist->setPlaylist(0, isShuffling);
+    playlist->setPlaylist(Playlist::Type::MASTER, 0);
 
 }
 

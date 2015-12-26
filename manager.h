@@ -1,5 +1,5 @@
-#ifndef MANAGER
-#define MANAGER
+#ifndef MANAGER_H
+#define MANAGER_H
 
 #include <WinBase.h>
 #include <Windows.h>

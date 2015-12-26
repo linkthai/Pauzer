@@ -7,6 +7,7 @@
 #include "autodetector.h"
 #include "librarycreator.h"
 #include "processwidget.h"
+#include "playlistqueuewidget.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -61,6 +62,11 @@ private:
     QHBoxLayout *grd_Manager;
     QGroupBox *grbx_Manager;
 
+    QVBoxLayout *grd_LeftPanel;
+    QGroupBox *grbx_LeftPanel;
+
+    PlaylistQueueWidget *queuePanel;
+
     QSizeGrip *grip;
 
     QPoint MiniPos;
@@ -104,7 +110,7 @@ private slots:
 
     void openFolders();
 
-	void on_detected_audio(int audio_num);
+    void detectAudio(int audio_num);
 
     void on_btn_Prev_clicked();
 
@@ -112,13 +118,13 @@ private slots:
 
     void endOfPlaylistStop();
 
-    void on_new_pixmap(const QPixmap &pixmap);
+    void setCoverArt(const QPixmap &pixmap);
 
     void on_btn_Close_clicked();
 
     void on_btn_Minimize_clicked();
 
-    void on_titleBar_dragged(const QPoint &newPoint);
+    void titleBardragged(const QPoint &newPoint);
 
     void on_btn_Up_clicked();
     void on_btn_Down_clicked();
