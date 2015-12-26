@@ -7,6 +7,8 @@ Xml_Parser::Xml_Parser()
 void Xml_Parser::Init()
 {
     Xml_Bus BUS;
+    albID = 1;
+    artID = 1;
     root = BUS.creatRoot("DATA");
 }
 QStringList Xml_Parser::GetAllAlbums()
@@ -29,13 +31,13 @@ QStringList Xml_Parser::GetAllArtist()
     }
     return allArtist;
 }
-QStringList Xml_Parser::GetAlbumsByArtist(QString artistName)
+QStringList Xml_Parser::GetAlbumsByArtist(int ID)
 {
     QStringList allAlbums;
     QDomNodeList artists = root.elementsByTagName("ARTIST");
     for (int i = 0; i < artists.length(); i++)
     {
-        if (artists.at(i).toElement().attribute("Artist_name") == artistName)
+        if (artists.at(i).toElement().attribute("ID").toInt() == ID)
         {
             for (int j = 0; j < artists.at(i).toElement().childNodes().length(); j++)
                 allAlbums.push_back(artists.at(i).toElement().childNodes().at(j).toElement().attribute("Album_name"));
@@ -43,7 +45,7 @@ QStringList Xml_Parser::GetAlbumsByArtist(QString artistName)
     }
     return allAlbums;
 }
-QList<Song> Xml_Parser::GetSongsByAlbum(QString albumName)
+QList<Song> Xml_Parser::GetSongsByAlbum(int ID)
 {
     QDomElement songList;
     QList<Song> list;
@@ -51,7 +53,7 @@ QList<Song> Xml_Parser::GetSongsByAlbum(QString albumName)
     QDomNodeList albums = root.elementsByTagName("ALBUM");
     for (int i = 0; i < albums.length(); i++)
     {
-        if (albums.at(i).toElement().attribute("Album_name") == albumName)
+        if (albums.at(i).toElement().attribute("ID").toInt() == ID)
             BUS.GetAllSong(albums.at(i).toElement(), songList);
     }
     for (int i = 0; i < songList.childNodes().length(); i++)
@@ -61,6 +63,25 @@ QList<Song> Xml_Parser::GetSongsByAlbum(QString albumName)
         list.push_back(temp);
     }
     return list;
+}
+int Xml_Parser::GetAllAlbumsCount()
+{
+    return root.elementsByTagName("ALBUM").length();
+}
+int Xml_Parser::GetAllArtistsCount()
+{
+    return root.elementsByTagName("ARTIST").length();
+}
+int Xml_Parser::GetAllAlbumsCountByArtist(int ID)
+{
+    QDomNodeList artists = root.elementsByTagName("ARTIST");
+    for (int i = 0; i < artists.length(); i++)
+    {
+        if (artists.at(i).toElement().attribute("ID").toInt() == ID)
+        {
+            return artists.at(i).toElement().childNodes().length();
+        }
+    }
 }
 void Xml_Parser::GetSongsInPlaylist(Master &list)
 {
@@ -88,32 +109,44 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
         {
             for (int j = 0; j < node.childNodes().length(); j++)
             {
-                QDomElement child = node.childNodes().at(i).toElement();
+                QDomElement child = node.childNodes().at(j).toElement();
                 if (child.attribute("Album_name") == album)
                 {
                     QDomElement temp = BUS.creatNode("SONG", child);
-                    temp.setAttribute("Path", path);
                     temp.setAttribute("Title", title);
+                    temp.setAttribute("Path", path);    
                     return;
                 }
             }
 
             QDomElement temp = BUS.creatNode("ALBUM", node);
+            temp.setAttribute("ID", albID);
             temp.setAttribute("Album_name", album);
             QDomElement songNode = BUS.creatNode("SONG", temp);
             songNode.setAttribute("Title", title);
             songNode.setAttribute("Path", path);
+
+            albID++;
+
             return;
         }
     }
 
+    albID = 1;
+
     QDomElement temp = BUS.creatNode("ARTIST", root);
+    temp.setAttribute("ID", artID);
     temp.setAttribute("Artist_name", artist);
     QDomElement albumNode = BUS.creatNode("ALBUM", temp);
+    albumNode.setAttribute("ID", albID);
     albumNode.setAttribute("Album_name", album);
     QDomElement songNode = BUS.creatNode("SONG", albumNode);
     songNode.setAttribute("Title", title);
     songNode.setAttribute("Path", path);
+
+    albID++;
+    artID++;
+
     return;
 }
 void Xml_Parser::SaveChoosenFolder(QString path)
