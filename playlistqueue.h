@@ -4,16 +4,19 @@
 #include <QObject>
 #include <QList>
 #include "playlist.h"
+#include "player.h"
 
 class PlaylistQueue : public QObject
 {
     Q_OBJECT
 private:
     QList<Playlist *> list;
+    int currentPlaylist;
 
     static PlaylistQueue *queue;
 public:
     explicit PlaylistQueue(QObject *parent = 0);
+    ~PlaylistQueue();
 
     static PlaylistQueue* getInstance()
     {
@@ -23,7 +26,15 @@ public:
         return queue;
     }
 
+    QList<Playlist *> getList();
+    int getCurrentPlaylistNum();
+
+    Playlist *getCurrentPlaylist();
+    void setPlaylistToPlayer(int playlistNum = 0);
+    void clearList();
+
 signals:
+    void currentPlaylistChanged();
 
 public slots:
 };

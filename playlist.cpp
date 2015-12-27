@@ -1,25 +1,40 @@
 #include "playlist.h"
 #include "manager.h"
-#include <QMessageBox>
 
 Playlist::Playlist(QObject *parent) : QObject(parent)
 {
     currentSong = 0;
+    currentPos = 0;
+    id = 0;
 }
 
 void Playlist::setPlaylist(Type _type, int playlistNum)
 {
     songList.clear();
 
-    int l = Manager::master.GetCount();
-    for (int i = 0; i < Manager::master.GetCount(); i++)
+    type = _type;
+    id = playlistNum;
+
+    switch(type)
     {
-        songList.append(i);
+    default:
+        for (int i = 0; i < Manager::master.GetCount(); i++)
+        {
+            songList.append(i);
+        }
+        break;
+
+    case Type::ALBUM:
+//        QList<int> album = Manager::parser.GetSongsByAlbum(playlistNum);
+        for (int i = 0; i < 10; i++)
+        {
+            songList.append(i + 40);
+        }
+        this->setName(Manager::parser.GetAlbumNameByID(playlistNum));
+        break;
     }
 
     reShuffle();
-
-    emit changeCurrentSong(currentSong, false);
 }
 
 Playlist::~Playlist()
@@ -40,6 +55,20 @@ QList<int> Playlist::getShuffleList()
 int Playlist::getCurrentSong()
 {
     return currentSong;
+}
+
+void Playlist::playFirstSong(bool isShuffling)
+{
+    if (isShuffling)
+    {
+        currentSong = shuffleList.at(0);
+        emit changeCurrentSong(currentSong);
+    }
+    else
+    {
+        currentSong = songList.at(0);
+        emit changeCurrentSong(currentSong);
+    }
 }
 
 void Playlist::nextSong(bool isShuffling)
@@ -75,9 +104,9 @@ void Playlist::nextSong(bool isShuffling)
     }
 
     if (num == 0)
-        emit changeCurrentSong(currentSong, true);
+        emit changeCurrentSong(currentSong);
     else
-        emit changeCurrentSong(currentSong, false);
+        emit changeCurrentSong(currentSong);
 }
 
 void Playlist::prevSong(bool isShuffling)
@@ -111,7 +140,7 @@ void Playlist::prevSong(bool isShuffling)
         currentSong = songList.at(num);
     }
 
-    emit changeCurrentSong(currentSong, false);
+    emit changeCurrentSong(currentSong);
 }
 
 void Playlist::reShuffle(bool changeSong)
@@ -134,7 +163,30 @@ void Playlist::reShuffle(bool changeSong)
     if (changeSong == true)
     {
         currentSong = shuffleList.at(0);
-        emit changeCurrentSong(currentSong, false);
+        emit changeCurrentSong(currentSong);
     }
+}
+
+void Playlist::setName(QString _name)
+{
+    if (_name == "")
+        return;
+
+    name = _name;
+}
+
+QString Playlist::getName()
+{
+    return name;
+}
+
+Playlist::Type Playlist::getType()
+{
+    return type;
+}
+
+int Playlist::getId()
+{
+    return id;
 }
 

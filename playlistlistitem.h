@@ -7,10 +7,12 @@
 #include <QListWidgetItem>
 #include <QStyledItemDelegate>
 
+#include "playlist.h"
+
 class PlaylistListItem : public QListWidgetItem
 {
 public:
-    explicit PlaylistListItem(QListWidget *parent = 0);
+    explicit PlaylistListItem(Playlist::Type type, int id, QString name, QListWidget *parent = 0);
 
 signals:
 

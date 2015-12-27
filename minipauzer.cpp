@@ -8,6 +8,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
 
     player = Player::getInstance();
+
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
 
@@ -76,14 +77,20 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
-    if (Manager::LoadSongToMaster())
-        player->changeToPlaylist(0);
+    Manager::LoadSongToMaster();
+
+    queue = PlaylistQueue::getInstance();
+    connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
+    queuePanel->createListFromQueue();
+
+    queue->setPlaylistToPlayer();
 }
 
 MiniPauzer::~MiniPauzer()
 {
     delete ui;
     delete player;
+    delete queue;
     detector->exit();
     delete detector;
     delete widget;
@@ -691,7 +698,9 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-        player->changeToPlaylist(0);
+        queue->clearList();
+        queuePanel->createListFromQueue();
+        queue->setPlaylistToPlayer();
     }
 }
 
