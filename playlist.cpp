@@ -25,7 +25,7 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
         break;
 
     case Type::ALBUM:
-//        QList<int> album = Manager::parser.GetSongsByAlbum(playlistNum);
+        QList<int> album = Manager::parser.GetSongsByAlbum(playlistNum);
         for (int i = 0; i < 10; i++)
         {
             songList.append(i + 40);
