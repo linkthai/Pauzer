@@ -10,6 +10,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     player = Player::getInstance();
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
+
     widget = new ProcessWidget(this);
 
     connect(creator, SIGNAL(finished()), this, SLOT(processFinished()));

@@ -86,7 +86,7 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     else
     {
         TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(framelist.front());
-        if (pic != NULL)
+        if (pic)
         {
             QImage coverArt;
             coverArt.loadFromData((const uchar *)pic->picture().data(), pic->picture().size());
@@ -94,6 +94,11 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
             QPixmap pixMap = QPixmap::fromImage(coverArt);
             emit songCover(pixMap);
 
+        }
+        else
+        {
+            QPixmap pixMap(":/resources/cover.png");
+            emit songCover(pixMap);
         }
     }
 
