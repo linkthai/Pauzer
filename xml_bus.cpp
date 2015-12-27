@@ -15,6 +15,7 @@ void Xml_Bus::GetAllSong(QDomElement node, QDomElement &result)
     if (!node.hasChildNodes())
     {
         QDomElement temp = creatNode("SONG", result);
+        temp.setAttribute("ID", node.attribute("ID"));
         temp.setAttribute("Title", node.attribute("Title"));
         temp.setAttribute("Path", node.attribute("Path"));
     }
