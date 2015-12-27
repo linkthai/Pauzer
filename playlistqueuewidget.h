@@ -18,10 +18,15 @@ public:
     ~PlaylistQueueWidget();
 
     void createListFromQueue();
-
+public slots:
+    void changeCurrentPlaylist();
+private slots:
+    void on_btn_Play_clicked();
 private:
     Ui::PlaylistQueueWidget *ui;
-    QGroupBox *grbx_item;
+    QLabel *grbx_item;
+    PlaylistQueue *queue;
+
 };
 
 #endif // PLAYLISTQUEUEWIDGET_H

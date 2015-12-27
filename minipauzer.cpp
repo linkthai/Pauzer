@@ -80,8 +80,10 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     Manager::LoadSongToMaster();
 
     queue = PlaylistQueue::getInstance();
-    queue->setPlaylistToPlayer();
+    connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
     queuePanel->createListFromQueue();
+
+    queue->setPlaylistToPlayer();
 }
 
 MiniPauzer::~MiniPauzer()
@@ -697,8 +699,8 @@ void MiniPauzer::processFinished()
         }
 
         queue->clearList();
-        queue->setPlaylistToPlayer();
         queuePanel->createListFromQueue();
+        queue->setPlaylistToPlayer();
     }
 }
 

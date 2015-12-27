@@ -34,6 +34,7 @@ public:
     void clearList();
 
 signals:
+    void currentPlaylistChanged();
 
 public slots:
 };

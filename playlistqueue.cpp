@@ -11,7 +11,6 @@ PlaylistQueue::PlaylistQueue(QObject *parent) : QObject(parent)
     list.append(master);
 
     Playlist *pharmacy = new Playlist();
-    pharmacy->setName("Pharmacy");
     pharmacy->setPlaylist(Playlist::Type::ALBUM, 1);
     list.append(pharmacy);
 
@@ -48,6 +47,8 @@ void PlaylistQueue::setPlaylistToPlayer(int playlistNum)
 
     Player* player = Player::getInstance();
     player->changeToPlaylist();
+
+    emit currentPlaylistChanged();
 }
 
 void PlaylistQueue::clearList()

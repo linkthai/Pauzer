@@ -49,7 +49,7 @@ void Player::changeToSong(int songNum)
     isChangingSong = true;
     QString filename;
 
-    filename = Manager::parser.GetSongPathByID(songNum);
+    filename = Manager::master.Get(songNum);
 
     BASS_ChannelRemoveSync(channel, BASS_SYNC_END);
 
@@ -124,7 +124,8 @@ void Player::setShuffle(bool state)
     if (state)
     {
         isShuffling = true;
-        playlist->reShuffle(true);
+        if (playlist)
+            playlist->reShuffle(true);
     }
     else
     {
