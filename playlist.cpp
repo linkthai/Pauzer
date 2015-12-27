@@ -7,7 +7,7 @@ Playlist::Playlist(QObject *parent) : QObject(parent)
     currentSong = 0;
 }
 
-void Playlist::setPlaylist(int playlistNum, bool isShuffling)
+void Playlist::setPlaylist(Type _type, int playlistNum)
 {
     songList.clear();
 
@@ -19,14 +19,6 @@ void Playlist::setPlaylist(int playlistNum, bool isShuffling)
 
     reShuffle();
 
-    if (isShuffling)
-    {
-        currentSong = shuffleList.at(0);
-    }
-    else
-    {
-        currentSong = songList.at(0);
-    }
     emit changeCurrentSong(currentSong, false);
 }
 

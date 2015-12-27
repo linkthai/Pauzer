@@ -46,5 +46,8 @@
         <file>icons/Menu_Settings_Hover.png</file>
         <file>icons/Pauzer.png</file>
         <file>icons/Pauzer_Hover.png</file>
+        <file>icons/Master.png</file>
+        <file>icons/Master_Hover.png</file>
+        <file>icons/Pauzer_Icon.png</file>
     </qresource>
 </RCC>

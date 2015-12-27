@@ -761,6 +761,57 @@ QPushButton:hover {
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QToolButton" name="btn_Master">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>240</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Master Playlist</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_Icon">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>90</y>
+     <width>81</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: transparent;</string>
+   </property>
+   <property name="text">
+    <string>Icon</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="spr_Icon">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>120</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
   <zorder>btn_AutoDetector</zorder>
   <zorder>btn_Repeat</zorder>
   <zorder>btn_Shuffle</zorder>
@@ -776,6 +827,9 @@ QPushButton:hover {
   <zorder>titleBar</zorder>
   <zorder>btn_Volume</zorder>
   <zorder>btn_Play</zorder>
+  <zorder>btn_Master</zorder>
+  <zorder>lbl_Icon</zorder>
+  <zorder>spr_Icon</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

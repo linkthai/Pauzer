@@ -1,5 +1,5 @@
-#ifndef STABLE
-#define STABLE
+#ifndef STABLE_H
+#define STABLE_H
 
 #define QStringToTString(s) TagLib::String(s.utf8().data(), TagLib::String::UTF8)
 #define TStringToQString(s) QString::fromUtf8(s.toCString(true))

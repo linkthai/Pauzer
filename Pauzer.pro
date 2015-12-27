@@ -34,7 +34,10 @@ SOURCES += main.cpp \
     xml_data.cpp \
     xml_parser.cpp \
     librarycreator.cpp \
-    processwidget.cpp
+    processwidget.cpp \
+    playlistqueuewidget.cpp \
+    playlistlistitem.cpp \
+    playlistqueue.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -54,12 +57,16 @@ HEADERS  += minipauzer.h \
     xml_data.h \
     xml_parser.h \
     librarycreator.h \
-    processwidget.h
+    processwidget.h \
+    playlistqueuewidget.h \
+    playlistlistitem.h \
+    playlistqueue.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
     volumeslider.ui \
-    processwidget.ui
+    processwidget.ui \
+    playlistqueuewidget.ui
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \
