@@ -51,6 +51,7 @@ QList<int> Xml_Parser::GetSongsByAlbum(int ID)
     QDomElement songList;
     QList<int> list;
     Xml_Bus BUS;
+    songList = BUS.creatRoot("SONG_LIST");
     QDomNodeList albums = root.elementsByTagName("ALBUM");
     for (int i = 0; i < albums.length(); i++)
     {
@@ -61,6 +62,7 @@ QList<int> Xml_Parser::GetSongsByAlbum(int ID)
     {
         list.push_back(songList.childNodes().at(i).toElement().attribute("ID").toInt());
     }
+
     return list;
 }
 int Xml_Parser::GetAllAlbumsCount()

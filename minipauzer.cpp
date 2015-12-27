@@ -77,13 +77,14 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
-    Manager::LoadSongToMaster();
+    if (Manager::LoadSongToMaster())
+    {
+        queue = PlaylistQueue::getInstance();
+        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
+        queuePanel->createListFromQueue();
 
-    queue = PlaylistQueue::getInstance();
-    connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
-    queuePanel->createListFromQueue();
-
-    queue->setPlaylistToPlayer();
+        queue->setPlaylistToPlayer();
+    }
 }
 
 MiniPauzer::~MiniPauzer()
@@ -698,8 +699,13 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-        queue->clearList();
+        if (queue)
+            queue->clearList();
+        else
+            queue = PlaylistQueue::getInstance();
+        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
         queuePanel->createListFromQueue();
+
         queue->setPlaylistToPlayer();
     }
 }
