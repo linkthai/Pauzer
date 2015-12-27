@@ -8,6 +8,7 @@
 #include "librarycreator.h"
 #include "processwidget.h"
 #include "playlistqueuewidget.h"
+#include "playlistqueue.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -31,6 +32,9 @@ private:
     AutoDetector *detector;
     LibraryCreator *creator;
     QTimer *buttonPlayClickTimer;
+
+    PlaylistQueue *queue;
+    Player *player;
 
     bool isPlaying;
     bool isDetectorOn;
@@ -90,9 +94,6 @@ protected:
 public:
     explicit MiniPauzer(QWidget *parent = 0);
     ~MiniPauzer();
-
-    //PS: THIS IS TEMPORARY UNTIL SWITCH PLAYER TO SINGLETON PATTERN
-    Player *player;
 
 private slots:
     void updateLabelCurTime(int time);

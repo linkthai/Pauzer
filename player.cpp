@@ -24,27 +24,27 @@ Player::Player(QObject *parent) :
     isRepeating = false;
     volume = 1.0;
 
-    playlist = new Playlist(this);
-    connect(playlist, SIGNAL(changeCurrentSong(int, bool)), this, SLOT(changeToSong(int, bool)));
+    playlist = NULL;
 
     emit(posChanged(0));
 }
 
 Player::~Player()
 {
-    delete playlist;
-
     if (t != NULL)
         delete t;
 }
 
-void Player::changeToPlaylist(int playlistNum)
+void Player::changeToPlaylist()
 {
-    playlist->setPlaylist(Playlist::Type::MASTER, 0);
+    playlist = PlaylistQueue::getInstance()->getCurrentPlaylist();
 
+    connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
+
+    playlist->playFirstSong(isShuffling);
 }
 
-void Player::changeToSong(int songNum, bool isPlaylistRepeated)
+void Player::changeToSong(int songNum)
 {
     isChangingSong = true;
     QString filename;

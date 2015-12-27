@@ -3,7 +3,7 @@
 
 #include "playlist.h"
 #include "manager.h"
-#include <stable.h>
+#include "playlistqueue.h"
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user);
 void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user);
@@ -53,8 +53,8 @@ public slots:
     void prevSong();
     void setPosition(int cur);
     void signalUpdate();
-    void changeToSong(int songNum, bool isPlaylistRepeated);
-    void changeToPlaylist(int playlistNum);
+    void changeToSong(int songNum);
+    void changeToPlaylist();
     void setShuffle(bool state);
     void setRepeat(bool state);
     void setVolume(float vol);
