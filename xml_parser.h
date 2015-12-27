@@ -3,7 +3,6 @@
 #include "stable.h"
 #include "xml_bus.h"
 #include "xml_data.h"
-#include "song.h"
 #include "master.h"
 
 class Xml_Parser

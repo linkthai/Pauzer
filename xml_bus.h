@@ -1,7 +1,6 @@
 #ifndef XML_BUS_H
 #define XML_BUS_H
 #include "xml_common.h"
-#include "song.h"
 
 class Xml_Bus : public Xml_Common
 {
