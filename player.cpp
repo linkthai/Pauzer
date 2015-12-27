@@ -49,7 +49,7 @@ void Player::changeToSong(int songNum)
     isChangingSong = true;
     QString filename;
 
-    filename = QString::fromStdWString(Manager::master.Get(songNum).GetPath());
+    filename = Manager::parser.GetSongPathByID(songNum);
 
     BASS_ChannelRemoveSync(channel, BASS_SYNC_END);
 

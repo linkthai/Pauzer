@@ -6,7 +6,6 @@
 
 #include "master.h"
 #include "xml_parser.h"
-#include "song.h"
 
 class Manager : public QObject
 {
