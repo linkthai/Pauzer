@@ -41,7 +41,6 @@ Player::~Player()
 void Player::changeToPlaylist(int playlistNum)
 {
     playlist->setPlaylist(0, isShuffling);
-
 }
 
 void Player::changeToSong(int songNum, bool isPlaylistRepeated)
@@ -49,7 +48,7 @@ void Player::changeToSong(int songNum, bool isPlaylistRepeated)
     isChangingSong = true;
     QString filename;
 
-    filename = QString::fromStdWString(Manager::master.Get(songNum).GetPath());
+    filename = Manager::master.Get(songNum);
 
     BASS_ChannelRemoveSync(channel, BASS_SYNC_END);
 

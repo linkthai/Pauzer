@@ -9,6 +9,7 @@ void Xml_Parser::Init()
     Xml_Bus BUS;
     albID = 1;
     artID = 1;
+    songID = 1;
     root = BUS.creatRoot("DATA");
 }
 QStringList Xml_Parser::GetAllAlbums()
@@ -31,24 +32,24 @@ QStringList Xml_Parser::GetAllArtist()
     }
     return allArtist;
 }
-QStringList Xml_Parser::GetAlbumsByArtist(int ID)
+QList<int> Xml_Parser::GetAlbumsByArtist(int ID)
 {
-    QStringList allAlbums;
+    QList<int> allAlbums;
     QDomNodeList artists = root.elementsByTagName("ARTIST");
     for (int i = 0; i < artists.length(); i++)
     {
         if (artists.at(i).toElement().attribute("ID").toInt() == ID)
         {
             for (int j = 0; j < artists.at(i).toElement().childNodes().length(); j++)
-                allAlbums.push_back(artists.at(i).toElement().childNodes().at(j).toElement().attribute("Album_name"));
+                allAlbums.push_back(artists.at(i).toElement().childNodes().at(j).toElement().attribute("ID").toInt());
         }
     }
     return allAlbums;
 }
-QList<Song> Xml_Parser::GetSongsByAlbum(int ID)
+QList<int> Xml_Parser::GetSongsByAlbum(int ID)
 {
     QDomElement songList;
-    QList<Song> list;
+    QList<int> list;
     Xml_Bus BUS;
     QDomNodeList albums = root.elementsByTagName("ALBUM");
     for (int i = 0; i < albums.length(); i++)
@@ -58,9 +59,7 @@ QList<Song> Xml_Parser::GetSongsByAlbum(int ID)
     }
     for (int i = 0; i < songList.childNodes().length(); i++)
     {
-        Song temp;
-        temp.SetPath(songList.childNodes().at(i).toElement().attribute("Path").toStdWString());
-        list.push_back(temp);
+        list.push_back(songList.childNodes().at(i).toElement().attribute("ID").toInt());
     }
     return list;
 }
@@ -83,19 +82,19 @@ int Xml_Parser::GetAllAlbumsCountByArtist(int ID)
         }
     }
 }
-void Xml_Parser::GetSongsInPlaylist(Master &list)
-{
-    if (list.GetCount() != 0)
-        list.ClearList();
+//void Xml_Parser::GetSongsInPlaylist(Master &list)
+//{
+//    if (list.GetCount() != 0)
+//        list.ClearList();
 
-    QDomNodeList songs = root.elementsByTagName("SONG");
-    for (int i = 0; i < songs.length(); i++)
-    {
-        Song temp;
-        temp.SetPath(songs.at(i).toElement().attribute("Path").toStdWString());
-        list.AddToList(temp);
-    }
-}
+//    QDomNodeList songs = root.elementsByTagName("SONG");
+//    for (int i = 0; i < songs.length(); i++)
+//    {
+//        Song temp;
+//        temp.SetPath(songs.at(i).toElement().attribute("Path").toStdWString());
+//        list.AddToList(temp);
+//    }
+//}
 
 void SavePlaylist();
 void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString path)
@@ -113,8 +112,12 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
                 if (child.attribute("Album_name") == album)
                 {
                     QDomElement temp = BUS.creatNode("SONG", child);
+                    temp.setAttribute("ID", songID);
                     temp.setAttribute("Title", title);
-                    temp.setAttribute("Path", path);    
+                    temp.setAttribute("Path", path);
+
+                    songID++;
+
                     return;
                 }
             }
@@ -123,16 +126,16 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
             temp.setAttribute("ID", albID);
             temp.setAttribute("Album_name", album);
             QDomElement songNode = BUS.creatNode("SONG", temp);
+            songNode.setAttribute("ID", songID);
             songNode.setAttribute("Title", title);
             songNode.setAttribute("Path", path);
 
             albID++;
+            songID++;
 
             return;
         }
     }
-
-    albID = 1;
 
     QDomElement temp = BUS.creatNode("ARTIST", root);
     temp.setAttribute("ID", artID);
@@ -141,13 +144,76 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
     albumNode.setAttribute("ID", albID);
     albumNode.setAttribute("Album_name", album);
     QDomElement songNode = BUS.creatNode("SONG", albumNode);
+    songNode.setAttribute("ID", songID);
     songNode.setAttribute("Title", title);
     songNode.setAttribute("Path", path);
 
     albID++;
     artID++;
+    songID++;
 
     return;
+}
+QMap<int, QString> Xml_Parser::GetAllSong()
+{
+    QMap<int, QString> list;
+    QDomNodeList songs = root.elementsByTagName("SONG");
+    for (int i = 0; i < songs.length(); i++)
+    {
+        list.insert(songs.at(i).toElement().attribute("ID").toInt(), songs.at(i).toElement().attribute("Path"));
+    }
+    return list;
+}
+int Xml_Parser::GetAllSongsCount()
+{
+    QDomNodeList songs = root.elementsByTagName("SONG");
+    return songs.count();
+}
+int Xml_Parser::GetAllSongsCountByAlbum(int ID)
+{
+    QDomNodeList albums = root.elementsByTagName("ALBUM");
+    for (int i = 0; i < albums.length(); i++)
+    {
+        if (albums.at(i).toElement().attribute("ID").toInt() == ID)
+            return albums.at(i).childNodes().length();
+    }
+    return 0;
+}
+QString Xml_Parser::GetArtistNameByID(int ID)
+{
+    QDomNodeList artists = root.elementsByTagName("ARTIST");
+    for (int i = 0; i < artists.length(); i++)
+    {
+        if (artists.at(i).toElement().attribute("ID").toInt() == ID)
+        {
+            return artists.at(i).toElement().attribute("Artist_name");
+        }
+    }
+    return "";
+}
+QString Xml_Parser::GetAlbumNameByID(int ID)
+{
+    QDomNodeList albums = root.elementsByTagName("ALBUM");
+    for (int i = 0; i < albums.length(); i++)
+    {
+        if (albums.at(i).toElement().attribute("ID").toInt() == ID)
+        {
+            return albums.at(i).toElement().attribute("Album_name");
+        }
+    }
+    return "";
+}
+QString Xml_Parser::GetSongPathByID(int ID)
+{
+    QDomNodeList songs = root.elementsByTagName("SONG");
+    for (int i = 0; i < songs.length(); i++)
+    {
+        if (songs.at(i).toElement().attribute("ID").toInt() == ID)
+        {
+            return songs.at(i).toElement().attribute("Path");
+        }
+    }
+    return "";
 }
 void Xml_Parser::SaveChoosenFolder(QString path)
 {
