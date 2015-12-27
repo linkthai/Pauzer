@@ -41,7 +41,7 @@ QString Master::GetName()
 
 int Master::GetCount()
 {
-	return _songCount;
+    return _list.size();
 }
 
 void Master::ClearList()

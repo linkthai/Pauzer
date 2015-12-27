@@ -7,9 +7,9 @@ Xml_Parser::Xml_Parser()
 void Xml_Parser::Init()
 {
     Xml_Bus BUS;
-    albID = 1;
-    artID = 1;
-    songID = 1;
+    albID = 0;
+    artID = 0;
+    songID = 0;
     root = BUS.creatRoot("DATA");
 }
 QStringList Xml_Parser::GetAllAlbums()
@@ -81,20 +81,15 @@ int Xml_Parser::GetAllAlbumsCountByArtist(int ID)
             return artists.at(i).toElement().childNodes().length();
         }
     }
+    return 0;
 }
-//void Xml_Parser::GetSongsInPlaylist(Master &list)
-//{
-//    if (list.GetCount() != 0)
-//        list.ClearList();
+void Xml_Parser::GetSongsInPlaylist(Master &list)
+{
+    if (list.GetCount() != 0)
+        list.ClearList();
 
-//    QDomNodeList songs = root.elementsByTagName("SONG");
-//    for (int i = 0; i < songs.length(); i++)
-//    {
-//        Song temp;
-//        temp.SetPath(songs.at(i).toElement().attribute("Path").toStdWString());
-//        list.AddToList(temp);
-//    }
-//}
+    list.SetList(GetAllSong());
+}
 
 void SavePlaylist();
 void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString path)

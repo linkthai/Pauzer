@@ -11,6 +11,7 @@ void Playlist::setPlaylist(int playlistNum, bool isShuffling)
 {
     songList.clear();
 
+    int l = Manager::master.GetCount();
     for (int i = 0; i < Manager::master.GetCount(); i++)
     {
         songList.append(i);

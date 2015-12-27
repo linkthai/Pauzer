@@ -26,15 +26,12 @@ SOURCES += main.cpp \
     autodetector.cpp \
     playlist.cpp \
     master.cpp \
-    song.cpp \
     qdraggableframe.cpp \
     volumebutton.cpp \
     volumeslider.cpp \
     xml_bus.cpp \
     xml_common.cpp \
     xml_data.cpp \
-    album.cpp \
-    artist.cpp \
     xml_parser.cpp \
     librarycreator.cpp \
     processwidget.cpp
@@ -49,15 +46,12 @@ HEADERS  += minipauzer.h \
     autodetector.h \
     playlist.h \
     master.h \
-    song.h \
     qdraggableframe.h \
     volumebutton.h \
     volumeslider.h \
     xml_bus.h \
     xml_common.h \
     xml_data.h \
-    album.h \
-    artist.h \
     xml_parser.h \
     librarycreator.h \
     processwidget.h
