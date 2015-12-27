@@ -44,10 +44,10 @@ void Manager::split(const std::wstring& s, char c, std::vector<std::wstring>& v)
    }
 }
 
-void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Master &list, Xml_Parser &parser, bool recursively)
+void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively)
 {
     if (recursively)
-        GetFileListing(directory, fileFilter, list, parser, false);
+        GetFileListing(directory, fileFilter, parser, false);
 
     directory += L"/";
 
@@ -85,10 +85,6 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
 
             CheckSongInfo(title, artist, album, filename);
             parser.AddToDom(title, artist, album, filename);
-
-            Song temp;
-            temp.SetPath(directory + str);
-            list.AddToList(temp);
         }
 
         while (FindNextFile(hFind, &FindFileData) != 0)
@@ -110,11 +106,6 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
 
                 CheckSongInfo(title, artist, album, filename);
                 parser.AddToDom(title, artist, album, filename);
-
-                Song temp;
-                temp.SetPath(directory + str);
-                list.AddToList(temp);
-                //std::cout << directory + std::wstring(FindFileData.cFileName) << std::endl;
             }
             else
             {
@@ -124,7 +115,7 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
 
                     std::wstring str( wstr.begin(), wstr.end() );
 
-                    GetFileListing(directory + str, fileFilter, list, parser);
+                    GetFileListing(directory + str, fileFilter, parser);
                 }
             }
         }
@@ -138,14 +129,14 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Ma
     }
 }
 
-void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Master &list, Xml_Parser &parser, bool recursively)
+void Manager::GetFiles(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively)
 {
     std::vector<std::wstring> ex;
     split(fileFilter, '|', ex);
 
     for (unsigned int i = 0; i < ex.size(); i++)
     {
-        GetFileListing(directory, ex[i], list, parser, recursively);
+        GetFileListing(directory, ex[i], parser, recursively);
     }
 }
 
@@ -166,8 +157,9 @@ void Manager::CreateMaster(QStringList str_list)
 
     for (int i = 0; i < str_list.size(); i++)
     {
-        GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", master, parser, true);
+        GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", parser, true);
     }
+    master.SetList(parser.GetAllSong());
 }
 
 void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, const QString &path)

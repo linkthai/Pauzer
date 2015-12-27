@@ -1,27 +1,24 @@
 #ifndef MASTER_H
 #define MASTER_H
 
-#include "song.h"
-#include <vector>
+#include "stable.h"
 #include <string>
 
 class Master
 {
 private:
-    std::wstring _id;
-    std::wstring _name;
-	int _songCount;
-	std::vector<Song> _list;
+    QString _name;
+    int _songCount;
+    QMap<int, QString> _list;
 public:
 	Master(void);
 	~Master(void);
-	void AddToList(Song song);
-    void RemoveFromList(std::wstring id);
-	void RemoveFromList(int pos);
-	Song Get(int pos);
-    Song Get(std::wstring id);
-    void SetName(std::wstring name);
-    std::wstring GetName();
+    void AddToList(int ID, QString path);
+    void SetList(QMap<int, QString> map);
+    void RemoveFromList(int id);
+    QString Get(int id);
+    void SetName(QString name);
+    QString GetName();
 	int GetCount();
     void ClearList();
 };

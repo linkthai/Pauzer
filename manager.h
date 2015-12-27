@@ -13,8 +13,8 @@ class Manager : public QObject
     Q_OBJECT
 private:
     void static split(const std::wstring& s, char c, std::vector<std::wstring>& v);
-    void static GetFileListing(std::wstring directory, std::wstring fileFilter, Master &list, Xml_Parser &parser, bool recursively = true);
-    void static GetFiles(std::wstring directory, std::wstring fileFilter, Master &list, Xml_Parser &parser, bool recursively = true);
+    void static GetFileListing(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively = true);
+    void static GetFiles(std::wstring directory, std::wstring fileFilter, Xml_Parser &parser, bool recursively = true);
 public:
     static Master master;
     static Xml_Parser parser;

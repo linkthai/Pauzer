@@ -12,11 +12,21 @@ public:
     Xml_Parser();
     QStringList GetAllAlbums();
     QStringList GetAllArtist();
-    QStringList GetAlbumsByArtist(int ID);
-    QList<Song> GetSongsByAlbum(int ID);
+    QMap<int, QString> GetAllSong();
+
+    QList<int> GetAlbumsByArtist(int ID);
+    QList<int> GetSongsByAlbum(int ID);
+
+    QString GetArtistNameByID(int ID);
+    QString GetAlbumNameByID(int ID);
+    QString GetSongPathByID(int ID);
+
     int GetAllAlbumsCount();
     int GetAllArtistsCount();
+    int GetAllSongsCount();
+    int GetAllSongsCountByAlbum(int ID);
     int GetAllAlbumsCountByArtist(int ID);
+
     void GetSongsInPlaylist(Master &list);
 
     void Init();
@@ -28,6 +38,7 @@ private:
     QDomElement root;
     unsigned int albID;
     unsigned int artID;
+    unsigned int songID;
 };
 
 #endif // XML_PARSER_H

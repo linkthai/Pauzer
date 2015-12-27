@@ -3,65 +3,45 @@
 
 Master::Master(void)
 {
-    _id = L"";
-    _name = L"";
 	_songCount = 0;
 }
-
 
 Master::~Master(void)
 {
 }
 
-void Master::AddToList(Song song)
+void Master::AddToList(int ID, QString path)
 {
-    song.SetID(std::to_wstring(_songCount));
-	_list.push_back(song);
+    _list.insert(ID, path);
 	_songCount++;
 }
-
-void Master::RemoveFromList(std::wstring id)
+void Master::SetList(QMap<int, QString> map)
 {
-    for (unsigned int i = 0; i < _list.size(); i++)
-		if (_list[i].GetID() == id)
-		{
-			_list.erase(_list.begin() + i);
-			_songCount--;
-		}
+    _list = map;
+}
+void Master::RemoveFromList(int id)
+{
+    _list.remove(id);
+    _songCount--;
 }
 
-void Master::RemoveFromList(int pos)
+QString Master::Get(int id)
 {
-	_list.erase(_list.begin() + pos);
-	_songCount--;
+    return _list.value(id);
+}
+void Master::SetName(QString name)
+{
+    _name = name;
 }
 
-Song Master::Get(int pos)
+QString Master::GetName()
 {
-	return _list[pos];
-}
-
-Song Master::Get(std::wstring id)
-{
-    for (unsigned int i = 0; i < _list.size(); i++)
-		if (_list[i].GetID() == id)
-		{
-			return _list[i];
-		}
-}
-void Master::SetName(std::wstring name)
-{
-	_name = name;
-}
-
-std::wstring Master::GetName()
-{
-	return _name;
+    return _name;
 }
 
 int Master::GetCount()
 {
-	return _songCount;
+    return _list.size();
 }
 
 void Master::ClearList()

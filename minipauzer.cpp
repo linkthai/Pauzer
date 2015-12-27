@@ -11,6 +11,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
+
     widget = new ProcessWidget(this);
     widget->setModal(true);
 
