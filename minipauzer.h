@@ -8,7 +8,6 @@
 #include "librarycreator.h"
 #include "processwidget.h"
 #include "playlistqueuewidget.h"
-#include "playlistqueue.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -33,7 +32,7 @@ private:
     LibraryCreator *creator;
     QTimer *buttonPlayClickTimer;
 
-    PlaylistQueue *queue;
+    PlaylistQueueModel *model;
     Player *player;
 
     bool isPlaying;

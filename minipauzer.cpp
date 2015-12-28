@@ -12,6 +12,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
 
+    model = new PlaylistQueueModel(this);
+
     widget = new ProcessWidget(this);
     widget->setModal(true);
 
@@ -79,11 +81,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     if (Manager::LoadSongToMaster())
     {
-        queue = PlaylistQueue::getInstance();
-        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
-        queuePanel->createListFromQueue();
-
-        queue->setPlaylistToPlayer();
+        model->initializeModel();
     }
 }
 
@@ -91,9 +89,9 @@ MiniPauzer::~MiniPauzer()
 {
     delete ui;
     delete player;
-    delete queue;
     detector->exit();
     delete detector;
+    delete model;
     delete widget;
     delete buttonPlayClickTimer;
 }
@@ -127,7 +125,7 @@ void MiniPauzer::layoutSetup()
     grd_LeftPanel = new QVBoxLayout();
     grbx_LeftPanel = new QGroupBox(this);
 
-    queuePanel = new PlaylistQueueWidget();
+    queuePanel = new PlaylistQueueWidget(model);
 
     this->setLayout(mainGrid);
     mainGrid->setMargin(0);
@@ -699,14 +697,7 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-        if (queue)
-            queue->clearList();
-        else
-            queue = PlaylistQueue::getInstance();
-        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
-        queuePanel->createListFromQueue();
-
-        queue->setPlaylistToPlayer();
+        model->initializeModel();
     }
 }
 

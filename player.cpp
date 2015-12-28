@@ -35,9 +35,9 @@ Player::~Player()
         delete t;
 }
 
-void Player::changeToPlaylist()
+void Player::changeToPlaylist(Playlist *_playlist)
 {
-    playlist = PlaylistQueue::getInstance()->getCurrentPlaylist();
+    playlist = _playlist;
 
     connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
 
