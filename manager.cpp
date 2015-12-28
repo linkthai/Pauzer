@@ -3,6 +3,7 @@
 
 Master Manager::master;
 Xml_Parser Manager::parser;
+Setting Manager::setting;
 
 Manager::Manager(QObject *parent) :
     QObject(parent)
@@ -144,7 +145,9 @@ void Manager::CreationProcessSuccess(bool isSuccessful)
 {
     if (isSuccessful)
     {
-        parser.SaveChoosenFolder("Master.xml");
+        if (!QDir("Data").exists())
+            QDir().mkdir("Data");
+        parser.SaveChoosenFolder("Data\\Master.xml");
     }
 }
 
@@ -185,7 +188,7 @@ void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, con
 
 bool Manager::LoadSongToMaster()
 {
-    QString XmlPath = "Master.xml";
+    QString XmlPath = "Data\\Master.xml";
     if (fileExists(XmlPath))
     {
         parser.LoadData(XmlPath);

@@ -6,6 +6,7 @@
 
 #include "master.h"
 #include "xml_parser.h"
+#include "setting.h"
 
 class Manager : public QObject
 {
@@ -17,6 +18,7 @@ private:
 public:
     static Master master;
     static Xml_Parser parser;
+    static Setting setting;
     static void CreationProcessSuccess(bool isSuccessful);
     static void CreateMaster(QStringList str_list);
     static void CheckSongInfo(QString &title, QString &artist, QString &album, const QString &path);

@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     processwidget.cpp \
     playlistqueuewidget.cpp \
     playlistlistitem.cpp \
-    playlistqueue.cpp
+    playlistqueue.cpp \
+    setting.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -60,7 +61,8 @@ HEADERS  += minipauzer.h \
     processwidget.h \
     playlistqueuewidget.h \
     playlistlistitem.h \
-    playlistqueue.h
+    playlistqueue.h \
+    setting.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
