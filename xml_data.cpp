@@ -36,10 +36,8 @@ QString Xml_Data::writeXml(QDomElement data, const QString &filename)
         std::cerr << "Error while loading file" << std::endl;
         result = "Error while loading file";
     }
-    QString c = data.childNodes().at(0).toElement().attribute("Artist_name");
     QTextStream stream(&file);
     doc.save(stream, 0);
-    //doc.save(stream, 0);
     file.close();
     return result;
 }

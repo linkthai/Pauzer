@@ -85,6 +85,19 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
         queue->setPlaylistToPlayer();
     }
+
+    QMap<QString, float> t;
+    t.insert("Volume", 50);
+    t.insert("Bar", 10);
+
+    Manager::setting.setList(t);
+    Manager::setting.WriteSetting();
+
+//    Manager::setting.ReadSetting();
+//    t = Manager::setting.list();
+//    Manager::setting.ResetDefault();
+//    t = Manager::setting.list();
+
 }
 
 MiniPauzer::~MiniPauzer()
