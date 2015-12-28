@@ -92,11 +92,6 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     Manager::setting.setList(t);
     Manager::setting.WriteSetting();
-
-//    Manager::setting.ReadSetting();
-//    t = Manager::setting.list();
-//    Manager::setting.ResetDefault();
-//    t = Manager::setting.list();
 }
 
 MiniPauzer::~MiniPauzer()
