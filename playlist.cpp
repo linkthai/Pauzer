@@ -15,6 +15,8 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
     type = _type;
     id = playlistNum;
 
+    QList<int> list;
+
     switch(type)
     {
     default:
@@ -25,10 +27,10 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
         break;
 
     case Type::ALBUM:
-        QList<int> album = Manager::parser.GetSongsByAlbum(playlistNum);
-        for (int i = 0; i < 10; i++)
+        list = Manager::parser.GetSongsByAlbum(playlistNum);
+        for (int i = 0; i < list.size(); i++)
         {
-            songList.append(i + 40);
+            songList.append(list.at(i));
         }
         this->setName(Manager::parser.GetAlbumNameByID(playlistNum));
         break;

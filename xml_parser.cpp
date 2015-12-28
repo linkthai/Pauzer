@@ -63,6 +63,7 @@ QList<int> Xml_Parser::GetSongsByAlbum(int ID)
     {
         list.push_back(songList.childNodes().at(i).toElement().attribute("ID").toInt());
     }
+
     return list;
 }
 int Xml_Parser::GetAllAlbumsCount()
