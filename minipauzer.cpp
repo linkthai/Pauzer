@@ -712,16 +712,11 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-<<<<<<< HEAD
-        queue = PlaylistQueue::getInstance();
-        queue->clearList();
-=======
         if (queue)
             queue->clearList();
         else
             queue = PlaylistQueue::getInstance();
         connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
->>>>>>> refs/remotes/lynxerious/master
         queuePanel->createListFromQueue();
 
         queue->setPlaylistToPlayer();
