@@ -3,7 +3,7 @@
 
 Playlist::Playlist(QObject *parent) : QObject(parent)
 {
-    currentSong = 0;
+    currentSong = -1;
     currentPos = 0;
     id = 0;
 }
@@ -24,6 +24,7 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
         {
             songList.append(i);
         }
+        this->setName("Master");
         break;
 
     case Type::ALBUM:
@@ -36,7 +37,7 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
         break;
     }
 
-    reShuffle();
+    this->setIcon();
 }
 
 Playlist::~Playlist()
@@ -61,14 +62,32 @@ int Playlist::getCurrentSong()
 
 void Playlist::playFirstSong(bool isShuffling)
 {
+    currentSong = -1;
     if (isShuffling)
     {
+        reShuffle();
         currentSong = shuffleList.at(0);
         emit changeCurrentSong(currentSong);
     }
     else
     {
         currentSong = songList.at(0);
+        emit changeCurrentSong(currentSong);
+    }
+}
+
+void Playlist::playLastSong(bool isShuffling)
+{
+    currentSong = -1;
+    if (isShuffling)
+    {
+        reShuffle();
+        currentSong = shuffleList.at(shuffleList.size() - 1);
+        emit changeCurrentSong(currentSong);
+    }
+    else
+    {
+        currentSong = songList.at(songList.size() - 1);
         emit changeCurrentSong(currentSong);
     }
 }
@@ -82,8 +101,8 @@ void Playlist::nextSong(bool isShuffling)
         num = shuffleList.indexOf(currentSong);
         if (num == shuffleList.size() - 1)
         {
-            reShuffle();
-            num = 0;
+            emit nextPlaylist();
+            return;
         }
         else
         {
@@ -96,7 +115,8 @@ void Playlist::nextSong(bool isShuffling)
         num = songList.indexOf(currentSong);
         if (num == songList.size() - 1)
         {
-            num = 0;
+            emit nextPlaylist();
+            return;
         }
         else
         {
@@ -105,10 +125,7 @@ void Playlist::nextSong(bool isShuffling)
         currentSong = songList.at(num);
     }
 
-    if (num == 0)
-        emit changeCurrentSong(currentSong);
-    else
-        emit changeCurrentSong(currentSong);
+    emit changeCurrentSong(currentSong);
 }
 
 void Playlist::prevSong(bool isShuffling)
@@ -120,7 +137,8 @@ void Playlist::prevSong(bool isShuffling)
         num = shuffleList.indexOf(currentSong);
         if (num == 0)
         {
-            num = 0;
+            emit prevPlaylist();
+            return;
         }
         else
         {
@@ -133,7 +151,8 @@ void Playlist::prevSong(bool isShuffling)
         num = songList.indexOf(currentSong);
         if (num == 0)
         {
-            num = songList.size() - 1;
+            emit prevPlaylist();
+            return;
         }
         else
         {
@@ -162,10 +181,10 @@ void Playlist::reShuffle(bool changeSong)
         tempList.removeAt(rand);
     }
 
-    if (changeSong == true)
+    //if the playlist is playing
+    if (currentSong != -1)
     {
-        currentSong = shuffleList.at(0);
-        emit changeCurrentSong(currentSong);
+        shuffleList.move(shuffleList.indexOf(currentSong), 0);
     }
 }
 
@@ -180,6 +199,75 @@ void Playlist::setName(QString _name)
 QString Playlist::getName()
 {
     return name;
+}
+
+void Playlist::setIcon()
+{
+    QString filename;
+    bool coverFound = false;
+    int i = 0;
+
+    if (type == Playlist::Type::MASTER)
+    {
+        QPixmap pixMap(":/icons/Pauzer_Icon.png");
+        icon.addPixmap(pixMap, QIcon::Normal);
+        icon.addPixmap(pixMap, QIcon::Selected);
+
+        coverFound = true;
+    }
+
+    while (coverFound == false && i < songList.size())
+    {
+        filename = Manager::master.Get(songList.at(i));
+        TagLib::MPEG::File f(reinterpret_cast<const wchar_t*>(filename.constData()));
+
+        TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
+
+        if (tag->isEmpty())
+        {
+            i++;
+            continue;
+        }
+
+        TagLib::ID3v2::FrameList framelist = tag->frameList("APIC");
+
+        if (framelist.isEmpty())
+        {
+            i++;
+            continue;
+        }
+        else
+        {
+            TagLib::ID3v2::AttachedPictureFrame *pic = static_cast<TagLib::ID3v2::AttachedPictureFrame *>(framelist.front());
+            if (pic)
+            {
+                QImage coverArt;
+                coverArt.loadFromData((const uchar *)pic->picture().data(), pic->picture().size());
+
+                QPixmap pixMap = QPixmap::fromImage(coverArt);
+                icon.addPixmap(pixMap, QIcon::Normal);
+                icon.addPixmap(pixMap, QIcon::Selected);
+                coverFound = true;
+            }
+            else
+            {
+                i++;
+                continue;
+            }
+        }
+    }
+
+    if (coverFound == false)
+    {
+        QPixmap pixMap(":/resources/cover.png");
+        icon.addPixmap(pixMap, QIcon::Normal);
+        icon.addPixmap(pixMap, QIcon::Selected);
+    }
+}
+
+QIcon Playlist::getIcon()
+{
+    return icon;
 }
 
 Playlist::Type Playlist::getType()

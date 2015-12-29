@@ -15,13 +15,22 @@ public:
     ~PlaylistQueueModel();
 
     void initializeModel();
-    void clearModel();
+    void setCurrentPlaylist(const int &num, bool firstSong = true);
+    void clearQueue();
+    int getCurrentPlaylistNum() const;
+    bool removePlaylist(const int &row);
+    bool movePlaylist(const int &from, const int &to);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+    bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+    bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count,
+                  const QModelIndex & destinationParent, int destinationChild);
 private:
     QList<Playlist *> list;
-    int currentPlaylist;
+signals:
+    void playlistRemoved();
+    void endOfQueue();
 };
 
 #endif // PLAYLISTQUEUEMODEL_H

@@ -69,6 +69,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     //connect player and volume button
     connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
 
+    //connect end Of Queue to pause button
+    connect(model, SIGNAL(endOfQueue()), this, SLOT(on_btn_Play_clicked()));
+
 	isPlaying = false;
     isDetectorOn = false;
 	isManuallyPlayed = false;

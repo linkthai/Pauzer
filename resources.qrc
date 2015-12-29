@@ -49,5 +49,15 @@
         <file>icons/Master.png</file>
         <file>icons/Master_Hover.png</file>
         <file>icons/Pauzer_Icon.png</file>
+        <file>icons/Playlist_Clear.png</file>
+        <file>icons/Playlist_Clear_Hover.png</file>
+        <file>icons/Playlist_Delete.png</file>
+        <file>icons/Playlist_Delete_Hover.png</file>
+        <file>icons/Playlist_Down.png</file>
+        <file>icons/Playlist_Down_Hover.png</file>
+        <file>icons/Playlist_Play.png</file>
+        <file>icons/Playlist_Play_Hover.png</file>
+        <file>icons/Playlist_Up.png</file>
+        <file>icons/Playlist_Up_Hover.png</file>
     </qresource>
 </RCC>
