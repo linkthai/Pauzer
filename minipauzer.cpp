@@ -94,6 +94,34 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     Manager::setting.WriteSetting();
 }
 
+void MiniPauzer::createThumbBar()
+{
+    thumbnailToolBar = new QWinThumbnailToolBar(this);
+    thumbnailToolBar->setWindow(this->windowHandle());
+
+    playToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
+    playToolButton->setEnabled(true);
+    playToolButton->setToolTip(tr("Play/Pause"));
+    playToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    connect(playToolButton, SIGNAL(clicked()), this, SLOT(on_btn_Play_clicked()));
+
+    forwardToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
+    forwardToolButton->setEnabled(true);
+    forwardToolButton->setToolTip(tr("Next track"));
+    forwardToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+    connect(forwardToolButton, SIGNAL(clicked()), this, SLOT(on_btn_Next_clicked()));
+
+    backwardToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
+    backwardToolButton->setEnabled(true);
+    backwardToolButton->setToolTip(tr("Previous track"));
+    backwardToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    connect(backwardToolButton, SIGNAL(clicked()), this, SLOT(on_btn_Prev_clicked()));
+
+    thumbnailToolBar->addButton(backwardToolButton);
+    thumbnailToolBar->addButton(playToolButton);
+    thumbnailToolBar->addButton(forwardToolButton);
+}
+
 MiniPauzer::~MiniPauzer()
 {
     delete ui;

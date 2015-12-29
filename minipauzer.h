@@ -88,12 +88,18 @@ private:
     void createMenu();
     void changeState(State _state);
 
+    QWinThumbnailToolBar* thumbnailToolBar;
+    QWinThumbnailToolButton *playToolButton;
+    QWinThumbnailToolButton *forwardToolButton;
+    QWinThumbnailToolButton *backwardToolButton;
+
 protected:
     void resizeEvent(QResizeEvent * event);
 
 public:
     explicit MiniPauzer(QWidget *parent = 0);
     ~MiniPauzer();
+    void createThumbBar();
 
 private slots:
     void updateLabelCurTime(int time);

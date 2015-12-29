@@ -45,7 +45,6 @@ void AutoDetector::run()
 void AutoDetector::start()
 {
     connect(t, SIGNAL(timeout()), this, SLOT(checkAudioOutput()));
-
 }
 
 void AutoDetector::pause()
