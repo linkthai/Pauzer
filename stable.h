@@ -29,6 +29,8 @@
 #include <QAction>
 #include <QFrame>
 #include <QFileInfo>
+#include <QWinThumbnailToolButton>
+#include <QWinThumbnailToolBar>
 
 #include <bass.h>
 
