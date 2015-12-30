@@ -67,7 +67,7 @@ FORMS    += minipauzer.ui \
     folderdialog.ui \
     volumeslider.ui \
     processwidget.ui \
-    playlistqueuewidget.ui
+    playlistqueuewidget.ui \
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \
@@ -93,17 +93,6 @@ LIBS += -LC:\Libraries\bass24\c -lbass \
 
 
 win32:LIBS += -lOle32 \
-
-DISTFILES += \
-    icons/Playlist_Clear.png \
-    icons/Playlist_Delete.png \
-    icons/Playlist_Delete_Hover.png \
-    icons/Playlist_Down.png \
-    icons/Playlist_Down_Hover.png \
-    icons/Playlist_Play.png \
-    icons/Playlist_Play_Hover.png \
-    icons/Playlist_Up.png \
-    icons/Playlist_Up_Hover.png
 
 RESOURCES += \
     resources.qrc \

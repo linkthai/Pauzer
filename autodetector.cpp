@@ -99,7 +99,7 @@ void AutoDetector::checkAudioOutput()
 					float peak = 0;
 					pAudioMeterInfo->GetPeakValue(&peak);
 					
-					if (peak < 0.001)
+                    if (peak < 0.001)
 						peak = 0;
 
 					if (peak != 0)

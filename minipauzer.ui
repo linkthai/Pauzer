@@ -561,11 +561,11 @@ QPushButton:hover {
 }
 
 QPushButton:checked:disabled {
-	image: url(:/icons/Pause_Inactive.png);
+	image: url(:/icons/Pause.png);
 }
 
 QPushButton:disabled {
-	image: url(:/icons/Play_Inactive.png);
+	image: url(:/icons/Play.png);
 }</string>
    </property>
    <property name="text">

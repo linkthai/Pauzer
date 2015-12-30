@@ -35,11 +35,7 @@ private:
     PlaylistQueueModel *model;
     Player *player;
 
-    bool isPlaying;
     bool isDetectorOn;
-    bool isManuallyPlayed;
-    bool isAutoPauseAllowed;
-    bool isButtonPlayClickAllowed;
     bool isProcessCanceled;
 
     QVBoxLayout *mainGrid;
