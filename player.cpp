@@ -35,13 +35,23 @@ Player::~Player()
         delete t;
 }
 
-void Player::changeToPlaylist()
+void Player::changeToPlaylist(Playlist *_playlist, bool playFirstSong)
 {
-    playlist = PlaylistQueue::getInstance()->getCurrentPlaylist();
+    if (playlist)
+    {
+        disconnect(playlist, 0, 0, 0);
+    }
+
+    playlist = _playlist;
 
     connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
+    connect(playlist, SIGNAL(nextPlaylist()), this, SIGNAL(nextPlaylist()));
+    connect(playlist, SIGNAL(prevPlaylist()), this, SIGNAL(prevPlaylist()));
 
-    playlist->playFirstSong(isShuffling);
+    if (playFirstSong)
+        playlist->playFirstSong(isShuffling);
+    else
+        playlist->playLastSong(isShuffling);
 }
 
 void Player::changeToSong(int songNum)
@@ -175,6 +185,11 @@ float Player::getVolume()
     return vol;
 }
 
+Playlist *Player::getPlaylist()
+{
+    return playlist;
+}
+
 void Player::checkEndPlayback()
 {
     if (endOfPlayback)
@@ -190,6 +205,11 @@ void Player::checkEndPlayback()
         }
         endOfPlayback = false;
     }
+}
+
+bool Player::getShuffle()
+{
+    return isShuffling;
 }
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user)
@@ -222,7 +242,7 @@ void Player::play()
 
     //Fade in music after starting or resuming
     BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, 0);
-    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, volume, 750);
+    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, volume, 500);
 }
 
 void Player::pause()
@@ -231,7 +251,7 @@ void Player::pause()
     emit changePlaying(isPlaying);
 
     //Fade out music
-    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0.f, 750);
+    BASS_ChannelSlideAttribute(channel, BASS_ATTRIB_VOL, 0.f, 500);
 
     //After fade out call function to pause
     BASS_ChannelSetSync(channel, BASS_SYNC_SLIDE | BASS_SYNC_ONETIME, 0.f, &PauseAfterFadeOut, 0);

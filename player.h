@@ -3,7 +3,6 @@
 
 #include "playlist.h"
 #include "manager.h"
-#include "playlistqueue.h"
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user);
 void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user);
@@ -27,6 +26,7 @@ public:
     ~Player();
     bool getPlaying();
     float getVolume();
+    Playlist *getPlaylist();
 
     static Player* getInstance()
     {
@@ -46,6 +46,8 @@ signals:
 	void changePlaying(bool isPlaying);
     void testText(QString str);
     void endOfPlaylistNoRepeat();
+    void nextPlaylist();
+    void prevPlaylist();
 public slots:
     void play();
     void pause();
@@ -54,11 +56,13 @@ public slots:
     void setPosition(int cur);
     void signalUpdate();
     void changeToSong(int songNum);
-    void changeToPlaylist();
+    void changeToPlaylist(Playlist *_playlist, bool playFirstSong = true);
     void setShuffle(bool state);
     void setRepeat(bool state);
     void setVolume(float vol);
     void checkEndPlayback();
+
+    bool getShuffle();
 };
 
 #endif // PLAYER_H

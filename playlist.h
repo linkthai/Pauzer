@@ -2,6 +2,7 @@
 #define PLAYLIST_H
 
 #include <QList>
+#include <QIcon>
 
 class Playlist : public QObject
 {
@@ -16,6 +17,7 @@ public:
     void setPlaylist(Type _type, int playlistNum);
     int getCurrentSong();
     void playFirstSong(bool isShuffling);
+    void playLastSong(bool isShuffling);
     void nextSong(bool isShuffling);
     void prevSong(bool isShuffling);
     void reShuffle(bool changeSong = false);
@@ -23,8 +25,12 @@ public:
     void setName(QString _name);
     QString getName();
 
+    void setIcon();
+    QIcon getIcon();
+
     Type getType();
     int getId();
+
 private:
     QString name;
     QList<int> songList;
@@ -33,8 +39,11 @@ private:
     int currentPos;
     Type type;
     int id;
+    QIcon icon;
 signals:
     void changeCurrentSong(int currentSong);
+    void nextPlaylist();
+    void prevPlaylist();
 public slots:
 };
 

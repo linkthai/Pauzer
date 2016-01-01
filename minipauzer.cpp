@@ -12,6 +12,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
 
+    model = new PlaylistQueueModel(this);
+
     widget = new ProcessWidget(this);
     widget->setModal(true);
 
@@ -67,23 +69,17 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     //connect player and volume button
     connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
 
-	isPlaying = false;
-    isDetectorOn = false;
-	isManuallyPlayed = false;
-	isAutoPauseAllowed = false;
-    isProcessCanceled = false;
+    //connect end Of Queue to pause button
+    connect(model, SIGNAL(endOfQueue()), this, SLOT(on_btn_Play_clicked()));
 
-    isButtonPlayClickAllowed = true;
+    isDetectorOn = false;
+    isProcessCanceled = false;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
     if (Manager::LoadSongToMaster())
     {
-        queue = PlaylistQueue::getInstance();
-        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
-        queuePanel->createListFromQueue();
-
-        queue->setPlaylistToPlayer();
+        model->initializeModel();
     }
 
     QMap<QString, float> t;
@@ -126,9 +122,9 @@ MiniPauzer::~MiniPauzer()
 {
     delete ui;
     delete player;
-    delete queue;
     detector->exit();
     delete detector;
+    delete model;
     delete widget;
     delete buttonPlayClickTimer;
 }
@@ -162,7 +158,7 @@ void MiniPauzer::layoutSetup()
     grd_LeftPanel = new QVBoxLayout();
     grbx_LeftPanel = new QGroupBox(this);
 
-    queuePanel = new PlaylistQueueWidget();
+    queuePanel = new PlaylistQueueWidget(model);
 
     this->setLayout(mainGrid);
     mainGrid->setMargin(0);
@@ -628,24 +624,53 @@ void MiniPauzer::resizeEvent(QResizeEvent *event)
 
 void MiniPauzer::on_btn_Play_clicked()
 {
-    if (isButtonPlayClickAllowed == true)
-	{
-        isButtonPlayClickAllowed = false;
-
+    if (ui->btn_Play->isEnabled())
+    {
+        ui->btn_Play->setEnabled(false);
         buttonPlayClickTimer->start(500);
 
 		if (player->getPlaying() == false)
-		{
-			isManuallyPlayed = true;
-			isDetectorOn = true;
-			player->play();
+        {
+            isDetectorOn = true;
+            player->play();
 		}
 		else
 		{
 			isDetectorOn = false;
-			player->pause();
+            player->pause();
 		}
 	}
+}
+
+
+void MiniPauzer::detectAudio(int audio_num)
+{
+    if (isDetectorOn && ui->btn_Play->isEnabled())
+    {
+        if (player->getPlaying() == true)
+        {
+            if (audio_num > 1)
+            {
+                ui->btn_Play->setEnabled(false);
+                buttonPlayClickTimer->start(500);
+                player->pause();
+            }
+        }
+        else
+        {
+            if (audio_num == 0)
+            {
+                ui->btn_Play->setEnabled(false);
+                buttonPlayClickTimer->start(500);
+                player->play();
+            }
+        }
+    }
+}
+
+void MiniPauzer::releaseButtonPlay()
+{
+    ui->btn_Play->setEnabled(true);
 }
 
 void MiniPauzer::on_sliderBar_sliderPressed()
@@ -734,14 +759,7 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-        if (queue)
-            queue->clearList();
-        else
-            queue = PlaylistQueue::getInstance();
-        connect(queue, SIGNAL(currentPlaylistChanged()), queuePanel, SLOT(changeCurrentPlaylist()));
-        queuePanel->createListFromQueue();
-
-        queue->setPlaylistToPlayer();
+        model->initializeModel();
     }
 }
 
@@ -750,44 +768,6 @@ void MiniPauzer::processTerminated()
     isProcessCanceled = true;
 
     Manager::LoadSongToMaster();
-}
-
-
-void MiniPauzer::detectAudio(int audio_num)
-{
-	if (isDetectorOn)
-	{
-		if (audio_num <= 1 && isAutoPauseAllowed == false)
-			isAutoPauseAllowed = true;
-
-		if (isManuallyPlayed == true && isAutoPauseAllowed == true)
-		{
-			if (audio_num > 1)
-				isAutoPauseAllowed = false;
-			isManuallyPlayed = false;
-		}
-
-		if (player->getPlaying() == true)
-		{
-			if (audio_num > 1 && isAutoPauseAllowed == true)
-			{
-				player->pause();
-			}
-		}
-		else
-		{
-			if (audio_num == 0)
-			{
-				player->play();
-			}
-		}
-	}
-
-}
-
-void MiniPauzer::releaseButtonPlay()
-{
-    isButtonPlayClickAllowed = true;
 }
 
 void MiniPauzer::on_btn_Prev_clicked()

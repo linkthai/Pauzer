@@ -25,7 +25,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="QListWidget" name="view_Playlist">
+  <widget class="QListView" name="view_Playlist">
    <property name="geometry">
     <rect>
      <x>11</x>
@@ -59,36 +59,39 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QPushButton" name="btn_Play">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="text">
-       <string>Play</string>
+       <string/>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="btn_Up">
       <property name="text">
-       <string>Up</string>
+       <string/>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="btn_Down">
       <property name="text">
-       <string>Down</string>
+       <string/>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="btn_Remove">
+     <widget class="QPushButton" name="btn_Delete">
       <property name="text">
-       <string>Remove</string>
+       <string/>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="btn_Clear">
       <property name="text">
-       <string>Clear</string>
+       <string/>
       </property>
      </widget>
     </item>

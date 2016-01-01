@@ -3,11 +3,15 @@
 #include <QBoxLayout>
 #include <QGroupBox>
 
-PlaylistQueueWidget::PlaylistQueueWidget(QWidget *parent) :
+PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PlaylistQueueWidget)
 {
     ui->setupUi(this);
+
+    model = _model;
+    connect(Player::getInstance(), SIGNAL(nextPlaylist()), this, SLOT(changeNextPlaylist()));
+    connect(Player::getInstance(), SIGNAL(prevPlaylist()), this, SLOT(changePrevPlaylist()));
 
     QVBoxLayout *layout = new QVBoxLayout();
     this->setLayout(layout);
@@ -27,31 +31,36 @@ PlaylistQueueWidget::PlaylistQueueWidget(QWidget *parent) :
     grd_main->setDirection(QBoxLayout::TopToBottom);
 
     grd_main->addWidget(ui->view_Playlist);
-    ui->view_Playlist->setStyleSheet("QListWidget {"
+    model->setParent(ui->view_Playlist);
+    ui->view_Playlist->setStyleSheet("QListView#view_Playlist {"
                                      "border: 1px solid #737373;"
                                      "border-radius: 4px;"
                                      "background-color: #1a1a1a;"
+                                     "selection-color: red;"
+                                     "selection-background-color: red;"
                                      "outline: 0px;"
                                      "}"
-                                     "QListWidget::item {"
-                                     "background-color: transparent;"
-                                     "color: white;"
+                                     "QListView::item {"
                                      "height: 60px;"
-                                     "margin: 2px;"
                                      "padding: 5px;"
-                                     "border-radius: 2px;"
                                      "}"
-                                     "QListWidget::item:selected {"
-                                     "selection-color: #61d169;"
-                                     "selection-background-color: white;"
+                                     "QListView::item:selected:active {"
+                                     "background-color: #404040;"
+                                     "color: white;"
+                                     "}"
+                                     "QListView::item:selected:!active {"
                                      "background-color: #4d4d4d;"
+                                     "color: lightgray;"
                                      "}");
     ui->view_Playlist->setContentsMargins(10, 10, 10, 10);
+    ui->view_Playlist->setIconSize(QSize(60, 60));
+    ui->view_Playlist->setModel(model);
+
     ui->view_Playlist->setDragDropMode(QAbstractItemView::DragDrop);
     ui->view_Playlist->setDefaultDropAction(Qt::MoveAction);
     ui->view_Playlist->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->view_Playlist->setIconSize(QSize(50, 50));
     ui->view_Playlist->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->view_Playlist->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     grd_main->addWidget(ui->grbx_Playlist);
     ui->grbx_Playlist->setStyleSheet("QGroupBox {"
@@ -61,7 +70,59 @@ PlaylistQueueWidget::PlaylistQueueWidget(QWidget *parent) :
     ui->grbx_Playlist->setContentsMargins(5, 5, 5, 5);
     ui->grbx_Playlist->setFixedHeight(50);
 
-    grbx_item == NULL;
+    ui->btn_Play->setStyleSheet("QPushButton#btn_Play{"
+                                "width: 30px;"
+                                "height: 30px;"
+                                "image: url(:/icons/Playlist_Play.png)"
+                                "}"
+                                "QPushButton#btn_Play:hover{"
+                                "image: url(:/icons/Playlist_Play_Hover.png)"
+                                "}");
+    ui->btn_Play->setToolTip(tr("Start playlist"));
+
+    ui->btn_Up->setStyleSheet("QPushButton#btn_Up{"
+                                "width: 30px;"
+                                "height: 30px;"
+                                "image: url(:/icons/Playlist_Up.png)"
+                                "}"
+                                "QPushButton#btn_Up:hover{"
+                                "image: url(:/icons/Playlist_Up_Hover.png)"
+                                "}");
+    ui->btn_Up->setToolTip(tr("Move up playlist"));
+
+    ui->btn_Down->setStyleSheet("QPushButton#btn_Down{"
+                                "width: 30px;"
+                                "height: 30px;"
+                                "image: url(:/icons/Playlist_Down.png)"
+                                "}"
+                                "QPushButton#btn_Down:hover{"
+                                "image: url(:/icons/Playlist_Down_Hover.png)"
+                                "}");
+    ui->btn_Down->setToolTip(tr("Move down playlist"));
+
+
+    ui->btn_Delete->setStyleSheet("QPushButton#btn_Delete{"
+                                "width: 30px;"
+                                "height: 30px;"
+                                "image: url(:/icons/Playlist_Delete.png)"
+                                "}"
+                                "QPushButton#btn_Delete:hover{"
+                                "image: url(:/icons/Playlist_Delete_Hover.png)"
+                                "}");
+    ui->btn_Delete->setToolTip(tr("Delete playlist"));
+
+
+    ui->btn_Clear->setStyleSheet("QPushButton#btn_Clear{"
+                                "width: 30px;"
+                                "height: 30px;"
+                                "image: url(:/icons/Playlist_Clear.png)"
+                                "}"
+                                "QPushButton#btn_Clear:hover{"
+                                "image: url(:/icons/Playlist_Clear_Hover.png)"
+                                "}");
+    ui->btn_Clear->setToolTip(tr("Clear playlist"));
+
+
 
 }
 
@@ -70,60 +131,61 @@ PlaylistQueueWidget::~PlaylistQueueWidget()
     delete ui;
 }
 
-void PlaylistQueueWidget::createListFromQueue()
-{
-    queue = PlaylistQueue::getInstance();
-    ui->view_Playlist->clear();
-
-    QList<Playlist *> playlist = queue->getList();
-    PlaylistListItem *item = NULL;
-    Playlist *current = NULL;
-
-    for (int i = 0; i < playlist.size(); i++)
-    {
-        current = playlist.at(i);
-        item = new PlaylistListItem(current->getType(), current->getId(), current->getName());
-
-        ui->view_Playlist->addItem(item);
-    }
-
-}
-
 void PlaylistQueueWidget::on_btn_Play_clicked()
 {
+    if (ui->view_Playlist->selectionModel()->selectedRows().size() == 0)
+        return;
 
-    if (ui->view_Playlist->selectedItems().size() != 0)
-    {
-        PlaylistListItem *item = static_cast<PlaylistListItem *>(ui->view_Playlist->selectedItems().first());
+    int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
 
-        if (item)
-        {
-            queue = PlaylistQueue::getInstance();
-
-            queue->setPlaylistToPlayer(ui->view_Playlist->row(item));
-        }
-    }
+    model->setCurrentPlaylist(selected);
 }
 
-void PlaylistQueueWidget::changeCurrentPlaylist()
+void PlaylistQueueWidget::on_btn_Clear_clicked()
 {
-    PlaylistListItem *item = static_cast<PlaylistListItem *>
-            (ui->view_Playlist->item(queue->getCurrentPlaylistNum()));
-    Playlist *current = queue->getCurrentPlaylist();
+    model->clearQueue();
+}
 
-    for (int i = 0; i < ui->view_Playlist->count(); i++)
-        ui->view_Playlist->removeItemWidget(ui->view_Playlist->item(i));
+void PlaylistQueueWidget::on_btn_Delete_clicked()
+{
+    if (ui->view_Playlist->selectionModel()->selectedRows().size() == 0)
+        return;
 
-    grbx_item = new QLabel(this);
-    QGridLayout *grd_item = new QGridLayout();
-    grbx_item->setLayout(grd_item);
+    int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
 
-    grbx_item->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    grbx_item->setStyleSheet("background-color: #61d169;"
-                             "border: 2px solid #61d169;"
-                             "color: white;");
-    grbx_item->setFont(QFont("Segoe UI", 12));
-    grbx_item->setText(current->getName());
+    model->removePlaylist(selected);
+}
 
-    ui->view_Playlist->setItemWidget(item, grbx_item);
+void PlaylistQueueWidget::on_btn_Up_clicked()
+{
+    if (ui->view_Playlist->selectionModel()->selectedRows().size() == 0)
+        return;
+
+    int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
+
+    model->movePlaylist(selected, selected - 1);
+}
+
+void PlaylistQueueWidget::on_btn_Down_clicked()
+{
+    if (ui->view_Playlist->selectionModel()->selectedRows().size() == 0)
+        return;
+
+    int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
+
+    model->movePlaylist(selected, selected + 1);
+}
+
+void PlaylistQueueWidget::changeNextPlaylist()
+{
+    int current = model->getCurrentPlaylistNum();
+
+    model->setCurrentPlaylist(current + 1, true);
+}
+
+void PlaylistQueueWidget::changePrevPlaylist()
+{
+    int current = model->getCurrentPlaylistNum();
+
+    model->setCurrentPlaylist(current - 1, false);
 }

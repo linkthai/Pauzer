@@ -37,9 +37,8 @@ SOURCES += main.cpp \
     librarycreator.cpp \
     processwidget.cpp \
     playlistqueuewidget.cpp \
-    playlistlistitem.cpp \
-    playlistqueue.cpp \
-    setting.cpp
+    playlistqueuemodel.cpp \
+    setting.cpp \
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -61,15 +60,14 @@ HEADERS  += minipauzer.h \
     librarycreator.h \
     processwidget.h \
     playlistqueuewidget.h \
-    playlistlistitem.h \
-    playlistqueue.h \
-    setting.h
+    playlistqueuemodel.h \
+    setting.h \
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
     volumeslider.ui \
     processwidget.ui \
-    playlistqueuewidget.ui
+    playlistqueuewidget.ui \
 
 INCLUDEPATH += C:\Libraries\bass24\c \
                 C:\Libraries\taglib\include \
@@ -95,8 +93,6 @@ LIBS += -LC:\Libraries\bass24\c -lbass \
 
 
 win32:LIBS += -lOle32 \
-
-DISTFILES +=
 
 RESOURCES += \
     resources.qrc \

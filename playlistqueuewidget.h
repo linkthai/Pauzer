@@ -2,8 +2,8 @@
 #define PLAYLISTQUEUEWIDGET_H
 
 #include <QWidget>
-#include "playlistlistitem.h"
-#include "playlistqueue.h"
+#include <QScrollBar>
+#include "playlistqueuemodel.h"
 
 namespace Ui {
 class PlaylistQueueWidget;
@@ -14,18 +14,26 @@ class PlaylistQueueWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit PlaylistQueueWidget(QWidget *parent = 0);
+    explicit PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *parent = 0);
     ~PlaylistQueueWidget();
-
-    void createListFromQueue();
-public slots:
-    void changeCurrentPlaylist();
 private slots:
     void on_btn_Play_clicked();
+
+    void on_btn_Clear_clicked();
+
+    void on_btn_Delete_clicked();
+
+    void on_btn_Up_clicked();
+
+    void on_btn_Down_clicked();
+
+    void changeNextPlaylist();
+    void changePrevPlaylist();
+
 private:
     Ui::PlaylistQueueWidget *ui;
     QLabel *grbx_item;
-    PlaylistQueue *queue;
+    PlaylistQueueModel *model;
 
 };
 
