@@ -8,6 +8,7 @@
 #include "librarycreator.h"
 #include "processwidget.h"
 #include "playlistqueuewidget.h"
+#include "mastermodel.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -22,17 +23,21 @@ private:
     static const int miniHeight = 250;
 
     enum class State { FULL, MINI };
+    enum class Panel { MASTER };
 
     ProcessWidget *widget;
     FolderDialog *dialog;
 
     State state;
+    Panel panel;
     Ui::MiniPauzer *ui;
     AutoDetector *detector;
     LibraryCreator *creator;
     QTimer *buttonPlayClickTimer;
 
-    PlaylistQueueModel *model;
+    PlaylistQueueModel *queueModel;
+    MasterModel *masterModel;
+
     Player *player;
 
     bool isDetectorOn;
@@ -64,6 +69,14 @@ private:
     QVBoxLayout *grd_LeftPanel;
     QGroupBox *grbx_LeftPanel;
 
+    QVBoxLayout *grd_MidPanel;
+    QGroupBox *grbx_MidPanel;
+
+    QGridLayout *grd_PanelInfo;
+    QGroupBox *grbx_PanelInfo;
+
+    QTableView *tableView;
+
     PlaylistQueueWidget *queuePanel;
 
     QSizeGrip *grip;
@@ -81,6 +94,7 @@ private:
     void loadData();
     void changeStyle();
     void createMenu();
+    void changePanel(Panel _panel);
     void changeState(State _state);
 
     QWinThumbnailToolBar* thumbnailToolBar;

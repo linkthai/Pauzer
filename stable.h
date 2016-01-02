@@ -31,6 +31,7 @@
 #include <QFileInfo>
 #include <QWinThumbnailToolButton>
 #include <QWinThumbnailToolBar>
+#include <QTableView>
 
 #include <bass.h>
 
