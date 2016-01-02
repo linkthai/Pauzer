@@ -12,7 +12,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     detector = new AutoDetector(this);
     creator = new LibraryCreator(this);
 
-    model = new PlaylistQueueModel(this);
+    queueModel = new PlaylistQueueModel(this);
+    masterModel = new MasterModel(this);
 
     widget = new ProcessWidget(this);
     widget->setModal(true);
@@ -70,17 +71,22 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
 
     //connect end Of Queue to pause button
-    connect(model, SIGNAL(endOfQueue()), this, SLOT(on_btn_Play_clicked()));
+    connect(queueModel, SIGNAL(endOfQueue()), this, SLOT(on_btn_Play_clicked()));
 
     isDetectorOn = false;
     isProcessCanceled = false;
 
     qsrand(QTime::currentTime().msecsSinceStartOfDay());
 
+    tableView->setModel(masterModel);
+
     if (Manager::LoadSongToMaster())
     {
-        model->initializeModel();
+        queueModel->initializeModel();
     }
+
+    changePanel(Panel::MASTER);
+
 
     QMap<QString, float> t;
     t.insert("Volume", 50);
@@ -124,7 +130,7 @@ MiniPauzer::~MiniPauzer()
     delete player;
     detector->exit();
     delete detector;
-    delete model;
+    delete queueModel;
     delete widget;
     delete buttonPlayClickTimer;
 }
@@ -158,7 +164,15 @@ void MiniPauzer::layoutSetup()
     grd_LeftPanel = new QVBoxLayout();
     grbx_LeftPanel = new QGroupBox(this);
 
-    queuePanel = new PlaylistQueueWidget(model);
+    grd_MidPanel = new QVBoxLayout();
+    grbx_MidPanel = new QGroupBox(this);
+
+    grd_PanelInfo = new QGridLayout();
+    grbx_PanelInfo = new QGroupBox(this);
+
+    tableView = new QTableView();
+
+    queuePanel = new PlaylistQueueWidget(queueModel);
 
     this->setLayout(mainGrid);
     mainGrid->setMargin(0);
@@ -215,20 +229,23 @@ void MiniPauzer::layoutSetup()
 
     //Manager layout
     grbx_Manager->setLayout(grd_Manager);
-    grbx_Manager->setStyleSheet("QGroupBox#grbx_Manager {border:0;}");
+    grbx_Manager->setStyleSheet("border:0;");
     grbx_Manager->setContentsMargins(0, 0, 0, 0);
     grd_Manager->setMargin(0);
     grd_Manager->setContentsMargins(0, 0, 0, 0);
     mainGrid->addWidget(grbx_Manager, Qt::AlignTop);
 
     grd_Manager->setDirection(QBoxLayout::LeftToRight);
+    grd_Manager->setSpacing(0);
 
     //---------LeftPanel--------------------
-    grd_Manager->addWidget(grbx_LeftPanel, 0, Qt::AlignLeft);
+    grd_Manager->addWidget(grbx_LeftPanel);
+    grd_Manager->setAlignment(grbx_LeftPanel, Qt::AlignLeft);
     grbx_LeftPanel->setLayout(grd_LeftPanel);
     grbx_LeftPanel->setFixedWidth(250);
     grbx_LeftPanel->setContentsMargins(0, 0, 0, 0);
     grd_LeftPanel->setMargin(0);
+    grd_LeftPanel->setSpacing(0);
 
     grd_LeftPanel->setDirection(QBoxLayout::TopToBottom);
 
@@ -243,23 +260,37 @@ void MiniPauzer::layoutSetup()
     ui->spr_Icon->setContentsMargins(10, 0, 10, 0);
     grd_LeftPanel->addWidget(ui->spr_Icon);
 
-    grd_LeftPanel->addWidget(ui->btn_Master, 1, Qt::AlignTop);
+    grd_LeftPanel->addWidget(ui->btn_Master);
     ui->btn_Master->setFixedHeight(50);
+    grd_LeftPanel->addWidget(ui->btn_User);
+    ui->btn_User->setFixedHeight(50);
+    grd_LeftPanel->addStretch(3);
 
     //----------MidPanel-----------------------
-    grd_Manager->addStretch(1);
+    grd_Manager->addWidget(grbx_MidPanel);
+    grbx_MidPanel->setLayout(grd_MidPanel);
+    grbx_MidPanel->setStyleSheet("background-color: #1a1a1a;");
+    grbx_MidPanel->setContentsMargins(0, 0, 0 , 0);
+    grd_MidPanel->setMargin(0);
+
+    grd_MidPanel->addWidget(grbx_PanelInfo);
+    grbx_PanelInfo->setLayout(grd_PanelInfo);
+    grbx_PanelInfo->setMinimumHeight(120);
+    grbx_PanelInfo->setStyleSheet("background-color: transparent");
+
+    grd_MidPanel->addWidget(tableView);
+    tableView->setStyleSheet("background-color: #f2f2f2;");
 
     //------------PlaylistQueuePanel------------
-    grd_Manager->addWidget(queuePanel, 2, Qt::AlignRight);
-    queuePanel->setFixedWidth(300);
+    grd_Manager->addWidget(queuePanel);
+    grd_Manager->setAlignment(grbx_LeftPanel, Qt::AlignRight);
+    queuePanel->setFixedWidth(320);
     queuePanel->setContentsMargins(0, 0, 0, 0);
-
 
     queuePanel->setStyleSheet("QWidget {"
                               "border: 0px;"
                               "background-color: #262626;"
                               "}");
-
 
     //Player layout
     grbx_Player->setLayout(grd_Player);
@@ -316,6 +347,19 @@ void MiniPauzer::layoutSetup()
 
 }
 
+void MiniPauzer::changePanel(MiniPauzer::Panel _panel)
+{
+    panel = _panel;
+
+    switch(panel)
+    {
+    case Panel::MASTER:
+        ui->btn_Master->setChecked(true);
+        masterModel->setMode(MasterModel::Mode::ALBUM);
+        break;
+    }
+}
+
 void MiniPauzer::loadData()
 {
     //code for load some data
@@ -340,7 +384,7 @@ void MiniPauzer::loadData()
     ui->btn_AutoDetector->setChecked(true);
 
     float volume = 1;
-    ui->btn_Volume->setVolume(volume);
+    ui->btn_Volume->setVolume(volume);    
 }
 
 void MiniPauzer::changeState(MiniPauzer::State _state)
@@ -539,7 +583,7 @@ void MiniPauzer::changeStyle()
     ui->spr_Icon->setStyleSheet("background-color: #404040;"
                                 "margin: 10px;");
 
-    ui->btn_Master->setCheckable(true);
+    ui->btn_Master->setAutoExclusive(true);
     ui->btn_Master->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui->btn_Master->setIcon(QIcon(":/icons/Master.png"));
     ui->btn_Master->setIconSize(QSize(24, 24));
@@ -562,6 +606,31 @@ void MiniPauzer::changeStyle()
                                   "QToolButton:checked:hover{"
                                   "background-color: #61d169;"
                                   "}");
+
+    ui->btn_User->setAutoExclusive(true);
+    ui->btn_User->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui->btn_User->setIcon(QIcon(":/icons/Master.png"));
+    ui->btn_User->setIconSize(QSize(24, 24));
+    ui->btn_User->setFont(QFont("UTM Avo"));
+    ui->btn_User->setText(tr(" User Playlist"));
+    ui->btn_User->setStyleSheet("QToolButton{"
+                                  "text-align: left;"
+                                  "border: 0px;"
+                                  "padding-left: 20px;"
+                                  "font-size: 18px;"
+                                  "background-color: transparent;"
+                                  "color: white;"
+                                  "}"
+                                  "QToolButton:hover{"
+                                  "background-color: #595959;"
+                                  "}"
+                                  "QToolButton:checked{"
+                                  "background-color: #3eba58;"
+                                  "}"
+                                  "QToolButton:checked:hover{"
+                                  "background-color: #61d169;"
+                                  "}");
+
 }
 
 void MiniPauzer::createMenu()
@@ -759,7 +828,9 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
-        model->initializeModel();
+        queueModel->clearQueue();
+        queueModel->initializeModel();
+        changePanel(Panel::MASTER);
     }
 }
 

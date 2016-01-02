@@ -18,7 +18,7 @@ public:
     void setCurrentPlaylist(const int &num, bool firstSong = true);
     void clearQueue();
     int getCurrentPlaylistNum() const;
-    bool removePlaylist(const int &row);
+    bool removePlaylist(const int &row, bool removeMaster = false);
     bool movePlaylist(const int &from, const int &to);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;

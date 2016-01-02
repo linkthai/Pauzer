@@ -779,6 +779,9 @@ QPushButton:hover {
    <property name="text">
     <string>Master Playlist</string>
    </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="lbl_Icon">
    <property name="geometry">
@@ -812,6 +815,28 @@ QPushButton:hover {
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
+  <widget class="QToolButton" name="btn_User">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>280</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>User Playlist</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+  </widget>
   <zorder>btn_AutoDetector</zorder>
   <zorder>btn_Repeat</zorder>
   <zorder>btn_Shuffle</zorder>
@@ -830,6 +855,7 @@ QPushButton:hover {
   <zorder>btn_Master</zorder>
   <zorder>lbl_Icon</zorder>
   <zorder>spr_Icon</zorder>
+  <zorder>btn_User</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

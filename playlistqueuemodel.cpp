@@ -76,37 +76,29 @@ void PlaylistQueueModel::clearQueue()
     //move master to the top (only in case master is allowed to be moved anywhere but top)
     //then set master to be the current playlist
     //pretty much just to make sure
-    for (int i = 0; i < list.size(); i++)
+
+    while (list.size() > 0)
     {
-        if (list.at(i)->getType() == Playlist::Type::MASTER)
-        {
-            list.move(i, 0);
-
-            Player::getInstance()->changeToPlaylist(list.front());
-
-            break;
-        }
-    }
-
-    while (list.size() != 1)
-    {
-        removeRow(1);
+        removePlaylist(0, true);
     }
 }
 
-bool PlaylistQueueModel::removePlaylist(const int& row)
+bool PlaylistQueueModel::removePlaylist(const int& row, bool removeMaster)
 {
     //return false if attempt to delete master
-    if (list.at(row)->getType() == Playlist::Type::MASTER)
+    if (!removeMaster && list.at(row)->getType() == Playlist::Type::MASTER)
         return false;
 
     //check if playlist being deleted is currently being played
     if (row == getCurrentPlaylistNum())
     {
-        if (row == list.size() - 1)
-            Player::getInstance()->changeToPlaylist(list.at(row - 1));
-        else
-            Player::getInstance()->changeToPlaylist(list.at(row + 1));
+        if (!removeMaster)
+        {
+            if (row == list.size() - 1)
+                Player::getInstance()->changeToPlaylist(list.at(row - 1));
+            else
+                Player::getInstance()->changeToPlaylist(list.at(row + 1));
+        }
     }
 
     removeRow(row);
@@ -136,7 +128,7 @@ QVariant PlaylistQueueModel::data(const QModelIndex &index, int role) const
 
     int row = index.row();
 
-    if (row >= list.size())
+    if (row < 0 || row >= list.size())
         return QVariant();
 
     switch (role)

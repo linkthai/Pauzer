@@ -39,6 +39,7 @@ SOURCES += main.cpp \
     playlistqueuewidget.cpp \
     playlistqueuemodel.cpp \
     setting.cpp \
+    mastermodel.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -62,6 +63,7 @@ HEADERS  += minipauzer.h \
     playlistqueuewidget.h \
     playlistqueuemodel.h \
     setting.h \
+    mastermodel.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \
