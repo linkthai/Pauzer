@@ -9,7 +9,7 @@ class Xml_Parser
 {
 public:
     Xml_Parser();
-    QStringList GetAllAlbums();
+    QMap<QString, QMap<int, QString>> GetAllAlbums();
     QStringList GetAllArtist();
     QMap<int, QString> GetAllSong();
 
@@ -27,11 +27,12 @@ public:
     int GetAllAlbumsCountByArtist(int ID);
 
     void GetSongsInPlaylist(Master &list);
+    void GetAlbumsInPlaylist(Master &list);
 
     void Init();
     void SavePlaylist();
     void SaveChoosenFolder(QString path);
-    void AddToDom(QString title, QString artist, QString album, QString path);
+    void AddToDom(QString title, QString artist, QString album, QString path, uint year);
     void LoadData(QString path);
 private:
     QDomElement root;

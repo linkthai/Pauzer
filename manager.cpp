@@ -76,16 +76,29 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xm
             std::wstring str( wstr.begin(), wstr.end() );
 
             QString title, artist, album, filename;
+            int duration;
+            uint year;
             filename = QString::fromStdWString(directory + str);
 
             TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+            TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
 
+            TagLib::ID3v2::FrameList albart = tag->frameList("TPE2");
+            if (!albart.isEmpty())
+            {
+                artist = TStringToQString(albart.front()->toString());
+            }
+            else
+                artist = TStringToQString(f.tag()->artist());
+
+            artist = artist.simplified();
             title = TStringToQString(f.tag()->title());
-            artist = TStringToQString(f.tag()->artist());
             album = TStringToQString(f.tag()->album());
+            year = f.tag()->year();
+            duration = f.audioProperties()->lengthInSeconds();
 
             CheckSongInfo(title, artist, album, filename);
-            parser.AddToDom(title, artist, album, filename);
+            parser.AddToDom(title, artist, album, filename, year);
         }
 
         while (FindNextFile(hFind, &FindFileData) != 0)
@@ -97,6 +110,8 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xm
                 std::wstring str( wstr.begin(), wstr.end() );
 
                 QString title, artist, album, filename;
+                uint year;
+                int duration;
                 filename = QString::fromStdWString(directory + str);
 
                 TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
@@ -104,9 +119,11 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xm
                 title = TStringToQString(f.tag()->title());
                 artist = TStringToQString(f.tag()->artist());
                 album = TStringToQString(f.tag()->album());
+                year = f.tag()->year();
+                duration = f.audioProperties()->lengthInSeconds();
 
                 CheckSongInfo(title, artist, album, filename);
-                parser.AddToDom(title, artist, album, filename);
+                parser.AddToDom(title, artist, album, filename, year);
             }
             else
             {
@@ -163,6 +180,7 @@ void Manager::CreateMaster(QStringList str_list)
         GetFiles(str_list.at(i).toStdWString(), L"*.mp3|*.wav", parser, true);
     }
     master.SetList(parser.GetAllSong());
+    master.SetAlbumList(parser.GetAllAlbums());
 }
 
 void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, const QString &path)
@@ -193,6 +211,7 @@ bool Manager::LoadSongToMaster()
     {
         parser.LoadData(XmlPath);
         parser.GetSongsInPlaylist(master);
+        parser.GetAlbumsInPlaylist(master);
         return true;
     }
     return false;

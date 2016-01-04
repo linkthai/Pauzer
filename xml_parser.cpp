@@ -12,15 +12,38 @@ void Xml_Parser::Init()
     songID = 0;
     root = BUS.creatRoot("DATA");
 }
-QStringList Xml_Parser::GetAllAlbums()
+QMap<QString, QMap<int, QString>> Xml_Parser::GetAllAlbums()
 {
-    QStringList allAlbum;
+    QMap<QString, QMap<int, QString>> mainList;
+
     QDomNodeList albums = root.elementsByTagName("ALBUM");
-    for (int i = 0; i < albums.length(); i++)
+    QString header;
+
+    for (int t = 0; t < 3; t++)
     {
-        allAlbum.push_back(albums.at(i).toElement().attribute("Album_name"));
+        QMap<int, QString> subList;
+
+        switch (t)
+        {
+        case 0:
+            header = "Album_name";
+            break;
+        case 1:
+            header = "Artist_name";
+            break;
+        case 2:
+            header = "Year";
+            break;
+        }
+
+        for (int i = 0; i < albums.length(); i++)
+        {
+            subList.insert(albums.at(i).toElement().attribute("ID").toInt(), albums.at(i).toElement().attribute(header));
+        }
+
+        mainList.insert(header, subList);
     }
-    return allAlbum;
+    return mainList;
 }
 QStringList Xml_Parser::GetAllArtist()
 {
@@ -94,8 +117,16 @@ void Xml_Parser::GetSongsInPlaylist(Master &list)
     list.SetList(GetAllSong());
 }
 
+void Xml_Parser::GetAlbumsInPlaylist(Master &list)
+{
+    if (list.GetAlbumsCount() != 0)
+        list.ClearAlbumList();
+
+    list.SetAlbumList(GetAllAlbums());
+}
+
 void SavePlaylist();
-void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString path)
+void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString path, uint year)
 {
     Xml_Bus BUS;
     Xml_Data DATA;
@@ -123,6 +154,8 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
             QDomElement temp = BUS.creatNode("ALBUM", node);
             temp.setAttribute("ID", albID);
             temp.setAttribute("Album_name", album);
+            temp.setAttribute("Artist_name", artist);
+            temp.setAttribute("Year", year);
             QDomElement songNode = BUS.creatNode("SONG", temp);
             songNode.setAttribute("ID", songID);
             songNode.setAttribute("Title", title);
@@ -141,6 +174,8 @@ void Xml_Parser::AddToDom(QString title, QString artist, QString album, QString 
     QDomElement albumNode = BUS.creatNode("ALBUM", temp);
     albumNode.setAttribute("ID", albID);
     albumNode.setAttribute("Album_name", album);
+    albumNode.setAttribute("Artist_name", artist);
+    albumNode.setAttribute("Year", year);
     QDomElement songNode = BUS.creatNode("SONG", albumNode);
     songNode.setAttribute("ID", songID);
     songNode.setAttribute("Title", title);
