@@ -32,9 +32,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     createMenu();
 
-	buttonPlayClickTimer = new QTimer(this);
-	buttonPlayClickTimer->setSingleShot(true);
-	connect(buttonPlayClickTimer, SIGNAL(timeout()), this, SLOT(releaseButtonPlay()));
+    buttonPlayClickTimer = new QTimer(this);
+    buttonPlayClickTimer->setSingleShot(true);
+    connect(buttonPlayClickTimer, SIGNAL(timeout()), this, SLOT(releaseButtonPlay()));
 
     detector->start();
     if (ui->btn_AutoDetector->isChecked())

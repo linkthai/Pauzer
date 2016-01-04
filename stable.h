@@ -45,6 +45,7 @@
 #include <tag.h>
 #include <taglib.h>
 #include <attachedpictureframe.h>
+#include <mpegproperties.h>
 
 #include <iostream>
 #include <string>
