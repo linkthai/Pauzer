@@ -3,8 +3,47 @@
 MasterModel::MasterModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
+    qRegisterMetaType<QMap<QString,QMap<int,QString> >>("MyQMapType");
+
     mode = Mode::ALBUM;
     count = 0;
+
+}
+
+void MasterModel::initializeModel()
+{
+//    albumList.clear();
+
+//    albumList = Manager::parser.GetAllAlbums();
+
+    LibraryCreator *albumCreator = new LibraryCreator(this);
+    albumCreator->setIndex(1);
+    albumCreator->start();
+
+    connect(albumCreator, SIGNAL(createdAlbumList(QMap<QString,QMap<int,QString> >)),
+            this, SLOT(setAlbumList(QMap<QString,QMap<int,QString> >)));
+
+    LibraryCreator *artistCreator = new LibraryCreator(this);
+    artistCreator->setIndex(2);
+    artistCreator->start();
+
+    connect(artistCreator, SIGNAL(createdArtistList(QStringList)),
+            this, SLOT(setArtistList(QStringList)));
+
+    LibraryCreator *songCreator = new LibraryCreator(this);
+    songCreator->setIndex(3);
+    songCreator->start();
+
+    connect(songCreator, SIGNAL(createdSongList(QMap<QString,QMap<int,QString> >)),
+            this, SLOT(setSongList(QMap<QString,QMap<int,QString> >)));
+
+    albumCreator->wait();
+    artistCreator->wait();
+    songCreator->wait();
+
+    delete albumCreator;
+    delete artistCreator;
+    delete songCreator;
 }
 
 void MasterModel::setMode(const MasterModel::Mode &_mode)
@@ -24,19 +63,30 @@ void MasterModel::setMode(const MasterModel::Mode &_mode)
         count = Manager::parser.GetAllSongsCount();
         break;
     }
+    resetInternalData();
 
     endResetModel();
 
 }
 
+void MasterModel::setAlbumList(QMap<QString, QMap<int, QString> > _albumList)
+{
+    albumList = _albumList;
+}
+
+void MasterModel::setArtistList(QStringList _artistList)
+{
+    artistList = _artistList;
+}
+
+void MasterModel::setSongList(QMap<QString, QMap<int, QString> > _songList)
+{
+    songList = _songList;
+}
 
 int MasterModel::rowCount(const QModelIndex &parent) const
 {
-    if (Manager::master.GetCount() <= 0)
-        return 0;
-
     return count;
-
 }
 
 int MasterModel::columnCount(const QModelIndex &parent) const
@@ -82,19 +132,51 @@ QVariant MasterModel::data(const QModelIndex &index, int role) const
             switch(col)
             {
             case 0:
-                return Manager::parser.GetAlbumNameByID(row);
+                return albumList["Album_name"][row];
                 break;
-            default:
-                return "NULL";
+            case 1:
+                return albumList["Artist_name"][row];
+                break;
+            case 2:
+                QString year = albumList["Year"][row];
+                if (year != "0")
+                    return year;
+                else
+                    return QVariant();
                 break;
             }
         }
             break;
         case Mode::ARTIST:
-            return 1;
+            return artistList.at(row);
             break;
         case Mode::SONG:
-            return 6;
+        {
+            if (col < 0 || col >= SongCol)
+                return QVariant();
+
+            switch(col)
+            {
+            case 0:
+                return songList["Title"][row];
+                break;
+            case 1:
+                return songList["Artist"][row];
+                break;
+            case 2:
+                return songList["Album"][row];
+                break;
+            case 3:
+                return songList["Genre"][row];
+                break;
+            case 4:
+                return songList["Year"][row];
+                break;
+            case 5:
+                return songList["Duration"][row];
+                break;
+            }
+        }
             break;
         }
     }

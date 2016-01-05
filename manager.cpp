@@ -90,10 +90,13 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xm
             }
             else
                 artist = TStringToQString(f.tag()->artist());
-
             artist = artist.simplified();
+
             title = TStringToQString(f.tag()->title());
+            title = title.simplified();
+
             album = TStringToQString(f.tag()->album());
+            album = album.simplified();
             year = f.tag()->year();
             duration = f.audioProperties()->lengthInSeconds();
 
@@ -111,16 +114,28 @@ void Manager::GetFileListing(std::wstring directory, std::wstring fileFilter, Xm
 
                 QString title, artist, album, filename;
                 uint year;
-                int duration;
                 filename = QString::fromStdWString(directory + str);
 
                 TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
 
                 title = TStringToQString(f.tag()->title());
-                artist = TStringToQString(f.tag()->artist());
+                title = title.simplified();
+
+                TagLib::ID3v2::FrameList albart = f.ID3v2Tag()->frameList("TPE2");
+                if (!albart.isEmpty())
+                {
+                    artist = TStringToQString(albart.front()->toString());
+                }
+                else
+                {
+                    artist = TStringToQString(f.tag()->artist());
+                }
+                artist = artist.simplified();
+
                 album = TStringToQString(f.tag()->album());
+                album = album.simplified();
+
                 year = f.tag()->year();
-                duration = f.audioProperties()->lengthInSeconds();
 
                 CheckSongInfo(title, artist, album, filename);
                 parser.AddToDom(title, artist, album, filename, year);
@@ -192,16 +207,19 @@ void Manager::CheckSongInfo(QString &title, QString &artist, QString &album, con
         name = title.split(".");
         title = name.value(0);
     }
+    title = title.simplified();
 
     if (album == "")
     {
         album = "Unknown";
     }
+    album = album.simplified();
 
     if (artist == "")
     {
         artist = "Unknown";
     }
+    artist = artist.simplified();
 }
 
 bool Manager::LoadSongToMaster()

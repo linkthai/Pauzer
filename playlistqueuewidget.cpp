@@ -36,8 +36,6 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
                                      "border: 1px solid #737373;"
                                      "border-radius: 4px;"
                                      "background-color: #1a1a1a;"
-                                     "selection-color: red;"
-                                     "selection-background-color: red;"
                                      "outline: 0px;"
                                      "}"
                                      "QListView::item {"
@@ -56,8 +54,11 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
     ui->view_Playlist->setIconSize(QSize(60, 60));
     ui->view_Playlist->setModel(model);
 
-    ui->view_Playlist->setDragDropMode(QAbstractItemView::DragDrop);
     ui->view_Playlist->setDefaultDropAction(Qt::MoveAction);
+    ui->view_Playlist->setDragEnabled(true);
+    ui->view_Playlist->setAcceptDrops(true);
+    ui->view_Playlist->setDropIndicatorShown(true);
+
     ui->view_Playlist->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->view_Playlist->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view_Playlist->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
@@ -143,7 +144,7 @@ void PlaylistQueueWidget::on_btn_Play_clicked()
 
 void PlaylistQueueWidget::on_btn_Clear_clicked()
 {
-    model->clearQueue();
+    model->clearQueueButMaster();
 }
 
 void PlaylistQueueWidget::on_btn_Delete_clicked()

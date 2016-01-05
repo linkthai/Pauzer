@@ -112,7 +112,7 @@ public:
 
 private slots:
     void updateLabelCurTime(int time);
-    void updateLabelMaxLen(int legth);
+    void updateLabelMaxLen(int length);
 
     void getFolderList(QStringList list);
 
@@ -151,10 +151,12 @@ private slots:
     void on_btn_Shuffle_toggled(bool checked);
 
     void on_btn_Repeat_toggled(bool checked);
-    void on_btn_Volume_toggled(bool checked);
 
     void processFinished();
     void processTerminated();
+    void on_btn_Albums_toggled(bool checked);
+    void on_btn_Artists_toggled(bool checked);
+    void on_btn_Songs_toggled(bool checked);
 };
 
 #endif // MINIPAUZER_H

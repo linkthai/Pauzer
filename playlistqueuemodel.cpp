@@ -73,13 +73,21 @@ void PlaylistQueueModel::setCurrentPlaylist(const int &num, bool firstSong)
 
 void PlaylistQueueModel::clearQueue()
 {
-    //move master to the top (only in case master is allowed to be moved anywhere but top)
-    //then set master to be the current playlist
-    //pretty much just to make sure
-
     while (list.size() > 0)
     {
         removePlaylist(0, true);
+    }
+}
+
+void PlaylistQueueModel::clearQueueButMaster()
+{
+    int index = 0;
+    while (list.size() > 1)
+    {
+        if (!removePlaylist(index, false))
+        {
+            index = 1;
+        }
     }
 }
 
@@ -102,6 +110,8 @@ bool PlaylistQueueModel::removePlaylist(const int& row, bool removeMaster)
     }
 
     removeRow(row);
+
+    return true;
 }
 
 bool PlaylistQueueModel::movePlaylist(const int& from, const int& to)

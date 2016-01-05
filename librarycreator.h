@@ -11,9 +11,15 @@ class LibraryCreator : public QThread
 public:
     LibraryCreator(QObject *parent = 0);
     void setList(QStringList folders);
+    void setIndex(int i);
+    void run();
 private:
     QStringList list;
-    void run();
+    int index;
+signals:
+    void createdAlbumList(QMap<QString, QMap<int, QString>> albumList);
+    void createdArtistList(QStringList artistList);
+    void createdSongList(QMap<QString, QMap<int, QString>> songList);
 };
 
 #endif // LIBRARYCREATOR_H

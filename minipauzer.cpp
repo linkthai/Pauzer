@@ -82,6 +82,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     if (Manager::LoadSongToMaster())
     {
+        masterModel->initializeModel();
         queueModel->initializeModel();
     }
 
@@ -269,7 +270,6 @@ void MiniPauzer::layoutSetup()
     //----------MidPanel-----------------------
     grd_Manager->addWidget(grbx_MidPanel);
     grbx_MidPanel->setLayout(grd_MidPanel);
-    grbx_MidPanel->setStyleSheet("background-color: #1a1a1a;");
     grbx_MidPanel->setContentsMargins(0, 0, 0 , 0);
     grd_MidPanel->setMargin(0);
 
@@ -278,8 +278,12 @@ void MiniPauzer::layoutSetup()
     grbx_PanelInfo->setMinimumHeight(120);
     grbx_PanelInfo->setStyleSheet("background-color: transparent");
 
+    //Panel Info
+    grd_PanelInfo->addWidget(ui->btn_Albums, 0, 0, -1, 1);
+    grd_PanelInfo->addWidget(ui->btn_Artists, 0, 1, -1, 1);
+    grd_PanelInfo->addWidget(ui->btn_Songs, 0, 2, -1, 1);
+
     grd_MidPanel->addWidget(tableView);
-    tableView->setStyleSheet("background-color: #f2f2f2;");
 
     //------------PlaylistQueuePanel------------
     grd_Manager->addWidget(queuePanel);
@@ -348,14 +352,14 @@ void MiniPauzer::layoutSetup()
 }
 
 void MiniPauzer::changePanel(MiniPauzer::Panel _panel)
-{
+{    
     panel = _panel;
 
     switch(panel)
     {
     case Panel::MASTER:
         ui->btn_Master->setChecked(true);
-        masterModel->setMode(MasterModel::Mode::ALBUM);
+        ui->btn_Albums->setChecked(true);
         break;
     }
 }
@@ -512,7 +516,6 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
 
 void MiniPauzer::changeStyle()
 {
-    //this->setStyleSheet("background-color: #282828;");
     ui->titleBar->setStyleSheet("background-color: #2d2d2d");
 
     grbx_Player->setStyleSheet("border: 0px; background-color: #282828;");
@@ -574,7 +577,6 @@ void MiniPauzer::changeStyle()
     grbx_LeftPanel->setStyleSheet("QGroupBox{"
                                   "border: 0px;"
                                   "background-color: #262626;"
-                                  "border-right: 1px solid #808080;"
                                   "}");
 
     ui->lbl_Icon->setPixmap(QPixmap(":/icons/Pauzer_Icon.png"));
@@ -630,6 +632,105 @@ void MiniPauzer::changeStyle()
                                   "QToolButton:checked:hover{"
                                   "background-color: #61d169;"
                                   "}");
+
+    grbx_MidPanel->setStyleSheet("QGroupBox{"
+                                 "background-color: #1a1a1a;"
+                                 "}");
+
+    ui->btn_Albums->setAutoExclusive(true);
+    ui->btn_Albums->setIcon(QIcon(":/icons/Albums.png"));
+    ui->btn_Albums->setIconSize(QSize(40, 40));
+    ui->btn_Albums->setText(tr(" Albums"));
+    ui->btn_Albums->setStyleSheet("QPushButton{"
+                                  "margin: 15px;"
+                                  "border-radius: 4px;"
+                                  "color: white;"
+                                  "background-color: transparent;"
+                                  "}"
+                                  "QPushButton:hover{"
+                                  "border: 2px solid #61d169;"
+                                  "background-color: #262626;"
+                                  "}"
+                                  "QPushButton:checked{"
+                                  "color: white;"
+                                  "background-color: #61d169;"
+                                  "}");
+
+    ui->btn_Artists->setAutoExclusive(true);
+    ui->btn_Artists->setIcon(QIcon(":/icons/Artists.png"));
+    ui->btn_Artists->setIconSize(QSize(40, 40));
+    ui->btn_Artists->setText(tr(" Artists"));
+    ui->btn_Artists->setStyleSheet("QPushButton{"
+                                   "margin: 15px;"
+                                   "border-radius: 4px;"
+                                  "color: white;"
+                                  "background-color: transparent;"
+                                  "}"
+                                  "QPushButton:hover{"
+                                   "border: 2px solid #61d169;"
+                                   "background-color: #262626;"
+                                  "}"
+                                  "QPushButton:checked{"
+                                  "color: white;"
+                                  "background-color: #61d169;"
+                                  "}");
+
+    ui->btn_Songs->setAutoExclusive(true);
+    ui->btn_Songs->setIcon(QIcon(":/icons/Songs.png"));
+    ui->btn_Songs->setIconSize(QSize(40, 40));
+    ui->btn_Songs->setText(tr(" Songs"));
+    ui->btn_Songs->setStyleSheet("QPushButton{"
+                                 "margin: 15px;"
+                                 "border-radius: 4px;"
+                                  "color: white;"
+                                  "background-color: transparent;"
+                                  "}"
+                                  "QPushButton:hover{"
+                                  "border: 2px solid #61d169;"
+                                  "background-color: #262626;"
+                                  "}"
+                                  "QPushButton:checked{"
+                                  "color: white;"
+                                  "background-color: #61d169;"
+                                  "}");
+
+    QHeaderView *verticalHeader = tableView->verticalHeader();
+    verticalHeader->setVisible(false);
+    verticalHeader->sectionResizeMode(QHeaderView::Fixed);
+    verticalHeader->setDefaultSectionSize(45);
+
+    QHeaderView *horizontalHeader = tableView->horizontalHeader();
+    horizontalHeader->setVisible(false);
+    horizontalHeader->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    horizontalHeader->setMinimumSectionSize(80);
+    horizontalHeader->setMaximumSectionSize(250);
+
+    tableView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    tableView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableView->setTextElideMode(Qt::ElideRight);
+
+    tableView->setShowGrid(false);
+    tableView->setDragEnabled(true);
+    tableView->setAcceptDrops(false);
+    tableView->setAutoScroll(false);
+    tableView->setAlternatingRowColors(true);
+    tableView->setStyleSheet("QTableView{"
+                             "outline: 0;"
+                             "padding: 10px;"
+                             "background-color: #f9f9f9;"
+                             "alternate-background-color: white;"
+                             "}"
+                             "QTableView::item{"
+                             "color: #1a1a1a;"
+                             "padding-left: 5px;"
+                             "padding-right: 5px;"
+                             "}"
+                             "QTableView::item:selected{"
+                             "background-color: #b0e8b4;"
+                             "}");
+
 
 }
 
@@ -772,13 +873,13 @@ void MiniPauzer::updateLabelCurTime(int time)
     ui->lbl_CurTime->setText(text);
 }
 
-void MiniPauzer::updateLabelMaxLen(int legth)
+void MiniPauzer::updateLabelMaxLen(int length)
 {
-    int hour = legth / 3600;
-    legth = legth % 3600;
-    int minute = legth / 60;
-    legth = legth % 60;
-    int sec = legth;
+    int hour = length / 3600;
+    length = length % 3600;
+    int minute = length / 60;
+    length = length % 60;
+    int sec = length;
 
     QTime maxLen;
     maxLen.setHMS(hour, minute, sec);
@@ -828,9 +929,9 @@ void MiniPauzer::processFinished()
             widget->close();
         }
 
+        masterModel->initializeModel();
         queueModel->clearQueue();
         queueModel->initializeModel();
-        changePanel(Panel::MASTER);
     }
 }
 
@@ -952,6 +1053,35 @@ void MiniPauzer::on_btn_Repeat_toggled(bool checked)
     }
 }
 
-void MiniPauzer::on_btn_Volume_toggled(bool checked)
+void MiniPauzer::on_btn_Albums_toggled(bool checked)
 {
+    if (checked)
+    {
+        masterModel->setMode(MasterModel::Mode::ALBUM);
+        tableView->resizeColumnsToContents();
+        tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        tableView->horizontalHeader()->setStretchLastSection(true);
+    }
+}
+
+void MiniPauzer::on_btn_Artists_toggled(bool checked)
+{
+    if (checked)
+    {
+        masterModel->setMode(MasterModel::Mode::ARTIST);
+        tableView->resizeColumnsToContents();
+        tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        tableView->horizontalHeader()->setStretchLastSection(true);
+    }
+}
+
+void MiniPauzer::on_btn_Songs_toggled(bool checked)
+{
+    if (checked)
+    {
+        masterModel->setMode(MasterModel::Mode::SONG);
+        tableView->resizeColumnsToContents();
+        tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        tableView->horizontalHeader()->setStretchLastSection(true);
+    }
 }

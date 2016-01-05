@@ -37,11 +37,6 @@ Player::~Player()
 
 void Player::changeToPlaylist(Playlist *_playlist, bool playFirstSong)
 {
-    if (playlist)
-    {
-        disconnect(playlist, 0, 0, 0);
-    }
-
     playlist = _playlist;
 
     connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
