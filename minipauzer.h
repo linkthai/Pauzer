@@ -9,6 +9,7 @@
 #include "processwidget.h"
 #include "playlistqueuewidget.h"
 #include "mastermodel.h"
+#include "mastertableview.h"
 
 namespace Ui {
 class MiniPauzer;
@@ -75,7 +76,7 @@ private:
     QGridLayout *grd_PanelInfo;
     QGroupBox *grbx_PanelInfo;
 
-    QTableView *tableView;
+    MasterTableView *tableView;
 
     PlaylistQueueWidget *queuePanel;
 
