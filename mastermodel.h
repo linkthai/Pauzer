@@ -3,6 +3,8 @@
 
 #include <QAbstractTableModel>
 #include "manager.h"
+#include "librarycreator.h"
+#include <QMetaType>
 
 class MasterModel : public QAbstractTableModel
 {
@@ -15,14 +17,24 @@ public:
 
     MasterModel(QObject* parent = 0);
 
+    void initializeModel();
+
     void setMode(const Mode& _mode);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int	columnCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+public slots:
+    void setAlbumList(QMap<QString, QMap<int, QString>> _albumList);
+    void setArtistList(QStringList _artistList);
+    void setSongList(QMap<QString, QMap<int, QString>> _songList);
 private:
     Mode mode;
     int count;
+
+    QMap<QString, QMap<int, QString>> albumList;
+    QMap<QString, QMap<int, QString>> songList;
+    QStringList artistList;
 };
 
 #endif // MASTERMODEL_H
