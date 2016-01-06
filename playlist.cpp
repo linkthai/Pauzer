@@ -35,6 +35,42 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
         }
         this->setName(Manager::parser.GetAlbumNameByID(playlistNum));
         break;
+    case Type::ARTIST:
+    {
+        QList<int> albums;
+        albums = Manager::parser.GetAlbumsByArtist(playlistNum);
+
+        for (int i = 0; i < albums.size(); i++)
+        {
+            list = Manager::parser.GetSongsByAlbum(albums.at(i));
+            for (int j = 0; j < list.size(); j++)
+            {
+                songList.append(list.at(j));
+            }
+        }
+        this->setName(Manager::parser.GetArtistNameByID(playlistNum));
+        break;
+    }
+    case Type::SONG:
+    {
+        songList.append(playlistNum);
+
+        QString filename = Manager::master.Get(playlistNum);
+        TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+        QString title = TStringToQString(f.ID3v2Tag()->title());
+
+        if (title == "")
+        {
+            QStringList name = filename.split("/");
+            title = name.value(name.length() - 1);
+            name = title.split(".");
+            title = name.value(0);
+        }
+        title = title.simplified();
+
+        this->setName(title);
+        break;
+    }
     }
 
     this->setIcon();

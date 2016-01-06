@@ -21,30 +21,6 @@ void PlaylistQueueModel::initializeModel()
 
     Player::getInstance()->changeToPlaylist(master);
 
-    Playlist *temp = new Playlist();
-    temp->setPlaylist(Playlist::Type::ALBUM, 1);
-    list.append(temp);
-
-    Playlist *sad = new Playlist();
-    sad->setPlaylist(Playlist::Type::ALBUM, 2);
-    list.append(sad);
-
-    sad = new Playlist();
-    sad->setPlaylist(Playlist::Type::ALBUM, 3);
-    list.append(sad);
-
-    sad = new Playlist();
-    sad->setPlaylist(Playlist::Type::ALBUM, 4);
-    list.append(sad);
-
-    sad = new Playlist();
-    sad->setPlaylist(Playlist::Type::ALBUM, 5);
-    list.append(sad);
-
-    sad = new Playlist();
-    sad->setPlaylist(Playlist::Type::ALBUM, 6);
-    list.append(sad);
-
     endResetModel();
 }
 
@@ -182,6 +158,24 @@ QVariant PlaylistQueueModel::data(const QModelIndex &index, int role) const
     }
 }
 
+bool PlaylistQueueModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    if (row < 0 || row > rowCount())
+        return false;
+
+    beginInsertRows(parent, row, row + count - 1);
+
+    for (int i = 0; i < count; i++)
+    {
+        Playlist *playlist = new Playlist();
+        list.insert(i + row, playlist);
+    }
+
+    endInsertRows();
+
+    return true;
+}
+
 bool PlaylistQueueModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     beginRemoveRows(parent, row, row + count - 1);
@@ -240,5 +234,115 @@ bool PlaylistQueueModel::moveRows(const QModelIndex &sourceParent, int sourceRow
     }
 
     endMoveRows();
+}
+
+Qt::ItemFlags PlaylistQueueModel::flags(const QModelIndex &index) const
+{
+    return (QAbstractListModel::flags(index) | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+}
+
+Qt::DropActions PlaylistQueueModel::supportedDropActions() const
+{
+    return Qt::CopyAction | Qt::MoveAction;
+}
+
+QStringList PlaylistQueueModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/x-playlist" << "application/x-playlist-move";
+    return types;
+}
+
+QMimeData* PlaylistQueueModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (QModelIndex index, indexes) {
+        if (index.isValid()) {
+
+            int num = index.row();
+
+            stream << num;
+        }
+    }
+
+    mimeData->setData("application/x-playlist-move", encodedData);
+    return mimeData;
+}
+
+bool PlaylistQueueModel::dropMimeData(const QMimeData *data, Qt::DropAction action,
+                                      int row, int column, const QModelIndex &parent)
+{
+    if (!data->hasFormat("application/x-playlist") && !data->hasFormat("application/x-playlist-move"))
+        return false;
+
+    if (action == Qt::IgnoreAction)
+        return true;
+
+    if (column > 0)
+        return false;
+
+    beginResetModel();
+
+    if (data->hasFormat("application/x-playlist"))
+    {
+        QByteArray encodedData = data->data("application/x-playlist");
+        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+        QString type;
+        int num;
+        stream >> type >> num;
+
+        if (!parent.isValid()) {
+            if (row < 0)
+                row = rowCount();
+            else
+                row = qMin(row, rowCount());
+        } else {
+            row = parent.row();
+        }
+
+        insertRow(row);
+
+        if (type == "Album")
+        {
+            list[row]->setPlaylist(Playlist::Type::ALBUM, num);
+        }
+        else
+            if (type == "Artist")
+            {
+                list[row]->setPlaylist(Playlist::Type::ARTIST, num);
+            }
+            else
+            {
+                list[row]->setPlaylist(Playlist::Type::SONG, num);
+            }
+    }
+    else
+    {
+        QByteArray encodedData = data->data("application/x-playlist-move");
+        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+        int num;
+        stream >> num;
+
+        if (!parent.isValid()) {
+            if (row < 0)
+                row = rowCount();
+            else
+                row = qMin(row, rowCount());
+        } else {
+            row = parent.row();
+        }
+
+        movePlaylist(num, row);
+    }
+
+    endResetModel();
+
+    return true;
 }
 

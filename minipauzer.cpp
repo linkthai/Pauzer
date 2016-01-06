@@ -133,7 +133,6 @@ MiniPauzer::~MiniPauzer()
 {
     delete ui;
     delete player;
-    detector->exit();
     delete detector;
     delete queueModel;
     delete widget;
@@ -175,7 +174,7 @@ void MiniPauzer::layoutSetup()
     grd_PanelInfo = new QGridLayout();
     grbx_PanelInfo = new QGroupBox(this);
 
-    tableView = new QTableView();
+    tableView = new MasterTableView();
 
     queuePanel = new PlaylistQueueWidget(queueModel);
 
@@ -697,44 +696,6 @@ void MiniPauzer::changeStyle()
                                   "color: white;"
                                   "background-color: #61d169;"
                                   "}");
-
-    QHeaderView *verticalHeader = tableView->verticalHeader();
-    verticalHeader->setVisible(false);
-    verticalHeader->sectionResizeMode(QHeaderView::Fixed);
-    verticalHeader->setDefaultSectionSize(45);
-
-    QHeaderView *horizontalHeader = tableView->horizontalHeader();
-    horizontalHeader->setVisible(false);
-    horizontalHeader->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    horizontalHeader->setMinimumSectionSize(80);
-    horizontalHeader->setMaximumSectionSize(250);
-
-    tableView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    tableView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-    tableView->setTextElideMode(Qt::ElideRight);
-
-    tableView->setShowGrid(false);
-    tableView->setDragEnabled(true);
-    tableView->setAcceptDrops(false);
-    tableView->setAutoScroll(false);
-    tableView->setAlternatingRowColors(true);
-    tableView->setStyleSheet("QTableView{"
-                             "outline: 0;"
-                             "padding: 10px;"
-                             "background-color: #f9f9f9;"
-                             "alternate-background-color: white;"
-                             "}"
-                             "QTableView::item{"
-                             "color: #1a1a1a;"
-                             "padding-left: 5px;"
-                             "padding-right: 5px;"
-                             "}"
-                             "QTableView::item:selected{"
-                             "background-color: #b0e8b4;"
-                             "}");
-
 
 }
 

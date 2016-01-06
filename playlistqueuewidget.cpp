@@ -54,9 +54,8 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
     ui->view_Playlist->setIconSize(QSize(60, 60));
     ui->view_Playlist->setModel(model);
 
-    ui->view_Playlist->setDefaultDropAction(Qt::MoveAction);
     ui->view_Playlist->setDragEnabled(true);
-    ui->view_Playlist->setAcceptDrops(true);
+    ui->view_Playlist->viewport()->setAcceptDrops(true);
     ui->view_Playlist->setDropIndicatorShown(true);
 
     ui->view_Playlist->setSelectionMode(QAbstractItemView::SingleSelection);

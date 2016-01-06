@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QVariant>
+#include <QMimeData>
 
 #include "playlist.h"
 #include "player.h"
@@ -24,9 +25,17 @@ public:
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+    bool insertRows(int row, int count, const QModelIndex & parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
     bool moveRows(const QModelIndex & sourceParent, int sourceRow, int count,
                   const QModelIndex & destinationParent, int destinationChild);
+
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    Qt::DropActions supportedDropActions() const;
+    QStringList mimeTypes() const;
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
+    bool dropMimeData(const QMimeData * data, Qt::DropAction action,
+                     int row, int column, const QModelIndex & parent);
 private:
     QList<Playlist *> list;
 signals:

@@ -12,9 +12,7 @@ MasterModel::MasterModel(QObject *parent) :
 
 void MasterModel::initializeModel()
 {
-//    albumList.clear();
-
-//    albumList = Manager::parser.GetAllAlbums();
+    beginResetModel();
 
     LibraryCreator *albumCreator = new LibraryCreator(this);
     albumCreator->setIndex(1);
@@ -41,9 +39,12 @@ void MasterModel::initializeModel()
     artistCreator->wait();
     songCreator->wait();
 
+    endResetModel();
+
     delete albumCreator;
     delete artistCreator;
     delete songCreator;
+
 }
 
 void MasterModel::setMode(const MasterModel::Mode &_mode)
@@ -183,5 +184,46 @@ QVariant MasterModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+Qt::ItemFlags MasterModel::flags(const QModelIndex &index) const
+{
+    if (index.isValid())
+        return (QAbstractTableModel::flags(index) | Qt::ItemIsDragEnabled);
+}
 
+QStringList MasterModel::mimeTypes() const
+{
+    QStringList types;
+    types << "application/x-playlist";
+    return types;
+}
 
+QMimeData *MasterModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    foreach (QModelIndex index, indexes) {
+        if (index.isValid()) {
+            QString type;
+            switch(mode)
+            {
+            case Mode::ALBUM:
+                type = "Album";
+                break;
+            case Mode::ARTIST:
+                type = "Artist";
+                break;
+            case Mode::SONG:
+                type = "Song";
+                break;
+            }
+            int num = index.row();
+            stream << type << num;
+        }
+    }
+
+    mimeData->setData("application/x-playlist", encodedData);
+    return mimeData;
+}
