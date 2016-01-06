@@ -32,6 +32,7 @@
 #include <QWinThumbnailToolButton>
 #include <QWinThumbnailToolBar>
 #include <QTableView>
+#include <QtWinExtras>
 
 #include <bass.h>
 

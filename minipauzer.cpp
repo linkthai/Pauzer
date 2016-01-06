@@ -102,6 +102,10 @@ void MiniPauzer::createThumbBar()
     thumbnailToolBar = new QWinThumbnailToolBar(this);
     thumbnailToolBar->setWindow(this->windowHandle());
 
+    thumbnailToolBar->setIconicPixmapNotificationsEnabled(true);
+    thumbnailToolBar->setIconicThumbnailPixmap(QPixmap(":/icons/Pauzer_Icon.png"));
+    thumbnailToolBar->setIconicLivePreviewPixmap(QPixmap(":/icons/Pauzer_Icon.png"));
+
     playToolButton = new QWinThumbnailToolButton(thumbnailToolBar);
     playToolButton->setEnabled(true);
     playToolButton->setToolTip(tr("Play/Pause"));
