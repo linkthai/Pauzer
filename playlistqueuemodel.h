@@ -22,6 +22,7 @@ public:
     int getCurrentPlaylistNum() const;
     bool removePlaylist(const int &row, bool removeMaster = false);
     bool movePlaylist(const int &from, const int &to);
+    void setPlayerState(bool PauseToPlay);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
@@ -40,7 +41,7 @@ private:
     QList<Playlist *> list;
 signals:
     void playlistRemoved();
-    void endOfQueue();
+    void switchPlayerState(bool);
 };
 
 #endif // PLAYLISTQUEUEMODEL_H

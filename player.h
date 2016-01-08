@@ -14,6 +14,7 @@ private:
     bool isPlaying;
     bool isShuffling;
     bool isRepeating;
+    bool isLocked;
     bool isChangingSong;
     unsigned long channel;
     float volume;
@@ -56,11 +57,13 @@ public slots:
     void setPosition(int cur);
     void signalUpdate();
     void changeToSong(int songNum);
-    void changeToPlaylist(Playlist *_playlist, bool playFirstSong = true);
+    void changeToPlaylist(Playlist *_playlist, bool playFirstSong = true, bool masterReset = false);
     void setShuffle(bool state);
     void setRepeat(bool state);
+    void setLock(bool state);
     void setVolume(float vol);
     void checkEndPlayback();
+    void removeCurrentPlaylist();
 
     bool getShuffle();
 };

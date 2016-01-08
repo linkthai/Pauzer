@@ -14,7 +14,6 @@
         <file>icons/Detector_On_Hover.png</file>
         <file>icons/Pause_Hover.png</file>
         <file>icons/Pause_Inactive.png</file>
-        <file>icons/play.svg</file>
         <file>icons/Play_Hover.png</file>
         <file>icons/Play_Inactive.png</file>
         <file>icons/Repeat_NoRepeat.png</file>
@@ -62,5 +61,10 @@
         <file>icons/Albums.png</file>
         <file>icons/Artists.png</file>
         <file>icons/Songs.png</file>
+        <file>icons/Lock_Off.png</file>
+        <file>icons/Lock_Off_Hover.png</file>
+        <file>icons/Lock_On.png</file>
+        <file>icons/Lock_On_Hover.png</file>
+        <file>icons/Pauzer_White.png</file>
     </qresource>
 </RCC>

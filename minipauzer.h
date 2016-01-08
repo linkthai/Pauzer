@@ -1,6 +1,8 @@
 #ifndef MINIPAUZER_H
 #define MINIPAUZER_H
 
+#include <QGraphicsDropShadowEffect>
+
 #include "player.h"
 #include "manager.h"
 #include "folderdialog.h"
@@ -20,8 +22,8 @@ class MiniPauzer : public QWidget
     Q_OBJECT
 
 private:
-    static const int miniWidth = 600;
-    static const int miniHeight = 250;
+    int miniWidth;
+    int miniHeight;
 
     enum class State { FULL, MINI };
     enum class Panel { MASTER };
@@ -117,8 +119,6 @@ private slots:
 
     void getFolderList(QStringList list);
 
-    void releaseButtonPlay();
-
     void on_btn_Play_clicked();
 
     void on_sliderBar_sliderPressed();
@@ -158,6 +158,9 @@ private slots:
     void on_btn_Albums_toggled(bool checked);
     void on_btn_Artists_toggled(bool checked);
     void on_btn_Songs_toggled(bool checked);
+
+    void switchPlayerState(bool PauseToPlay);
+    void on_btn_Lock_toggled(bool checked);
 };
 
 #endif // MINIPAUZER_H

@@ -18,8 +18,8 @@ public:
     int getCurrentSong();
     void playFirstSong(bool isShuffling);
     void playLastSong(bool isShuffling);
-    void nextSong(bool isShuffling);
-    void prevSong(bool isShuffling);
+    void nextSong(bool isShuffling, bool isLocked);
+    void prevSong(bool isShuffling, bool isLocked);
     void reShuffle(bool changeSong = false);
 
     void setName(QString _name);
@@ -31,7 +31,10 @@ public:
     Type getType();
     int getId();
 
+    bool getInit();
+
 private:
+    bool isInit;
     QString name;
     QList<int> songList;
     QList<int> shuffleList;
