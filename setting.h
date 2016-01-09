@@ -15,7 +15,7 @@ public:
     void ResetDefault();
     void WriteSetting();
     void ReadSetting();
-    QMap<QString, float> list() const;
+    QMap<QString, float> list();
     void setList(const QMap<QString, float> &list);
 };
 

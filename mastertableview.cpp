@@ -12,7 +12,7 @@ MasterTableView::MasterTableView(QWidget* parent):
     horizontalHeader->setVisible(false);
     horizontalHeader->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     horizontalHeader->setMinimumSectionSize(80);
-    horizontalHeader->setMaximumSectionSize(250);
+    horizontalHeader->setMaximumSectionSize(260);
 
     this->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     this->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

@@ -26,6 +26,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
 
     layoutSetup();
 
+    //connect player and volume button
+    connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
+
     //loading data to set up pauzer
     loadData();
 
@@ -64,9 +67,6 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     //emit audio detection
     connect(detector, SIGNAL(audioDetected(int)), this, SLOT(detectAudio(int)));
 
-    //connect player and volume button
-    connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
-
     //connect end Of Queue to pause button
     connect(queueModel, SIGNAL(switchPlayerState(bool)), this, SLOT(switchPlayerState(bool)));
 
@@ -84,13 +84,6 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     }
 
     changePanel(Panel::MASTER);
-
-    QMap<QString, float> t;
-    t.insert("Volume", 50);
-    t.insert("Bar", 10);
-
-    Manager::setting.setList(t);
-    Manager::setting.WriteSetting();
 }
 
 void MiniPauzer::createThumbBar()
@@ -123,6 +116,80 @@ void MiniPauzer::createThumbBar()
 
 MiniPauzer::~MiniPauzer()
 {
+    QMap<QString, float> list;
+
+    list.insert("FullSizeWidth", FullSize.width());
+    list.insert("FullSizeHeight", FullSize.height());
+
+    QPoint pos = this->mapToGlobal(MiniPos);
+
+    list.insert("MiniPosX", MiniPos.x());
+    list.insert("MiniPosY", MiniPos.y());
+
+    pos = this->mapToGlobal(FullPos);
+
+    list.insert("FullPosX", FullPos.x());
+    list.insert("FullPosY", FullPos.y());
+
+    if (state == State::FULL)
+    {
+        list.insert("State_Full", 1);
+    }
+    else
+    {
+        list.insert("State_Full", 0);
+    }
+
+    if (windowState() == Qt::WindowMaximized)
+    {
+        list.insert("Maximized", 1);
+    }
+    else
+    {
+        list.insert("Maximized", 0);
+    }
+
+    list.insert("Volume", ui->btn_Volume->getVolume());
+
+    if (ui->btn_AutoDetector->isChecked())
+    {
+        list.insert("Detector", 1);
+    }
+    else
+    {
+        list.insert("Detector", 0);
+    }
+
+    if (ui->btn_Shuffle->isChecked())
+    {
+        list.insert("Shuffle", 1);
+    }
+    else
+    {
+        list.insert("Shuffle", 0);
+    }
+
+    if (ui->btn_Repeat->isChecked())
+    {
+        list.insert("Repeat", 1);
+    }
+    else
+    {
+        list.insert("Repeat", 0);
+    }
+
+    if (ui->btn_Lock->isChecked())
+    {
+        list.insert("Lock", 1);
+    }
+    else
+    {
+        list.insert("Lock", 0);
+    }
+
+    Manager::setting.setList(list);
+    Manager::setting.WriteSetting();
+
     delete ui;
     delete player;
     delete detector;
@@ -366,29 +433,79 @@ void MiniPauzer::loadData()
     //get previous state of pauzer
     //pretend we did that
 
+    Manager::setting.ReadSetting();
+    QMap<QString, float> list = Manager::setting.list();
+
     QRect rec = QApplication::desktop()->screenGeometry();
 
     //set size for mini pauzer
     miniWidth = 580;
     miniHeight = 225;
-    //if full size doesn't have a value in data
-    FullSize.setWidth(rec.width() * 7 / 10);
-    FullSize.setHeight(rec.height() * 8 / 10);
-    //if MiniPos doesn't have a value in data
-    MiniPos.setX((rec.width() - miniWidth) / 2);
-    MiniPos.setY((rec.height() - miniHeight) / 2);
-    //if FullPos doesn't have a value in data
-    FullPos.setX((rec.width() - FullSize.width()) / 2);
-    FullPos.setY((rec.height() - FullSize.height()) / 2);
-    isFullScreen = false;
 
-    changeState(State::FULL);
+    FullSize.setWidth(list.value("FullSizeWidth", rec.width() * 7 / 10));
+    FullSize.setHeight(list.value("FullSizeHeight", rec.height() * 8 / 10));
+
+    MiniPos.setX(list.value("MiniPosX", (rec.width() - miniWidth) / 2));
+    MiniPos.setY(list.value("MiniPosY", (rec.height() - miniHeight) / 2));
+
+    FullPos.setX(list.value("FullPosX", (rec.width() - FullSize.width()) / 2));
+    FullPos.setY(list.value("FullPosY", (rec.height() - FullSize.height()) / 2));
+
+    if (list.value("State_Full") == 1)
+    {
+        if (list.value("Maximized") == 1)
+            isFullScreen = true;
+        else
+            isFullScreen = false;
+
+        changeState(State::FULL);
+    }
+    else
+    {
+        changeState(State::MINI);
+    }
 
     ui->btn_AutoDetector->setChecked(true);
     ui->btn_Lock->setChecked(false);
 
-    float volume = 1;
-    ui->btn_Volume->setVolume(volume);    
+    float volume = Manager::setting.list().value("Volume");
+    ui->btn_Volume->setVolume(volume);
+
+    if (Manager::setting.list().value("Detector") == 0)
+    {
+        ui->btn_AutoDetector->setChecked(false);
+    }
+    else
+    {
+        ui->btn_AutoDetector->setChecked(true);
+    }
+
+    if (Manager::setting.list().value("Shuffle") == 0)
+    {
+        ui->btn_Shuffle->setChecked(false);
+    }
+    else
+    {
+        ui->btn_Shuffle->setChecked(true);
+    }
+
+    if (Manager::setting.list().value("Repeat") == 0)
+    {
+        ui->btn_Repeat->setChecked(false);
+    }
+    else
+    {
+        ui->btn_Repeat->setChecked(true);
+    }
+
+    if (Manager::setting.list().value("Lock") == 0)
+    {
+        ui->btn_Lock->setChecked(false);
+    }
+    else
+    {
+        ui->btn_Lock->setChecked(true);
+    }
 }
 
 void MiniPauzer::changeState(MiniPauzer::State _state)
@@ -966,6 +1083,14 @@ void MiniPauzer::on_btn_Minimize_clicked()
 void MiniPauzer::titleBardragged(const QPoint &newPoint)
 {
     this->move(newPoint);
+    if (state == State::FULL)
+    {
+        FullPos = newPoint;
+    }
+    else
+    {
+        MiniPos = newPoint;
+    }
 }
 
 void MiniPauzer::on_btn_Up_clicked()
@@ -1078,7 +1203,7 @@ void MiniPauzer::on_btn_Songs_toggled(bool checked)
         masterModel->setMode(MasterModel::Mode::SONG);
         tableView->resizeColumnsToContents();
         tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-        tableView->horizontalHeader()->setStretchLastSection(true);
+        tableView->horizontalHeader()->setStretchLastSection(false);
     }
 }
 

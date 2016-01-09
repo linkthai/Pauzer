@@ -4,12 +4,20 @@ QMap<QString, float> Setting::_default = Setting::InitDefault();
 
 Setting::Setting()
 {
+    _list = InitDefault();
 }
+
 QMap<QString, float> Setting::InitDefault()
 {
     QMap<QString, float> temp;
-    temp.insert("Volume", 30);
-    temp.insert("Bar", 10);
+
+    temp.insert("Volume", 1);
+    temp.insert("Detector", 1);
+    temp.insert("Lock", 0);
+    temp.insert("Shuffle", 0);
+    temp.insert("Repeat", 0);
+    temp.insert("State_Full", 1);
+    temp.insert("Maximized", 0);
     return temp;
 }
 
@@ -55,6 +63,7 @@ void Setting::WriteSetting()
 
 void Setting::ReadSetting()
 {
+
     QDomElement data;
     QString XmlPath = "Data\\Setting.xml";
 
@@ -84,7 +93,7 @@ void Setting::ReadSetting()
     }
 }
 
-QMap<QString, float> Setting::list() const
+QMap<QString, float> Setting::list()
 {
     return _list;
 }
