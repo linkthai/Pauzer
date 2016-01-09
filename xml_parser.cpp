@@ -40,7 +40,7 @@ QMap<QString, QMap<int, QString>> Xml_Parser::GetAllAlbums()
         {
             subList.insert(albums.at(i).toElement().attribute("ID").toInt(), albums.at(i).toElement().attribute(header));
         }
-
+        sortMap(subList);
         mainList.insert(header, subList);
     }
     return mainList;
@@ -53,6 +53,7 @@ QStringList Xml_Parser::GetAllArtist()
     {
         allArtist.push_back(artists.at(i).toElement().attribute("Artist_name"));
     }
+    qSort(allArtist);
     return allArtist;
 }
 QList<int> Xml_Parser::GetAlbumsByArtist(int ID)
@@ -257,5 +258,30 @@ void Xml_Parser::LoadData(QString path)
 {
     Xml_Data DATA;
     root = DATA.readXml(path);
+}
+
+void Xml_Parser::sortMap(QMap<int, QString> &map)
+{
+    QList<int> keys;
+    QList<QString> values;
+
+    QList<int>::Iterator i;
+    QList<QString>::Iterator j;
+
+    values = map.values();
+    keys = map.keys();
+
+    qSort(values);
+    map.clear();
+
+    j=values.begin();
+    i=keys.begin();
+
+    while(j != values.end() && i != keys.end())
+    {
+        map.insert(*i, *j);
+        i++;
+        j++;
+    }
 }
 

@@ -34,6 +34,8 @@ public:
     void SaveChoosenFolder(QString path);
     void AddToDom(QString title, QString artist, QString album, QString path, uint year);
     void LoadData(QString path);
+
+    void sortMap(QMap<int, QString> &map);
 private:
     QDomElement root;
     unsigned int albID;

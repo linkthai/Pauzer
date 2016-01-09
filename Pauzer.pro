@@ -95,7 +95,6 @@ CONFIG(release, debug|release) {
 
 LIBS += -LC:\Libraries\bass24\c -lbass \
 
-
 win32:LIBS += -lOle32 \
 
 RESOURCES += \
