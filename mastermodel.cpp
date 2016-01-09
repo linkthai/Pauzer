@@ -4,7 +4,8 @@ MasterModel::MasterModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
     qRegisterMetaType<QMap<QString,QMap<int,QString> >>("MyQMapType");
-
+    qRegisterMetaType<QMap<QString, QStringList >>("MyQMapType2");
+    qRegisterMetaType<QList<QPair<int, QString>> >("MyListType");
     mode = Mode::ALBUM;
     count = 0;
 
@@ -18,15 +19,15 @@ void MasterModel::initializeModel()
     albumCreator->setIndex(1);
     albumCreator->start();
 
-    connect(albumCreator, SIGNAL(createdAlbumList(QMap<QString,QMap<int,QString> >)),
-            this, SLOT(setAlbumList(QMap<QString,QMap<int,QString> >)));
+    connect(albumCreator, SIGNAL(createdAlbumList(QMap<QString,QStringList >)),
+            this, SLOT(setAlbumList(QMap<QString,QStringList >)));
 
     LibraryCreator *artistCreator = new LibraryCreator(this);
     artistCreator->setIndex(2);
     artistCreator->start();
 
-    connect(artistCreator, SIGNAL(createdArtistList(QStringList)),
-            this, SLOT(setArtistList(QStringList)));
+    connect(artistCreator, SIGNAL(createdArtistList(QList<QPair<int, QString>>)),
+            this, SLOT(setArtistList(QList<QPair<int, QString>>)));
 
     LibraryCreator *songCreator = new LibraryCreator(this);
     songCreator->setIndex(3);
@@ -72,12 +73,12 @@ void MasterModel::setMode(const MasterModel::Mode &_mode)
 
 }
 
-void MasterModel::setAlbumList(QMap<QString, QMap<int, QString> > _albumList)
+void MasterModel::setAlbumList(QMap<QString, QStringList > _albumList)
 {
     albumList = _albumList;
 }
 
-void MasterModel::setArtistList(QStringList _artistList)
+void MasterModel::setArtistList(QList<QPair<int, QString>> _artistList)
 {
     artistList = _artistList;
 }
@@ -129,19 +130,19 @@ QVariant MasterModel::data(const QModelIndex &index, int role) const
         {
         case Mode::ALBUM:
         {
-            if (col < 0 || col >= AlbumCol)
+            if (col < 0 || col >= AlbumCol || albumList.count() <= 0)
                 return QVariant();
 
             switch(col)
             {
             case 0:
-                return albumList["Album_name"][row];
+                return albumList["Album_name"].at(row);
                 break;
             case 1:
-                return albumList["Artist_name"][row];
+                return albumList["Artist_name"].at(row);
                 break;
             case 2:
-                QString year = albumList["Year"][row];
+                QString year = albumList["Year"].at(row);
                 if (year != "0")
                     return year;
                 else
@@ -151,7 +152,7 @@ QVariant MasterModel::data(const QModelIndex &index, int role) const
         }
             break;
         case Mode::ARTIST:
-            return artistList.at(row);
+            return artistList.at(row).second;
             break;
         case Mode::SONG:
         {
@@ -209,19 +210,22 @@ QMimeData *MasterModel::mimeData(const QModelIndexList &indexes) const
     foreach (QModelIndex index, indexes) {
         if (index.isValid()) {
             QString type;
+            int num;
             switch(mode)
             {
             case Mode::ALBUM:
                 type = "Album";
+                num = albumList["ID"].at(index.row()).toInt();
                 break;
             case Mode::ARTIST:
                 type = "Artist";
+                num = artistList.at(index.row()).first;
                 break;
             case Mode::SONG:
                 type = "Song";
+                num = index.row();
                 break;
             }
-            int num = index.row();
             stream << type << num;
         }
     }

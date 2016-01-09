@@ -10,13 +10,13 @@ private:
     QString _name;
     int _songCount;
     QMap<int, QString> _list;
-    QMap<QString, QMap<int, QString>> _albumList;
+    QMap<QString, QStringList> _albumList;
 public:
 	Master(void);
 	~Master(void);
     void AddToList(int ID, QString path);
     void SetList(QMap<int, QString> map);
-    void SetAlbumList(QMap<QString, QMap<int, QString>> map);
+    void SetAlbumList(QMap<QString, QStringList> map);
     void RemoveFromList(int id);
     QString Get(int id);
     void SetName(QString name);

@@ -23,6 +23,7 @@ QMap<QString, float> Setting::InitDefault()
 
 void Setting::ResetDefault()
 {
+    _list.clear();
     _list = _default;
 }
 void Setting::WriteSetting()

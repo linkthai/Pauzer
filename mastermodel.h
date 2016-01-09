@@ -31,16 +31,16 @@ public:
     QStringList mimeTypes() const;
     QMimeData* mimeData(const QModelIndexList & indexes) const;
 public slots:
-    void setAlbumList(QMap<QString, QMap<int, QString>> _albumList);
-    void setArtistList(QStringList _artistList);
+    void setAlbumList(QMap<QString, QStringList> _albumList);
+    void setArtistList(QList<QPair<int, QString>> _artistList);
     void setSongList(QMap<QString, QMap<int, QString>> _songList);
 private:
     Mode mode;
     int count;
 
-    QMap<QString, QMap<int, QString>> albumList;
+    QMap<QString, QStringList> albumList;
     QMap<QString, QMap<int, QString>> songList;
-    QStringList artistList;
+    QList<QPair<int, QString>> artistList;
 };
 
 #endif // MASTERMODEL_H

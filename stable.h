@@ -34,6 +34,7 @@
 #include <QTableView>
 #include <QtWinExtras>
 #include <QtAlgorithms>
+#include <QPair>
 
 #include <bass.h>
 
