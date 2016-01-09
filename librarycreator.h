@@ -17,8 +17,8 @@ private:
     QStringList list;
     int index;
 signals:
-    void createdAlbumList(QMap<QString, QMap<int, QString>> albumList);
-    void createdArtistList(QStringList artistList);
+    void createdAlbumList(QMap<QString, QStringList> albumList);
+    void createdArtistList(QList<QPair<int, QString>> artistList);
     void createdSongList(QMap<QString, QMap<int, QString>> songList);
 };
 

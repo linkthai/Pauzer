@@ -12,16 +12,16 @@ void Xml_Parser::Init()
     songID = 0;
     root = BUS.creatRoot("DATA");
 }
-QMap<QString, QMap<int, QString>> Xml_Parser::GetAllAlbums()
+QMap<QString,QStringList> Xml_Parser::GetAllAlbums()
 {
-    QMap<QString, QMap<int, QString>> mainList;
+    QMap<QString,QStringList> mainList;
 
     QDomNodeList albums = root.elementsByTagName("ALBUM");
     QString header;
 
-    for (int t = 0; t < 3; t++)
+    for (int t = 0; t < 4; t++)
     {
-        QMap<int, QString> subList;
+        QStringList subList;
 
         switch (t)
         {
@@ -34,26 +34,29 @@ QMap<QString, QMap<int, QString>> Xml_Parser::GetAllAlbums()
         case 2:
             header = "Year";
             break;
+        case 3:
+            header = "ID";
+            break;
         }
 
         for (int i = 0; i < albums.length(); i++)
         {
-            subList.insert(albums.at(i).toElement().attribute("ID").toInt(), albums.at(i).toElement().attribute(header));
+            subList.append(albums.at(i).toElement().attribute(header));
         }
-        sortMap(subList);
         mainList.insert(header, subList);
     }
+    sortMap(mainList);
     return mainList;
 }
-QStringList Xml_Parser::GetAllArtist()
+QList<QPair<int, QString>> Xml_Parser::GetAllArtist()
 {
-    QStringList allArtist;
+    QList<QPair<int, QString>> allArtist;
     QDomNodeList artists = root.elementsByTagName("ARTIST");
     for (int i = 0; i < artists.length(); i++)
     {
-        allArtist.push_back(artists.at(i).toElement().attribute("Artist_name"));
+        allArtist.append(qMakePair(artists.at(i).toElement().attribute("ID").toInt(), artists.at(i).toElement().attribute("Artist_name")));
     }
-    qSort(allArtist);
+    qSort(allArtist.begin(), allArtist.end(), less_second<int, QString>());
     return allArtist;
 }
 QList<int> Xml_Parser::GetAlbumsByArtist(int ID)
@@ -260,28 +263,83 @@ void Xml_Parser::LoadData(QString path)
     root = DATA.readXml(path);
 }
 
-void Xml_Parser::sortMap(QMap<int, QString> &map)
+void Xml_Parser::sortMap(QMap<QString, QStringList> &map)
 {
-    QList<int> keys;
-    QList<QString> values;
+    AlbumData data;
+    data.album = map["Album_name"];
+    data.artist = map["Artist_name"];
+    data.year = map["Year"];
+    data.id = map["ID"];
 
-    QList<int>::Iterator i;
-    QList<QString>::Iterator j;
+    QMutex mutex;
+    mutex.lock();
+    quicksort(0, data.album.size() - 1, data);
+    mutex.unlock();
 
-    values = map.values();
-    keys = map.keys();
-
-    qSort(values);
     map.clear();
+    map.insert("Album_name", data.album);
+    map.insert("Artist_name", data.artist);
+    map.insert("Year", data.year);
+    map.insert("ID", data.id);
+}
 
-    j=values.begin();
-    i=keys.begin();
-
-    while(j != values.end() && i != keys.end())
+void Xml_Parser::quicksort(int leftIdx, int rightIdx, Xml_Parser::AlbumData &data)
+{
+    if (leftIdx >= 0 && data.album.size() <= data.album.size() && rightIdx > leftIdx && rightIdx <= data.album.size())
     {
-        map.insert(*i, *j);
-        i++;
-        j++;
+        if(leftIdx < rightIdx)
+        {
+            int pivotIdx = divide(leftIdx, rightIdx, data);
+            quicksort(leftIdx, pivotIdx - 1, data);
+            quicksort(pivotIdx + 1, rightIdx, data);
+        }
     }
+}
+
+void Xml_Parser::swap(int leftIdx, int rightIdx, Xml_Parser::AlbumData &data)
+{
+    if (leftIdx >= 0 && leftIdx <= data.album.size() && rightIdx > leftIdx && rightIdx <= data.album.size())
+    {
+        QString temp = data.album[leftIdx];
+        data.album[leftIdx] = data.album[rightIdx];
+        data.album[rightIdx] = temp;
+
+        temp = data.artist[leftIdx];
+        data.artist[leftIdx] = data.artist[rightIdx];
+        data.artist[rightIdx] = temp;
+
+        temp = data.year[leftIdx];
+        data.year[leftIdx] = data.year[rightIdx];
+        data.year[rightIdx] = temp;
+
+        temp = data.id[leftIdx];
+        data.id[leftIdx] = data.id[rightIdx];
+        data.id[rightIdx] = temp;
+    }
+}
+
+int Xml_Parser::divide(int leftIdx, int rightIdx, Xml_Parser::AlbumData &data)
+{
+    int l = leftIdx;
+    if (leftIdx >= 0 && leftIdx <= data.album.size() && rightIdx > leftIdx && rightIdx <= data.album.size())
+    {
+        int r = rightIdx - 1;
+        QString pivot = data.album[rightIdx];
+
+        while (l <= r)
+        {
+            if(data.album[l] < pivot)
+            {
+                ++l;
+            }
+            else
+            {
+                this->swap(l, r, data);
+                --r;
+            }
+        }
+        this->swap(l, rightIdx, data);
+    }
+    return l;
 }
 

@@ -29,7 +29,7 @@ void LibraryCreator::run()
         break;
     case 1:
     {
-        QMap<QString, QMap<int, QString>> albumList;
+        QMap<QString, QStringList> albumList;
         albumList.clear();
         albumList = Manager::parser.GetAllAlbums();
         emit createdAlbumList(albumList);
@@ -37,7 +37,7 @@ void LibraryCreator::run()
         break;
     case 2:
     {
-        QStringList artistList;
+        QList<QPair<int, QString>> artistList;
         artistList = Manager::parser.GetAllArtist();
         emit createdArtistList(artistList);
     }

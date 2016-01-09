@@ -7,10 +7,26 @@
 
 class Xml_Parser
 {
+    template <typename T1, typename T2>
+    struct less_second {
+        typedef QPair<T1, T2> type;
+        bool operator ()(type const& a, type const& b) const {
+            return a.second < b.second;
+        }
+    };
+
+    struct AlbumData
+    {
+        QStringList album;
+        QStringList artist;
+        QStringList year;
+        QStringList id;
+    };
+
 public:
     Xml_Parser();
-    QMap<QString, QMap<int, QString>> GetAllAlbums();
-    QStringList GetAllArtist();
+    QMap<QString, QStringList> GetAllAlbums();
+    QList<QPair<int, QString>> GetAllArtist();
     QMap<int, QString> GetAllSong();
 
     QList<int> GetAlbumsByArtist(int ID);
@@ -35,7 +51,10 @@ public:
     void AddToDom(QString title, QString artist, QString album, QString path, uint year);
     void LoadData(QString path);
 
-    void sortMap(QMap<int, QString> &map);
+    void sortMap(QMap<QString, QStringList> &map);
+    void quicksort(int leftIdx, int rightIdx, AlbumData &data);
+    void swap(int leftIdx, int rightIdx, AlbumData &data);
+    int divide(int leftIdx, int rightIdx, AlbumData &data);
 private:
     QDomElement root;
     unsigned int albID;

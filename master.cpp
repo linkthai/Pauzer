@@ -21,7 +21,7 @@ void Master::SetList(QMap<int, QString> map)
     _list = map;
 }
 
-void Master::SetAlbumList(QMap<QString, QMap<int, QString> > map)
+void Master::SetAlbumList(QMap<QString, QStringList > map)
 {
     _albumList = map;
 }
