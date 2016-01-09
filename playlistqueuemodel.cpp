@@ -15,11 +15,13 @@ void PlaylistQueueModel::initializeModel()
 {
     beginResetModel();
 
+    clearQueue();
+
     Playlist *master = new Playlist();
     master->setPlaylist(Playlist::Type::MASTER, 0);
     list.append(master);
 
-    Player::getInstance()->changeToPlaylist(master);
+    Player::getInstance()->changeToPlaylist(master, true, true);
 
     endResetModel();
 }
@@ -35,7 +37,7 @@ void PlaylistQueueModel::setCurrentPlaylist(const int &num, bool firstSong)
     else
         if (num >= list.size())
         {
-            emit endOfQueue();
+            setPlayerState(false);
             Player::getInstance()->changeToPlaylist(list.at(list.size() - 1), firstSong);
         }
         else
@@ -93,7 +95,17 @@ bool PlaylistQueueModel::removePlaylist(const int& row, bool removeMaster)
 bool PlaylistQueueModel::movePlaylist(const int& from, const int& to)
 {
     QModelIndex index = QModelIndex();
-    return moveRows(index, from, 1, index, to);
+
+    int endRow = to;
+    if (endRow == -1 || endRow >= rowCount(index))
+        endRow = rowCount(index) - 1;
+
+    return moveRows(index, from, 1, index, endRow);
+}
+
+void PlaylistQueueModel::setPlayerState(bool PauseToPlay)
+{
+    emit switchPlayerState(PauseToPlay);
 }
 
 int PlaylistQueueModel::getCurrentPlaylistNum() const
@@ -123,7 +135,7 @@ QVariant PlaylistQueueModel::data(const QModelIndex &index, int role) const
         return list.at(row)->getName();
         break;
     case Qt::FontRole:
-        return QFont("UTM Avo", 10);
+        return QFont("Segoe UI", 10);
         break;
     case Qt::BackgroundRole:
     {
@@ -184,8 +196,6 @@ bool PlaylistQueueModel::removeRows(int row, int count, const QModelIndex &paren
     {
         delete list.at(row);
         list.removeAt(row);
-        if (row == getCurrentPlaylistNum())
-            emit playlistRemoved();
     }
 
     endRemoveRows();

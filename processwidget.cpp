@@ -10,7 +10,7 @@ ProcessWidget::ProcessWidget(QWidget *parent) :
     this->setFixedSize(220, 150);
     this->setStyleSheet("QDialog#ProcessWidget {"
                         "background-color: #333333;"
-                        "border: 1px solid #666666;"
+                        "border: 1px solid #61d169;"
                         "}");
 
     layout = new QGridLayout(this);

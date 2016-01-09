@@ -5,7 +5,8 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MiniPauzer)
 {
-    this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
+    this->setWindowFlags(Qt::Widget | Qt::FramelessWindowHint |
+                         Qt::WindowMinimizeButtonHint);
 
     player = Player::getInstance();
 
@@ -31,10 +32,6 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     changeStyle();
 
     createMenu();
-
-    buttonPlayClickTimer = new QTimer(this);
-    buttonPlayClickTimer->setSingleShot(true);
-    connect(buttonPlayClickTimer, SIGNAL(timeout()), this, SLOT(releaseButtonPlay()));
 
     detector->start();
     if (ui->btn_AutoDetector->isChecked())
@@ -71,7 +68,7 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     connect(ui->btn_Volume, SIGNAL(volumeChanged(float)), player, SLOT(setVolume(float)));
 
     //connect end Of Queue to pause button
-    connect(queueModel, SIGNAL(endOfQueue()), this, SLOT(on_btn_Play_clicked()));
+    connect(queueModel, SIGNAL(switchPlayerState(bool)), this, SLOT(switchPlayerState(bool)));
 
     isDetectorOn = false;
     isProcessCanceled = false;
@@ -87,7 +84,6 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     }
 
     changePanel(Panel::MASTER);
-
 
     QMap<QString, float> t;
     t.insert("Volume", 50);
@@ -137,6 +133,8 @@ MiniPauzer::~MiniPauzer()
 
 void MiniPauzer::layoutSetup()
 {
+    QRect rec = QApplication::desktop()->screenGeometry();
+
     //initialize layout
     mainGrid = new QVBoxLayout(this);
 
@@ -242,10 +240,10 @@ void MiniPauzer::layoutSetup()
     grd_Manager->addWidget(grbx_LeftPanel);
     grd_Manager->setAlignment(grbx_LeftPanel, Qt::AlignLeft);
     grbx_LeftPanel->setLayout(grd_LeftPanel);
-    grbx_LeftPanel->setFixedWidth(250);
+    grbx_LeftPanel->setFixedWidth(220);
     grbx_LeftPanel->setContentsMargins(0, 0, 0, 0);
     grd_LeftPanel->setMargin(0);
-    grd_LeftPanel->setSpacing(0);
+    grd_LeftPanel->setSpacing(10);
 
     grd_LeftPanel->setDirection(QBoxLayout::TopToBottom);
 
@@ -262,8 +260,6 @@ void MiniPauzer::layoutSetup()
 
     grd_LeftPanel->addWidget(ui->btn_Master);
     ui->btn_Master->setFixedHeight(50);
-    grd_LeftPanel->addWidget(ui->btn_User);
-    ui->btn_User->setFixedHeight(50);
     grd_LeftPanel->addStretch(3);
 
     //----------MidPanel-----------------------
@@ -274,7 +270,7 @@ void MiniPauzer::layoutSetup()
 
     grd_MidPanel->addWidget(grbx_PanelInfo);
     grbx_PanelInfo->setLayout(grd_PanelInfo);
-    grbx_PanelInfo->setMinimumHeight(120);
+    grbx_PanelInfo->setFixedHeight(100);
     grbx_PanelInfo->setStyleSheet("background-color: transparent");
 
     //Panel Info
@@ -287,7 +283,7 @@ void MiniPauzer::layoutSetup()
     //------------PlaylistQueuePanel------------
     grd_Manager->addWidget(queuePanel);
     grd_Manager->setAlignment(grbx_LeftPanel, Qt::AlignRight);
-    queuePanel->setFixedWidth(320);
+    queuePanel->setFixedWidth(300);
     queuePanel->setContentsMargins(0, 0, 0, 0);
 
     queuePanel->setStyleSheet("QWidget {"
@@ -341,6 +337,7 @@ void MiniPauzer::layoutSetup()
     grd_SongSetting->setAlignment(Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_Volume, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_Repeat, Qt::AlignRight);
+    grd_SongSetting->addWidget(ui->btn_Lock, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_Shuffle, Qt::AlignRight);
     grd_SongSetting->addWidget(ui->btn_AutoDetector, Qt::AlignRight);
 
@@ -371,6 +368,9 @@ void MiniPauzer::loadData()
 
     QRect rec = QApplication::desktop()->screenGeometry();
 
+    //set size for mini pauzer
+    miniWidth = 580;
+    miniHeight = 225;
     //if full size doesn't have a value in data
     FullSize.setWidth(rec.width() * 7 / 10);
     FullSize.setHeight(rec.height() * 8 / 10);
@@ -385,6 +385,7 @@ void MiniPauzer::loadData()
     changeState(State::FULL);
 
     ui->btn_AutoDetector->setChecked(true);
+    ui->btn_Lock->setChecked(false);
 
     float volume = 1;
     ui->btn_Volume->setVolume(volume);    
@@ -434,20 +435,31 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         //add title, artist and album labels
         grbx_SongInfo->setFixedWidth(400);
         grd_PlayerFull->addWidget(grbx_SongInfo, 1, 1, -1, 1);
-        grd_SongInfo->setContentsMargins(0, 0, 15, 10);
-        ui->lbl_Title->setContentsMargins(0, 0, 0, 0);
+        grd_SongInfo->setContentsMargins(0, 0, 15, 5);
+        ui->lbl_Title->setContentsMargins(0, -5, 0, 0);
         grd_SongInfo->setSpacing(5);
+        ui->lbl_Title->setFont(QFont("Segoe UI", 18));
+        ui->lbl_Artist->setFont(QFont("Segoe UI", 10));
+        ui->lbl_Album->setFont(QFont("Segoe UI", 9));
 
         //add player button
         grd_PlayerFull->addWidget(grbx_SongButton, 1, 2, 1, 1);
         grbx_SongButton->setFixedWidth(400);
         grd_PlayerFull->setAlignment(grbx_SongButton, Qt::AlignCenter);
-        grd_SongButton->setSpacing(20);
+        grd_SongButton->setSpacing(15);
+        ui->btn_Prev->setFixedSize(25, 25);
+        ui->btn_Next->setFixedSize(25, 25);
+        ui->btn_Play->setFixedSize(30, 30);
 
         //add player setting
         grd_PlayerFull->addWidget(grbx_SongSetting, 2, 2, 1, 1);
         grd_SongSetting->setMargin(15);
         grd_SongSetting->setSpacing(25);
+        ui->btn_Volume->setFixedSize(QSize(20, 20));
+        ui->btn_Repeat->setFixedSize(QSize(20, 20));
+        ui->btn_Shuffle->setFixedSize(QSize(20, 20));
+        ui->btn_Lock->setFixedSize(QSize(20, 20));
+        ui->btn_AutoDetector->setFixedSize(QSize(20, 20));
 
         if (isFullScreen)
             this->setWindowState(this->windowState() ^ Qt::WindowMaximized);
@@ -473,7 +485,7 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grbx_PlayerFull->hide();
         grbx_Player->show();
 
-        grbx_Player->setFixedHeight(210);
+        grbx_Player->setFixedHeight(miniHeight - ui->titleBar->geometry().height());
 
         //add cover art
         grd_Player->addWidget(ui->coverArt, 0, 0, -1, 1);
@@ -489,11 +501,13 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_SongInfo->setContentsMargins(15, 5, 15, 5);
         ui->lbl_Artist->setContentsMargins(0, -4, 0, 0);
         grd_SongInfo->setSpacing(0);
-
+        ui->lbl_Title->setFont(QFont("Segoe UI", 18));
+        ui->lbl_Artist->setFont(QFont("Segoe UI", 9));
+        ui->lbl_Album->setFont(QFont("Segoe UI", 8));
 
         //add progress bar
         grd_Player->addWidget(grbx_SongProgress, 1, 1, 1, -1);
-        grd_SongProgress->setContentsMargins(15, 5, 15, 5);
+        grd_SongProgress->setContentsMargins(15, 0, 15, 0);
         grd_SongProgress->setSpacing(10);
 
         //add player button
@@ -502,11 +516,19 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
         grd_Player->setAlignment(grbx_SongButton, Qt::AlignCenter);
         grd_SongButton->setContentsMargins(0, 5, 0, 5);
         grd_SongSetting->setSpacing(10);
+        ui->btn_Prev->setFixedSize(18, 18);
+        ui->btn_Next->setFixedSize(18, 18);
+        ui->btn_Play->setFixedSize(24, 24);
 
         //add player setting
         grd_Player->addWidget(grbx_SongSetting, 3, 1, 1, -1);
         grd_SongSetting->setContentsMargins(15, 5, 20, 15);
         grd_SongSetting->setSpacing(20);
+        ui->btn_Volume->setFixedSize(QSize(16, 16));
+        ui->btn_Repeat->setFixedSize(QSize(16, 16));
+        ui->btn_Shuffle->setFixedSize(QSize(16, 16));
+        ui->btn_Lock->setFixedSize(QSize(16, 16));
+        ui->btn_AutoDetector->setFixedSize(QSize(16, 16));
 
         this->resize(miniWidth, miniHeight);
         this->move(MiniPos);
@@ -515,6 +537,11 @@ void MiniPauzer::changeState(MiniPauzer::State _state)
 
 void MiniPauzer::changeStyle()
 {
+    this->setStyleSheet("QWidget#MiniPauzer {"
+                        "border: 3px solid green;"
+                        "margin: 10px;"
+                        "}");
+
     ui->titleBar->setStyleSheet("background-color: #2d2d2d");
 
     grbx_Player->setStyleSheet("border: 0px; background-color: #282828;");
@@ -566,6 +593,15 @@ void MiniPauzer::changeStyle()
     ui->lbl_Artist->setMinimumHeight(18);
     ui->lbl_Album->setMinimumHeight(16);
 
+    ui->btn_Play->setToolTip(tr("Play/Pause"));
+    ui->btn_Prev->setToolTip(tr("Previous Song"));
+    ui->btn_Next->setToolTip(tr("Next Song"));
+    ui->btn_AutoDetector->setToolTip(tr("Auto detector"));
+    ui->btn_Lock->setToolTip(tr("Lock Playlist"));
+    ui->btn_Repeat->setToolTip(tr("Repeat Song"));
+    ui->btn_Shuffle->setToolTip(tr("Shuffle playlist"));
+    ui->btn_Volume->setToolTip(tr("Volume"));
+
     grip->setStyleSheet("QSizeGrip {"
                         "width: 15px;"
                         "height: 15px;"
@@ -608,29 +644,29 @@ void MiniPauzer::changeStyle()
                                   "background-color: #61d169;"
                                   "}");
 
-    ui->btn_User->setAutoExclusive(true);
-    ui->btn_User->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui->btn_User->setIcon(QIcon(":/icons/Master.png"));
-    ui->btn_User->setIconSize(QSize(24, 24));
-    ui->btn_User->setFont(QFont("UTM Avo"));
-    ui->btn_User->setText(tr(" User Playlist"));
-    ui->btn_User->setStyleSheet("QToolButton{"
-                                  "text-align: left;"
-                                  "border: 0px;"
-                                  "padding-left: 20px;"
-                                  "font-size: 18px;"
-                                  "background-color: transparent;"
-                                  "color: white;"
-                                  "}"
-                                  "QToolButton:hover{"
-                                  "background-color: #595959;"
-                                  "}"
-                                  "QToolButton:checked{"
-                                  "background-color: #3eba58;"
-                                  "}"
-                                  "QToolButton:checked:hover{"
-                                  "background-color: #61d169;"
-                                  "}");
+//    ui->btn_User->setAutoExclusive(true);
+//    ui->btn_User->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+//    ui->btn_User->setIcon(QIcon(":/icons/Master.png"));
+//    ui->btn_User->setIconSize(QSize(24, 24));
+//    ui->btn_User->setFont(QFont("UTM Avo"));
+//    ui->btn_User->setText(tr(" User Playlist"));
+//    ui->btn_User->setStyleSheet("QToolButton{"
+//                                  "text-align: left;"
+//                                  "border: 0px;"
+//                                  "padding-left: 20px;"
+//                                  "font-size: 18px;"
+//                                  "background-color: transparent;"
+//                                  "color: white;"
+//                                  "}"
+//                                  "QToolButton:hover{"
+//                                  "background-color: #595959;"
+//                                  "}"
+//                                  "QToolButton:checked{"
+//                                  "background-color: #3eba58;"
+//                                  "}"
+//                                  "QToolButton:checked:hover{"
+//                                  "background-color: #61d169;"
+//                                  "}");
 
     grbx_MidPanel->setStyleSheet("QGroupBox{"
                                  "background-color: #1a1a1a;"
@@ -639,10 +675,10 @@ void MiniPauzer::changeStyle()
     ui->btn_Albums->setAutoExclusive(true);
     ui->btn_Albums->setIcon(QIcon(":/icons/Albums.png"));
     ui->btn_Albums->setIconSize(QSize(40, 40));
-    ui->btn_Albums->setText(tr(" Albums"));
+    ui->btn_Albums->setText(tr("Albums"));
     ui->btn_Albums->setStyleSheet("QPushButton{"
-                                  "margin: 15px;"
-                                  "border-radius: 4px;"
+                                  "margin: 10px;"
+                                  "border-radius: 3px;"
                                   "color: white;"
                                   "background-color: transparent;"
                                   "}"
@@ -658,10 +694,10 @@ void MiniPauzer::changeStyle()
     ui->btn_Artists->setAutoExclusive(true);
     ui->btn_Artists->setIcon(QIcon(":/icons/Artists.png"));
     ui->btn_Artists->setIconSize(QSize(40, 40));
-    ui->btn_Artists->setText(tr(" Artists"));
+    ui->btn_Artists->setText(tr("Artists"));
     ui->btn_Artists->setStyleSheet("QPushButton{"
-                                   "margin: 15px;"
-                                   "border-radius: 4px;"
+                                   "margin: 10px;"
+                                   "border-radius: 3px;"
                                   "color: white;"
                                   "background-color: transparent;"
                                   "}"
@@ -677,10 +713,10 @@ void MiniPauzer::changeStyle()
     ui->btn_Songs->setAutoExclusive(true);
     ui->btn_Songs->setIcon(QIcon(":/icons/Songs.png"));
     ui->btn_Songs->setIconSize(QSize(40, 40));
-    ui->btn_Songs->setText(tr(" Songs"));
+    ui->btn_Songs->setText(tr("Songs"));
     ui->btn_Songs->setStyleSheet("QPushButton{"
-                                 "margin: 15px;"
-                                 "border-radius: 4px;"
+                                 "margin: 10px;"
+                                 "border-radius: 3px;"
                                   "color: white;"
                                   "background-color: transparent;"
                                   "}"
@@ -755,53 +791,43 @@ void MiniPauzer::resizeEvent(QResizeEvent *event)
 
 void MiniPauzer::on_btn_Play_clicked()
 {
-    if (ui->btn_Play->isEnabled())
-    {
-        ui->btn_Play->setEnabled(false);
-        buttonPlayClickTimer->start(500);
 
-		if (player->getPlaying() == false)
-        {
-            isDetectorOn = true;
-            player->play();
-		}
-		else
-		{
-			isDetectorOn = false;
-            player->pause();
-		}
-	}
+    if (player->getPlaying() == false)
+    {
+        isDetectorOn = true;
+        player->play();
+        playToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+    }
+    else
+    {
+        isDetectorOn = false;
+        player->pause();
+        playToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+    }
 }
 
 
 void MiniPauzer::detectAudio(int audio_num)
 {
-    if (isDetectorOn && ui->btn_Play->isEnabled())
+    if (isDetectorOn)
     {
         if (player->getPlaying() == true)
         {
             if (audio_num > 1)
             {
-                ui->btn_Play->setEnabled(false);
-                buttonPlayClickTimer->start(500);
                 player->pause();
+                playToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
             }
         }
         else
         {
             if (audio_num == 0)
             {
-                ui->btn_Play->setEnabled(false);
-                buttonPlayClickTimer->start(500);
                 player->play();
+                playToolButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
             }
         }
     }
-}
-
-void MiniPauzer::releaseButtonPlay()
-{
-    ui->btn_Play->setEnabled(true);
 }
 
 void MiniPauzer::on_sliderBar_sliderPressed()
@@ -891,8 +917,9 @@ void MiniPauzer::processFinished()
         }
 
         masterModel->initializeModel();
-        queueModel->clearQueue();
         queueModel->initializeModel();
+
+        changePanel(Panel::MASTER);
     }
 }
 
@@ -1014,6 +1041,14 @@ void MiniPauzer::on_btn_Repeat_toggled(bool checked)
     }
 }
 
+void MiniPauzer::on_btn_Lock_toggled(bool checked)
+{
+    if (player != NULL)
+    {
+        player->setLock(checked);
+    }
+}
+
 void MiniPauzer::on_btn_Albums_toggled(bool checked)
 {
     if (checked)
@@ -1044,5 +1079,23 @@ void MiniPauzer::on_btn_Songs_toggled(bool checked)
         tableView->resizeColumnsToContents();
         tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
         tableView->horizontalHeader()->setStretchLastSection(true);
+    }
+}
+
+void MiniPauzer::switchPlayerState(bool PauseToPlay)
+{
+    if (PauseToPlay)
+    {
+        if (!player->getPlaying())
+        {
+            ui->btn_Play->click();
+        }
+    }
+    else
+    {
+        if (player->getPlaying())
+        {
+            ui->btn_Play->click();
+        }
     }
 }

@@ -17,11 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#MiniPauzer{	
-    border: 1px solid black;
-    outline-style: solid;
-    outline-color: red;
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QLabel" name="lbl_Title">
    <property name="geometry">
@@ -201,9 +197,9 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QSlider::groove:horizontal {
-    height: 2px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+    height: 1px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
     background: white;
-	border: 2px solid white;
+	border: 1px solid white;
     border-radius: 10px;
 }
 
@@ -484,8 +480,6 @@ padding: 0px;
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 25px;
-	height: 25px;
     image: url(:/icons/Volume_Off.png);
 }
 
@@ -542,8 +536,6 @@ QPushButton:hover {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 30px;
-	height: 30px;
 	image: url(:/icons/Play.png);
 }
 
@@ -586,8 +578,6 @@ QPushButton:disabled {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 25px;
-	height: 25px;
 	image: url(:/icons/Prev.png);
 }
 
@@ -614,8 +604,6 @@ QPushButton:disabled {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 25px;
-	height: 25px;
 	image: url(:/icons/Next.png);
 }
 
@@ -634,7 +622,7 @@ QPushButton:disabled {
   <widget class="QPushButton" name="btn_AutoDetector">
    <property name="geometry">
     <rect>
-     <x>870</x>
+     <x>840</x>
      <y>770</y>
      <width>19</width>
      <height>16</height>
@@ -648,8 +636,6 @@ QPushButton:disabled {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 16px;
-	height: 16px;
 	image: url(:/icons/Detector_Off.png);
 }
 
@@ -693,8 +679,6 @@ QPushButton:hover {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 18px;
-	height: 18px;
     image: url(:/icons/Repeat_NoRepeat.png);
 }
 
@@ -735,8 +719,6 @@ QPushButton:hover {
    </property>
    <property name="styleSheet">
     <string notr="true">QPushButton {
-	width: 22px;
-	height: 22px;
     image: url(:/icons/Shuffle_Off.png);
 }
 
@@ -939,6 +921,52 @@ QPushButton:hover {
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="btn_Lock">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>770</y>
+     <width>19</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	image: url(:/icons/Lock_Off.png);
+}
+
+QPushButton:checked {
+	image: url(:/icons/Lock_On.png);
+}
+
+
+QPushButton:checked:hover {
+    image: url(:/icons/Lock_On_Hover.png);
+}
+
+QPushButton:hover {
+    image: url(:/icons/Lock_Off_Hover.png);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+  </widget>
   <zorder>btn_AutoDetector</zorder>
   <zorder>btn_Repeat</zorder>
   <zorder>btn_Shuffle</zorder>
@@ -961,6 +989,7 @@ QPushButton:hover {
   <zorder>btn_Albums</zorder>
   <zorder>btn_Artists</zorder>
   <zorder>btn_Songs</zorder>
+  <zorder>btn_Lock</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

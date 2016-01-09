@@ -6,6 +6,7 @@ Playlist::Playlist(QObject *parent) : QObject(parent)
     currentSong = -1;
     currentPos = 0;
     id = 0;
+    isInit = false;
 }
 
 void Playlist::setPlaylist(Type _type, int playlistNum)
@@ -74,6 +75,7 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
     }
 
     this->setIcon();
+    isInit = true;
 }
 
 Playlist::~Playlist()
@@ -128,7 +130,7 @@ void Playlist::playLastSong(bool isShuffling)
     }
 }
 
-void Playlist::nextSong(bool isShuffling)
+void Playlist::nextSong(bool isShuffling, bool isLocked)
 {
     int num;
 
@@ -137,8 +139,16 @@ void Playlist::nextSong(bool isShuffling)
         num = shuffleList.indexOf(currentSong);
         if (num == shuffleList.size() - 1)
         {
-            emit nextPlaylist();
-            return;
+            if (isLocked)
+            {
+                reShuffle(true);
+                num = 0;
+            }
+            else
+            {
+                emit nextPlaylist();
+                return;
+            }
         }
         else
         {
@@ -151,8 +161,15 @@ void Playlist::nextSong(bool isShuffling)
         num = songList.indexOf(currentSong);
         if (num == songList.size() - 1)
         {
-            emit nextPlaylist();
-            return;
+            if (isLocked)
+            {
+                num = 0;
+            }
+            else
+            {
+                emit nextPlaylist();
+                return;
+            }
         }
         else
         {
@@ -164,7 +181,7 @@ void Playlist::nextSong(bool isShuffling)
     emit changeCurrentSong(currentSong);
 }
 
-void Playlist::prevSong(bool isShuffling)
+void Playlist::prevSong(bool isShuffling, bool isLocked)
 {
     int num;
 
@@ -173,8 +190,15 @@ void Playlist::prevSong(bool isShuffling)
         num = shuffleList.indexOf(currentSong);
         if (num == 0)
         {
-            emit prevPlaylist();
-            return;
+            if (isLocked)
+            {
+                num = shuffleList.size() - 1;
+            }
+            else
+            {
+                emit prevPlaylist();
+                return;
+            }
         }
         else
         {
@@ -187,8 +211,15 @@ void Playlist::prevSong(bool isShuffling)
         num = songList.indexOf(currentSong);
         if (num == 0)
         {
-            emit prevPlaylist();
-            return;
+            if (isLocked)
+            {
+                num = songList.size() - 1;
+            }
+            else
+            {
+                emit prevPlaylist();
+                return;
+            }
         }
         else
         {
@@ -202,6 +233,10 @@ void Playlist::prevSong(bool isShuffling)
 
 void Playlist::reShuffle(bool changeSong)
 {
+    int lastSongId = -1;
+    if (shuffleList.size() > 1)
+        lastSongId = shuffleList.at(shuffleList.size() - 1);
+
     shuffleList.clear();
 
     QList<int> tempList;
@@ -218,9 +253,20 @@ void Playlist::reShuffle(bool changeSong)
     }
 
     //if the playlist is playing
-    if (currentSong != -1)
+    if (!changeSong)
     {
-        shuffleList.move(shuffleList.indexOf(currentSong), 0);
+        if (currentSong != -1)
+        {
+            shuffleList.move(shuffleList.indexOf(currentSong), 0);
+        }
+    }
+    else
+    {
+        if (lastSongId == shuffleList.at(0))
+        {
+            int rand = qrand() % (shuffleList.size() - 1);
+            shuffleList.move(0, rand + 1);
+        }
     }
 }
 
@@ -245,7 +291,7 @@ void Playlist::setIcon()
 
     if (type == Playlist::Type::MASTER)
     {
-        QPixmap pixMap(":/icons/Pauzer_Icon.png");
+        QPixmap pixMap(":/icons/Pauzer_White.png");
         icon.addPixmap(pixMap, QIcon::Normal);
         icon.addPixmap(pixMap, QIcon::Selected);
 
@@ -314,5 +360,10 @@ Playlist::Type Playlist::getType()
 int Playlist::getId()
 {
     return id;
+}
+
+bool Playlist::getInit()
+{
+    return isInit;
 }
 

@@ -39,6 +39,8 @@ void MasterModel::initializeModel()
     artistCreator->wait();
     songCreator->wait();
 
+    count = Manager::parser.GetAllAlbumsCount();
+
     endResetModel();
 
     delete albumCreator;

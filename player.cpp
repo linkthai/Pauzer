@@ -1,6 +1,7 @@
 #include "player.h"
 
 bool endOfPlayback;
+bool pauseAllowed;
 Player* Player::player = NULL;
 
 Player::Player(QObject *parent) :
@@ -19,7 +20,9 @@ Player::Player(QObject *parent) :
 	isPlaying = false;
     isShuffling = false;
     isChangingSong = false;
+    isLocked = false;
     endOfPlayback = false;
+    pauseAllowed = false;
 
     isRepeating = false;
     volume = 1.0;
@@ -35,8 +38,11 @@ Player::~Player()
         delete t;
 }
 
-void Player::changeToPlaylist(Playlist *_playlist, bool playFirstSong)
+void Player::changeToPlaylist(Playlist *_playlist, bool playFirstSong, bool masterReset)
 {
+    if (!masterReset)
+        removeCurrentPlaylist();
+
     playlist = _playlist;
 
     connect(playlist, SIGNAL(changeCurrentSong(int)), this, SLOT(changeToSong(int)));
@@ -150,6 +156,18 @@ void Player::setRepeat(bool state)
     }
 }
 
+void Player::setLock(bool state)
+{
+    if (state)
+    {
+        isLocked = true;
+    }
+    else
+    {
+        isLocked = false;
+    }
+}
+
 void Player::setVolume(float vol)
 {
     if (vol < 0 || vol > 1)
@@ -160,10 +178,11 @@ void Player::setVolume(float vol)
     if (BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED)
         return;
 
-    BASS_ChannelSetAttribute(
+    BASS_ChannelSlideAttribute(
         channel,
         BASS_ATTRIB_VOL,
-        volume
+        volume,
+        500
     );
 }
 
@@ -202,6 +221,14 @@ void Player::checkEndPlayback()
     }
 }
 
+void Player::removeCurrentPlaylist()
+{
+    if (playlist != NULL && playlist->getInit())
+    {
+        playlist->disconnect();
+    }
+}
+
 bool Player::getShuffle()
 {
     return isShuffling;
@@ -209,7 +236,10 @@ bool Player::getShuffle()
 
 void CALLBACK PauseAfterFadeOut(HSYNC handle, DWORD channel, DWORD data, void *user)
 {
-    BASS_ChannelPause(channel);
+    if (pauseAllowed)
+    {
+        BASS_ChannelPause(channel);
+    }
 }
 
 void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user)
@@ -218,7 +248,9 @@ void CALLBACK EndOfPlayback(HSYNC handle, DWORD channel, DWORD data, void *user)
 }
 
 void Player::play()
-{
+{    
+    pauseAllowed = false;
+
     //Check is channel is Active
     //If no then start the playlist, if yes then resume the song
     if (BASS_ChannelIsActive(channel) == BASS_ACTIVE_STOPPED)
@@ -242,6 +274,7 @@ void Player::play()
 
 void Player::pause()
 {
+    pauseAllowed = true;
 	isPlaying = false;
     emit changePlaying(isPlaying);
 
@@ -255,14 +288,20 @@ void Player::pause()
 
 void Player::nextSong()
 {
-    BASS_ChannelStop(channel);
-    playlist->nextSong(isShuffling);
+    if (playlist)
+    {
+        BASS_ChannelStop(channel);
+        playlist->nextSong(isShuffling, isLocked);
+    }
 }
 
 void Player::prevSong()
 {
-    BASS_ChannelStop(channel);
-    playlist->prevSong(isShuffling);
+    if (playlist)
+    {
+        BASS_ChannelStop(channel);
+        playlist->prevSong(isShuffling, isLocked);
+    }
 }
 
 bool Player::getPlaying()

@@ -16,6 +16,12 @@ class PlaylistQueueWidget : public QWidget
 public:
     explicit PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *parent = 0);
     ~PlaylistQueueWidget();
+
+private:
+    Ui::PlaylistQueueWidget *ui;
+    QLabel *grbx_item;
+    PlaylistQueueModel *model;
+
 private slots:
     void on_btn_Play_clicked();
 
@@ -27,13 +33,10 @@ private slots:
 
     void on_btn_Down_clicked();
 
+    void modelScrollTo(const QModelIndex & parent, int start, int end);
+
     void changeNextPlaylist();
     void changePrevPlaylist();
-
-private:
-    Ui::PlaylistQueueWidget *ui;
-    QLabel *grbx_item;
-    PlaylistQueueModel *model;
 
 };
 

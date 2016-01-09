@@ -13,6 +13,8 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
     connect(Player::getInstance(), SIGNAL(nextPlaylist()), this, SLOT(changeNextPlaylist()));
     connect(Player::getInstance(), SIGNAL(prevPlaylist()), this, SLOT(changePrevPlaylist()));
 
+    connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(modelScrollTo(QModelIndex,int,int)));
+
     QVBoxLayout *layout = new QVBoxLayout();
     this->setLayout(layout);
 
@@ -57,6 +59,9 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
     ui->view_Playlist->setDragEnabled(true);
     ui->view_Playlist->viewport()->setAcceptDrops(true);
     ui->view_Playlist->setDropIndicatorShown(true);
+    ui->view_Playlist->setAutoScroll(true);
+    ui->view_Playlist->setAutoScrollMargin(100);
+    ui->view_Playlist->verticalScrollBar()->setSingleStep(10);
 
     ui->view_Playlist->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->view_Playlist->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -139,6 +144,7 @@ void PlaylistQueueWidget::on_btn_Play_clicked()
     int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
 
     model->setCurrentPlaylist(selected);
+    model->setPlayerState(true);
 }
 
 void PlaylistQueueWidget::on_btn_Clear_clicked()
@@ -174,6 +180,11 @@ void PlaylistQueueWidget::on_btn_Down_clicked()
     int selected = ui->view_Playlist->selectionModel()->selectedRows().front().row();
 
     model->movePlaylist(selected, selected + 1);
+}
+
+void PlaylistQueueWidget::modelScrollTo(const QModelIndex &parent, int start, int end)
+{
+    ui->view_Playlist->scrollToBottom();
 }
 
 void PlaylistQueueWidget::changeNextPlaylist()
