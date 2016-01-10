@@ -198,7 +198,6 @@ MiniPauzer::~MiniPauzer()
     delete detector;
     delete queueModel;
     delete widget;
-    delete buttonPlayClickTimer;
 }
 
 void MiniPauzer::layoutSetup()

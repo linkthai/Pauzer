@@ -58,6 +58,10 @@ void Playlist::setPlaylist(Type _type, int playlistNum)
 
         QString filename = Manager::master.Get(playlistNum);
         TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+
+        if (!f.isValid())
+            return;
+
         QString title = TStringToQString(f.ID3v2Tag()->title());
 
         if (title == "")
@@ -302,6 +306,12 @@ void Playlist::setIcon()
     {
         filename = Manager::master.Get(songList.at(i));
         TagLib::MPEG::File f(reinterpret_cast<const wchar_t*>(filename.constData()));
+
+        if (!f.isValid())
+        {
+            i++;
+            continue;
+        }
 
         TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
 

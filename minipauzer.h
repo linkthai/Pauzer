@@ -36,7 +36,6 @@ private:
     Ui::MiniPauzer *ui;
     AutoDetector *detector;
     LibraryCreator *creator;
-    QTimer *buttonPlayClickTimer;
 
     PlaylistQueueModel *queueModel;
     MasterModel *masterModel;

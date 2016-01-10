@@ -73,9 +73,10 @@ void Player::changeToSong(int songNum)
 
     BASS_ChannelSetSync(channel, BASS_SYNC_END, 0, &EndOfPlayback, 0);
 
-
     QString title, artist, album;
     TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+    if (!f.isValid())
+        return;
 
     title = TStringToQString(f.tag()->title());
     artist = TStringToQString(f.tag()->artist());
@@ -88,6 +89,7 @@ void Player::changeToSong(int songNum)
     emit songAlbum(album);
 
     TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
+
     TagLib::ID3v2::FrameList framelist = tag->frameList("APIC");
 
     if (framelist.isEmpty())

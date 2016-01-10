@@ -91,6 +91,10 @@ void LibraryCreator::run()
         {
             QString filename = Manager::master.Get(i);
             TagLib::MPEG::File f( reinterpret_cast<const wchar_t*>(filename.constData()) );
+
+            if (!f.isValid())
+                continue;
+
             TagLib::ID3v2::Tag *tag = f.ID3v2Tag();
 
             title = TStringToQString(tag->title());
