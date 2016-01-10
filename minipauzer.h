@@ -92,6 +92,7 @@ private:
     QMenu *menu;
     QAction *openFoldersAct;
     QAction *settingsAct;
+    QAction *aboutAct;
 
     void layoutSetup();
     void loadData();
@@ -126,6 +127,7 @@ private slots:
     void on_sliderBar_sliderReleased();
 
     void openFolders();
+    void openAbout();
 
     void detectAudio(int audio_num);
 

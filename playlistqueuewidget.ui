@@ -25,7 +25,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="QListView" name="view_Playlist">
+  <widget class="PlaylistQueueListView" name="view_Playlist">
    <property name="geometry">
     <rect>
      <x>11</x>
@@ -98,6 +98,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PlaylistQueueListView</class>
+   <extends>QListView</extends>
+   <header>playlistqueuelistview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -13,6 +13,8 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
     connect(Player::getInstance(), SIGNAL(nextPlaylist()), this, SLOT(changeNextPlaylist()));
     connect(Player::getInstance(), SIGNAL(prevPlaylist()), this, SLOT(changePrevPlaylist()));
 
+    connect(model, SIGNAL(playCurrent()), this, SLOT(playCurrent()));
+
     connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), this, SLOT(modelScrollTo(QModelIndex,int,int)));
 
     QVBoxLayout *layout = new QVBoxLayout();
@@ -34,38 +36,7 @@ PlaylistQueueWidget::PlaylistQueueWidget(PlaylistQueueModel *_model, QWidget *pa
 
     grd_main->addWidget(ui->view_Playlist);
     model->setParent(ui->view_Playlist);
-    ui->view_Playlist->setStyleSheet("QListView#view_Playlist {"
-                                     "border: 1px solid #737373;"
-                                     "border-radius: 4px;"
-                                     "background-color: #1a1a1a;"
-                                     "outline: 0px;"
-                                     "}"
-                                     "QListView::item {"
-                                     "height: 60px;"
-                                     "padding: 5px;"
-                                     "}"
-                                     "QListView::item:selected:active {"
-                                     "background-color: #404040;"
-                                     "color: white;"
-                                     "}"
-                                     "QListView::item:selected:!active {"
-                                     "background-color: #4d4d4d;"
-                                     "color: lightgray;"
-                                     "}");
-    ui->view_Playlist->setContentsMargins(10, 10, 10, 10);
-    ui->view_Playlist->setIconSize(QSize(60, 60));
     ui->view_Playlist->setModel(model);
-
-    ui->view_Playlist->setDragEnabled(true);
-    ui->view_Playlist->viewport()->setAcceptDrops(true);
-    ui->view_Playlist->setDropIndicatorShown(true);
-    ui->view_Playlist->setAutoScroll(true);
-    ui->view_Playlist->setAutoScrollMargin(100);
-    ui->view_Playlist->verticalScrollBar()->setSingleStep(10);
-
-    ui->view_Playlist->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->view_Playlist->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->view_Playlist->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     grd_main->addWidget(ui->grbx_Playlist);
     ui->grbx_Playlist->setStyleSheet("QGroupBox {"
@@ -199,4 +170,9 @@ void PlaylistQueueWidget::changePrevPlaylist()
     int current = model->getCurrentPlaylistNum();
 
     model->setCurrentPlaylist(current - 1, false);
+}
+
+void PlaylistQueueWidget::playCurrent()
+{
+    model->setPlayerState(true);
 }

@@ -16,6 +16,9 @@ MiniPauzer::MiniPauzer(QWidget *parent) :
     queueModel = new PlaylistQueueModel(this);
     masterModel = new MasterModel(this);
 
+    connect(masterModel, SIGNAL(playlistPlayed(QString,int)), queueModel, SLOT(playPlaylist(QString,int)));
+    connect(masterModel, SIGNAL(playlistQueued(QString,int)), queueModel, SLOT(queuePlaylist(QString,int)));
+
     widget = new ProcessWidget(this);
     widget->setModal(true);
 
@@ -856,19 +859,23 @@ void MiniPauzer::createMenu()
     ui->btn_Menu->setArrowType(Qt::NoArrow);
 
     openFoldersAct = new QAction(tr("&Open Folders"), this);
-    openFoldersAct->setIcon(QPixmap(":/icons/Menu_Folders_Hover.png"));
+    openFoldersAct->setIcon(QPixmap(":/icons/Menu_Folders.png"));
     openFoldersAct->setText(tr("Open Folders"));
     connect(openFoldersAct, SIGNAL(triggered()), this, SLOT(openFolders()));
 
     settingsAct = new QAction(tr("&Settings"), this);
-    settingsAct->setIcon(QPixmap(":/icons/Menu_Settings_Hover.png"));
+    settingsAct->setIcon(QPixmap(":/icons/Menu_Settings.png"));
     settingsAct->setIconText(tr("Settings"));
 
+    aboutAct = new QAction(tr("&About"), this);
+    aboutAct->setIcon(QPixmap(":/icons/Menu_About.png"));
+    aboutAct->setIconText(tr("About"));
+    connect(aboutAct, SIGNAL(triggered()), this, SLOT(openAbout()));
+
     menu->addAction(openFoldersAct);
-    menu->addSeparator();
     menu->addAction(settingsAct);
-    menu->setSizeIncrement(100, 100);
-    //menu-
+    menu->addSeparator();
+    menu->addAction(aboutAct);
 
     menu->setStyleSheet("QMenu {"
                         "background-color: #383838;"
@@ -1006,6 +1013,36 @@ void MiniPauzer::openFolders()
 
     dialog->exec();
     delete dialog;
+}
+
+void MiniPauzer::openAbout()
+{
+    QDialog *about = new QDialog();
+    about->setModal(true);
+    about->setFixedSize(400, 300);
+
+    QVBoxLayout *layout = new QVBoxLayout();
+    about->setLayout(layout);
+
+    QLabel *label = new QLabel();
+    label->setText("Pauzer © 2016\n\n"
+                   "GitHub: github.com/lynxerious/Pauzer\n\n"
+                   "Created by:\n"
+                   "Thái Việt Linh\n"
+                   "Hà Mộng Long\n");
+    label->setFont(QFont("Segoe UI", 10));
+    label->setAlignment(Qt::AlignCenter);
+    layout->addWidget(label, Qt::AlignCenter);
+
+    QPushButton *button = new QPushButton();
+    button->setText(tr("Ok"));
+    layout->addWidget(button, Qt::AlignCenter);
+    button->setFixedHeight(40);
+
+    connect(button, SIGNAL(clicked()), about, SLOT(close()));
+    about->exec();
+
+    delete about;
 }
 
 void MiniPauzer::getFolderList(QStringList list)

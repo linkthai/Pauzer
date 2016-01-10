@@ -22,6 +22,8 @@ public:
     void initializeModel();
 
     void setMode(const Mode& _mode);
+    void playPlaylist(int row);
+    void queuePlaylist(int row);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int	columnCount(const QModelIndex & parent = QModelIndex()) const;
@@ -30,6 +32,9 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QStringList mimeTypes() const;
     QMimeData* mimeData(const QModelIndexList & indexes) const;
+signals:
+    void playlistPlayed(QString, int);
+    void playlistQueued(QString, int);
 public slots:
     void setAlbumList(QMap<QString, QStringList> _albumList);
     void setArtistList(QList<QPair<int, QString>> _artistList);

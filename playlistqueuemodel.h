@@ -42,6 +42,11 @@ private:
 signals:
     void playlistRemoved();
     void switchPlayerState(bool);
+    void playCurrent();
+public slots:
+    void playPlaylist(QString type, int num);
+    void queuePlaylist(QString type, int num);
+    void playPlaylist(int row);
 };
 
 #endif // PLAYLISTQUEUEMODEL_H

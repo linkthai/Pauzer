@@ -356,3 +356,63 @@ bool PlaylistQueueModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
     return true;
 }
 
+void PlaylistQueueModel::playPlaylist(QString type, int num)
+{
+    beginResetModel();
+
+    int currentRow = getCurrentPlaylistNum();
+    if (list[currentRow]->getType() == Playlist::Type::MASTER)
+        currentRow++;
+
+    insertRow(currentRow);
+
+    if (type == "Album")
+    {
+        list[currentRow]->setPlaylist(Playlist::Type::ALBUM, num);
+    }
+    else
+        if (type == "Artist")
+        {
+            list[currentRow]->setPlaylist(Playlist::Type::ARTIST, num);
+        }
+        else
+        {
+            list[currentRow]->setPlaylist(Playlist::Type::SONG, num);
+        }
+
+    setCurrentPlaylist(currentRow);
+    emit playCurrent();
+
+    endResetModel();
+}
+
+void PlaylistQueueModel::queuePlaylist(QString type, int num)
+{
+    beginResetModel();
+
+    int newRow = rowCount();
+    insertRow(newRow);
+
+    if (type == "Album")
+    {
+        list[newRow]->setPlaylist(Playlist::Type::ALBUM, num);
+    }
+    else
+        if (type == "Artist")
+        {
+            list[newRow]->setPlaylist(Playlist::Type::ARTIST, num);
+        }
+        else
+        {
+            list[newRow]->setPlaylist(Playlist::Type::SONG, num);
+        }
+
+    endResetModel();
+}
+
+void PlaylistQueueModel::playPlaylist(int row)
+{
+    setCurrentPlaylist(row);
+    emit playCurrent();
+}
+

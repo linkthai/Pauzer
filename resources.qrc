@@ -40,9 +40,7 @@
         <file>icons/Grip_Hover.png</file>
         <file>icons/Restore.png</file>
         <file>icons/Menu_Folders.png</file>
-        <file>icons/Menu_Folders_Hover.png</file>
         <file>icons/Menu_Settings.png</file>
-        <file>icons/Menu_Settings_Hover.png</file>
         <file>icons/Pauzer.png</file>
         <file>icons/Pauzer_Hover.png</file>
         <file>icons/Master.png</file>
@@ -66,5 +64,6 @@
         <file>icons/Lock_On.png</file>
         <file>icons/Lock_On_Hover.png</file>
         <file>icons/Pauzer_White.png</file>
+        <file>icons/Menu_About.png</file>
     </qresource>
 </RCC>

@@ -73,6 +73,48 @@ void MasterModel::setMode(const MasterModel::Mode &_mode)
 
 }
 
+void MasterModel::playPlaylist(int row)
+{
+    int num;
+
+    switch(mode)
+    {
+    case Mode::ALBUM:
+        num = albumList["ID"].at(row).toInt();
+        emit playlistPlayed("Album", num);
+        break;
+    case Mode::ARTIST:
+        num = artistList.at(row).first;
+        emit playlistPlayed("Artist", num);
+        break;
+    case Mode::SONG:
+        num = row;
+        emit playlistPlayed("Song", num);
+        break;
+    }
+}
+
+void MasterModel::queuePlaylist(int row)
+{
+    int num;
+
+    switch(mode)
+    {
+    case Mode::ALBUM:
+        num = albumList["ID"].at(row).toInt();
+        emit playlistQueued("Album", num);
+        break;
+    case Mode::ARTIST:
+        num = artistList.at(row).first;
+        emit playlistQueued("Artist", num);
+        break;
+    case Mode::SONG:
+        num = row;
+        emit playlistQueued("Song", num);
+        break;
+    }
+}
+
 void MasterModel::setAlbumList(QMap<QString, QStringList > _albumList)
 {
     albumList = _albumList;

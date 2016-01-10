@@ -40,7 +40,8 @@ SOURCES += main.cpp \
     playlistqueuemodel.cpp \
     setting.cpp \
     mastermodel.cpp \
-    mastertableview.cpp
+    mastertableview.cpp \
+    playlistqueuelistview.cpp
 
 HEADERS  += minipauzer.h \
     manager.h \
@@ -65,7 +66,8 @@ HEADERS  += minipauzer.h \
     playlistqueuemodel.h \
     setting.h \
     mastermodel.h \
-    mastertableview.h
+    mastertableview.h \
+    playlistqueuelistview.h
 
 FORMS    += minipauzer.ui \
     folderdialog.ui \

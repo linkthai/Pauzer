@@ -38,6 +38,8 @@ private slots:
     void changeNextPlaylist();
     void changePrevPlaylist();
 
+    void playCurrent();
+
 };
 
 #endif // PLAYLISTQUEUEWIDGET_H
